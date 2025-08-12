@@ -1,0 +1,214 @@
+/* ==============================
+   FOOTER - Base
+   ============================== */
+.footer {
+  background-color: transparent;
+  color: #fff;
+  padding: 40px 0;
+  font-size: 14px;
+  transition: all 0.4s ease;
+  opacity: 0.95;
+}
+
+.footer:hover {
+  opacity: 1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.col {
+  flex: 1;
+  min-width: 200px;
+  margin: 0 10px 20px;
+}
+
+/* Logo */
+.col-logo img {
+  width: 150px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.col-logo img:hover {
+  transform: scale(1.1);
+}
+
+/* Títulos */
+.footer-top h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  position: relative;
+  text-align: left;
+  color: #000;
+}
+
+.footer-top h3::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: #ff0000;
+  transition: all 0.3s ease;
+}
+
+/* Links */
+.footer-top ul {
+  list-style: none;
+}
+
+.footer-top ul li {
+  margin-bottom: 8px;
+}
+
+.footer-top ul li a {
+  color: #000;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-top ul li a:hover {
+  color: #ff0000;
+}
+
+/* Linha divisória */
+hr {
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 30px 0;
+}
+
+/* Redes sociais */
+.social-icon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 18px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.social-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Copyright */
+.col-copyright {
+  font-size: 14px;
+  color: #aaa;
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Botão Voltar ao Topo */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.back-to-top:hover {
+  background: #ff3333;
+  transform: translateY(-2px);
+}
+
+/* ==============================
+   DARK MODE - Estilos (RESPONDE AO BODY)
+   ============================== */
+
+/* Quando o body tem dark-mode, o footer muda */
+body.dark-mode .footer {
+  color: #eee;
+}
+
+/* Títulos no dark mode */
+body.dark-mode .footer .footer-top h3 {
+  color: #eee;
+}
+
+body.dark-mode .footer .footer-top h3::after {
+  background: #00d1b2; /* Ciano no dark mode */
+}
+
+/* Links no dark mode */
+body.dark-mode .footer .footer-top ul li a {
+  color: #eee;
+}
+
+body.dark-mode .footer .footer-top ul li a:hover {
+  color: #00d1b2;
+}
+
+/* Linha divisória no dark mode */
+body.dark-mode hr {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Redes sociais no dark mode */
+body.dark-mode .social-icon {
+  background: rgba(255, 255, 255, 0.05);
+  color: #eee;
+}
+
+body.dark-mode .social-icon:hover {
+  background: rgba(0, 209, 178, 0.2);
+  color: #00d1b2;
+}
+
+/* Botão Voltar ao Topo no dark mode */
+body.dark-mode .back-to-top {
+  background: #d10000;
+}
+
+body.dark-mode .back-to-top:hover {
+  background: #ff0000;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .col {
+    margin-bottom: 20px;
+  }
+
+  .col-copyright {
+    order: -1;
+  }
+}
