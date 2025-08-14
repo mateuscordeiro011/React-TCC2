@@ -1,6 +1,3 @@
-/* ==============================
-   HOME - GERAL (Controlado por body.dark-mode)
-   ============================== */
 .home {
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
@@ -14,9 +11,6 @@ body.dark-mode .home {
   color: #eee;
 }
 
-/* ==============================
-   CARROSSEL PRINCIPAL
-   ============================== */
 .hero-carousel {
   width: 100%;
   height: 80vh;
@@ -38,47 +32,79 @@ body.dark-mode .home {
 
 .hero-content {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+  bottom: 80px;
+  left: 60px;  
+  transform: none;
+  text-align: left;
   color: white;
-  max-width: 800px;
+  max-width: 650px;
   padding: 20px;
   z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-content h1 {
-  font-size: 2.8rem;
-  margin-bottom: 15px;
+  font-size: 3.5rem;
+  margin: 0 0 12px 0;
   color: #fff;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-  transition: transform 0.3s ease;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8),
+               0 0 15px rgba(255, 215, 0, 0.4); 
+  font-weight: bold;
+  letter-spacing: -0.5px;
+  transition: all 0.3s ease;
 }
 
 .hero-content h1:hover {
-  transform: scale(1.02);
+  transform: scale(1.03);
+  text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.9),
+               0 0 20px rgba(255, 215, 0, 0.6);
 }
 
 .hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 25px;
-  color: #ddd;
-  line-height: 1.6;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+  font-size: 1.3rem;
+  margin: 0 0 16px 0;
+  color: #fff;
+  line-height: 1.7;
+  text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.hero-content p i {
+  display: block;
+  font-size: 1.1rem;
+  color: #ffd700; 
+  margin-top: 8px;
+  font-style: italic;
+  opacity: 0.95;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.7);
 }
 
 .cta-button {
   padding: 14px 30px;
-  background: #d4af37; /* Dourado */
+  background: #d4af37; 
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 15px;
 }
 
 .cta-button:hover {
@@ -87,9 +113,6 @@ body.dark-mode .home {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* ==============================
-   SEÇÕES DE CATÁLOGO (Produtos e Adoção)
-   ============================== */
 .catalog-section {
   padding: 60px 20px;
   max-width: 1400px;
@@ -100,14 +123,14 @@ body.dark-mode .home {
   text-align: center;
   font-size: 2.4rem;
   margin-bottom: 40px;
-  color: #00b7c2; /* Ciano */
+  color: #00b7c2;
   position: relative;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
 body.dark-mode .catalog-title {
-  color: #d4af37; /* Dourado */
+  color: #d4af37;
 }
 
 .catalog-title::after {
@@ -118,13 +141,13 @@ body.dark-mode .catalog-title {
   transform: translateX(-50%);
   width: 100px;
   height: 4px;
-  background: #d4af37; /* Dourado */
+  background: #d4af37;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
 
 body.dark-mode .catalog-title::after {
-  background: #00b7c2; /* Ciano */
+  background: #00b7c2; 
 }
 
 .no-items {
@@ -143,7 +166,6 @@ body.dark-mode .no-items {
   color: #aaa;
 }
 
-/* Grid responsivo */
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -151,9 +173,97 @@ body.dark-mode .no-items {
   padding: 0 10px;
 }
 
+.catalog-grid img {
+  max-width: 200px;
+}
+
+.catalog-section {
+  padding: 80px 20px 60px;
+  position: relative;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+body.dark-mode .catalog-section {
+  background: #1e1e1e;
+  border-color: #333;
+}
+
+/* Última seção sem borda inferior */
+.catalog-section:last-of-type {
+  border-bottom: none;
+}
+
 /* ==============================
-   CARD UNIFICADO (Produto e Animal)
+   CABEÇALHO DAS SEÇÕES - Título + Botão VER MAIS
    ============================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto 30px;
+  padding: 0 15px;
+  position: relative;
+}
+
+.catalog-title {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #00b7c2;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .catalog-title {
+  color: #d4af37;
+}
+
+/* Botão VER MAIS */
+.view-more-btn {
+  background: #d4af37;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+}
+
+.view-more-btn:hover {
+  background: #c0a080;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .view-more-btn {
+  background: #c0a080;
+}
+
+body.dark-mode .view-more-btn:hover {
+  background: #d4af37;
+  color: #333;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
 .catalog-item {
   background: #fff;
   border-radius: 14px;
@@ -180,7 +290,6 @@ body.dark-mode .catalog-item {
   border-color: #d4af37;
 }
 
-/* Imagem */
 .catalog-item-image {
   width: 100%;
   height: 190px;
@@ -197,7 +306,6 @@ body.dark-mode .catalog-item-image {
   transform: scale(1.18);
 }
 
-/* Título */
 .catalog-item-title {
   font-size: 1.3rem;
   margin: 16px 12px 8px;
@@ -214,7 +322,6 @@ body.dark-mode .catalog-item-title {
   color: #d4af37;
 }
 
-/* Preço (para produtos) */
 .catalog-item-price {
   font-size: 1.25rem;
   font-weight: bold;
@@ -227,7 +334,6 @@ body.dark-mode .catalog-item-price {
   color: #00d1b2;
 }
 
-/* Informações do animal */
 .catalog-item-info {
   font-size: 0.92rem;
   color: #666;
@@ -256,7 +362,6 @@ body.dark-mode .catalog-item-info strong {
   color: #ddd;
 }
 
-/* Botão de ação */
 .catalog-item-button {
   padding: 11px 22px;
   background: #00b7c2;
@@ -288,7 +393,6 @@ body.dark-mode .catalog-item-button:hover {
   color: #333;
 }
 
-/* Ícone de lupa (zoom) */
 .zoom-icon {
   position: absolute;
   top: 50%;
@@ -322,7 +426,6 @@ body.dark-mode .zoom-icon {
   border-color: #333;
 }
 
-/* Efeito de brilho sutil */
 .catalog-item::before {
   content: "";
   position: absolute;
@@ -346,75 +449,18 @@ body.dark-mode .zoom-icon {
   opacity: 1;
 }
 
-/* ==============================
-   SEÇÃO DE ADOÇÃO - Cabeçalho com botão VER MAIS
-   ============================== */
-.adoption-section {
-  position: relative;
-  padding-top: 80px; /* Espaço para o cabeçalho fixo */
+.no-items {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #888;
+  margin: 40px 0;
+  font-style: italic;
 }
 
-.section-header {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1400px;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 3;
+body.dark-mode .no-items {
+  color: #aaa;
 }
 
-.section-header .catalog-title {
-  margin: 0;
-  font-size: 2.2rem;
-  color: #00b7c2;
-  background: #f4f1eb;
-  padding: 8px 16px;
-  border-radius: 10px 10px 0 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: color 0.3s ease;
-}
-
-body.dark-mode .section-header .catalog-title {
-  color: #d4af37;
-  background: #1a1a1a;
-}
-
-.view-more-btn {
-  background: #d4af37;
-  color: white;
-  padding: 12px 22px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  white-space: nowrap;
-}
-
-.view-more-btn:hover {
-  background: #c0a080;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-}
-
-body.dark-mode .view-more-btn {
-  background: #c0a080;
-}
-
-body.dark-mode .view-more-btn:hover {
-  background: #d4af37;
-  color: #333;
-}
-
-/* ==============================
-   MODAL DE DETALHES (Produto e Animal)
-   ============================== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -586,9 +632,6 @@ body.dark-mode .modal-btn.info {
   background: #00d1b2;
 }
 
-/* ==============================
-   RESPONSIVIDADE
-   ============================== */
 @media (max-width: 768px) {
   .catalog-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -632,7 +675,6 @@ body.dark-mode .modal-btn.info {
     font-size: 1.8rem;
   }
 
-  /* Responsividade do cabeçalho de adoção */
   .section-header {
     flex-direction: column;
     top: 10px;
@@ -679,7 +721,6 @@ body.dark-mode .modal-btn.info {
     font-size: 1rem;
   }
 
-  /* Ajuste para mobile: mais espaço no topo */
   .adoption-section {
     padding-top: 120px;
   }

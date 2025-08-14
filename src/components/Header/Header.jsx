@@ -12,10 +12,9 @@ export default function Navbar() {
   const [hasScroll, setHasScroll] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ✅ Usa o tema do contexto
+
   const { darkMode, toggleDarkMode } = useTheme();
 
-  // Verifica se há scroll na página
   useEffect(() => {
     const checkScroll = () => {
       const documentHeight = document.documentElement.scrollHeight;
@@ -28,7 +27,6 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", checkScroll);
   }, []);
 
-  // Controla a navbar com scroll
   useEffect(() => {
     const controlNavbar = () => {
       if (!hasScroll) {
@@ -61,12 +59,11 @@ export default function Navbar() {
         transition: "all 0.4s ease",
       }}
     >
-      {/* Logo */}
+ 
       <ScrollLink to="home" smooth={true} duration={500} className="logo">
         <img src={darkMode ? logoLight : logoDark} alt="Logo" id="header-logo" />
       </ScrollLink>
 
-      {/* Barra de pesquisa */}
       <div className="search-container">
         <input
           type="text"
@@ -77,7 +74,6 @@ export default function Navbar() {
         />
       </div>
 
-      {/* Menu Hamburger */}
       <input className="menu-btn" type="checkbox" id="menu-btn" />
       <label className="menu-icon" htmlFor="menu-btn">
         <span className="nav-icon"></span>
@@ -85,16 +81,15 @@ export default function Navbar() {
 
       <ul className="menu">
         <li><ScrollLink to="home" smooth duration={500} offset={-70}>Início</ScrollLink></li>
-        <li><ScrollLink to="catalog" smooth duration={500} offset={-70}>Catálogo</ScrollLink></li>
+        <li><ScrollLink to="catalog-section" smooth duration={580} offset={-40}>Catálogo</ScrollLink></li>
         <li><ScrollLink to="adoption" smooth duration={500} offset={-70}>Adoção</ScrollLink></li>
       </ul>
 
-      {/* Botão de Dark Mode */}
       <button className="mode-toggle" onClick={toggleDarkMode} aria-label="Alternar modo escuro">
         <i className={`fas ${darkMode ? "fa-sun" : "fa-moon"}`}></i>
       </button>
 
-      {/* Ícone de Usuário */}
+
       <div className="user-icon" onClick={toggleDropdown}>
         <i className="fas fa-user"></i>
         {dropdownOpen && (
@@ -107,7 +102,6 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Overlay para fechar dropdown */}
       {dropdownOpen && <div className="dropdown-overlay" onClick={toggleDropdown}></div>}
     </nav>
   );
