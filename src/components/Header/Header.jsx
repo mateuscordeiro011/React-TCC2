@@ -82,7 +82,7 @@ export default function Navbar() {
       <ul className="menu">
         <li><ScrollLink to="home" smooth duration={500} offset={-70}>Início</ScrollLink></li>
         <li><ScrollLink to="catalog-section" smooth duration={580} offset={-40}>Catálogo</ScrollLink></li>
-        <li><ScrollLink to="adoption" smooth duration={500} offset={-70}>Adoção</ScrollLink></li>
+        <li><ScrollLink to="adoption-section" smooth duration={500} offset={-70}>Adoção</ScrollLink></li>
       </ul>
 
       <button className="mode-toggle" onClick={toggleDarkMode} aria-label="Alternar modo escuro">

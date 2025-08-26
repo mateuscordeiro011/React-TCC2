@@ -76,6 +76,14 @@ export default function Home() {
   const openAnimalModal = (animal) => setSelectedAnimal(animal);
   const closeAnimalModal = () => setSelectedAnimal(null);
 
+  const getBase64ImageSrc = (base64, defaultSrc) => {
+  if (!base64) return defaultSrc;
+
+  if (base64.startsWith("iVBOR")) return `data:image/png;base64,${base64}`;
+  if (base64.startsWith("R0lGO")) return `data:image/gif;base64,${base64}`;
+  return `data:image/jpeg;base64,${base64}`;
+};
+
 
   return (
     <>
@@ -192,7 +200,9 @@ export default function Home() {
                 >
                   <img
                     src={
-                      animal.foto || "https://via.placeholder.com/200x200?text=Sem+Imagem"
+                      animal.foto
+                        ? `data:image/jpeg;base64,${animal.foto}`
+                        : "https://via.placeholder.com/200x200?text=Sem+Imagem"
                     }
                     alt={animal.nome}
                     className="catalog-item-image"
@@ -203,7 +213,7 @@ export default function Home() {
                     <br />
                     <strong>Raça:</strong> {animal.raca}
                     <br />
-                    <strong>Idade:</strong> {calculateAge(animal.data_nascimento)} anos
+                    <strong>Idade:</strong> {calculateAge(animal.nascimento)} anos
                     <br />
                     <strong>Peso:</strong> {animal.peso} kg
                     <br />
@@ -245,11 +255,15 @@ export default function Home() {
               <button className="modal-close" onClick={closeAnimalModal}>
                 &times;
               </button>
-              <img
-                src={selectedAnimal.foto}
-                alt={selectedAnimal.nome}
-                className="modal-image"
-              />
+                  <img
+                    src={
+                      selectedAnimal.foto
+                        ? `data:image/jpeg;base64,${selectedAnimal.foto}`
+                        : "https://via.placeholder.com/200x200?text=Sem+Imagem"
+                    }
+                    alt={selectedAnimal.nome}
+                    className="catalog-item-image"
+                  />
               <h2>{selectedAnimal.nome}</h2>
               <p className="modal-desc">
                 <strong>Espécie:</strong> {selectedAnimal.especie}

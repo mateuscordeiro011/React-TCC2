@@ -23,7 +23,6 @@ const FormProduto = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // Estados para modais
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
@@ -31,7 +30,7 @@ const FormProduto = () => {
 
   const [produtoEditando, setProdutoEditando] = useState(null);
 
-  // Buscar produtos
+
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
@@ -55,7 +54,6 @@ const FormProduto = () => {
     setProdutoEditando(null);
   };
 
-  // Editar produto
   const handleEdit = (produto) => {
     setProdutoEditando(produto.id_produto);
     setNome(produto.nome);
@@ -70,7 +68,6 @@ const FormProduto = () => {
     }
   };
 
-  // Enviar formulário (POST ou PUT)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!vnome || !vpreco || !vestoque || !vdesc) {
