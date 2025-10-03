@@ -10,7 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import "./FormAnimal.css";
-import Navbar from "../../../components/Header/Header";
+import Navbar from "../../../components/Header/NavbarFuncionario";
 import Footer from "../../../components/Footer/Footer";
 
 const FormAnimal = () => {
@@ -19,7 +19,7 @@ const FormAnimal = () => {
   const [vespecie, setEspecie] = useState("");
   const [vpeso, setPeso] = useState("");
   const [vraca, setRaca] = useState("");
-  const [vimg, setImg] = useState("");
+  const [vimg, setImg] = useState(""); // Sempre será uma URL data: válida ou string vazia
   const [vsexo, setSexo] = useState("");
   const [vnascimento, setNascimento] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,15 +77,12 @@ const FormAnimal = () => {
     setNascimento(animal.nascimento);
     setAnimalEditando(animal.id_animal);
 
-    if (animal.foto && animal.foto.startsWith("data:image")) {
-      setImg(animal.foto);
-    } else if (animal.foto) {
+    if (animal.foto) {
       setImg(`data:image/jpeg;base64,${animal.foto}`);
     } else {
       setImg("");
     }
   };
-
 
   const calculateAge = (nascimento) => {
     if (!nascimento) return "Desconhecida";
@@ -132,9 +129,9 @@ const FormAnimal = () => {
       };
 
       if (vimg && vimg.startsWith("data:image")) {
-        const base64String = vimg.split(",")[1];
-        if (base64String) {
-          payload.foto = base64String;
+        const base64Part = vimg.split(",")[1];
+        if (base64Part) {
+          payload.foto = base64Part;
         }
       }
 
@@ -191,9 +188,14 @@ const FormAnimal = () => {
     setAnimalToDelete(null);
   };
 
+  const getValidImageUrl = (imgValue) => {
+    if (!imgValue) return "";
+    if (imgValue.startsWith("image")) return imgValue;
+    return `image/jpeg;base64,${imgValue}`;
+  };
+
   return (
     <>
-    <div style={backgroundImageStyle}>
       <Navbar />
 
       <AnimatePresence>
@@ -216,7 +218,6 @@ const FormAnimal = () => {
 
       <div className="petshop-container">
         <div className="petshop-grid">
-          {/* Formulário */}
           <motion.section
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -313,13 +314,24 @@ const FormAnimal = () => {
                     const file = e.target.files[0];
                     if (file) {
                       const reader = new FileReader();
-                      reader.onloadend = () => setImg(reader.result);
+                      reader.onloadend = () => {
+                        setImg(reader.result);
+                      };
                       reader.readAsDataURL(file);
+                    } else {
+                      setImg("");
                     }
                   }}
                   style={{ display: "none" }}
                 />
-                {vimg && <img src={vimg} alt="Prévia" className="petshop-preview-img" />}
+                {vimg && (
+                  <img
+                    src={vimg}
+                    alt="Prévia"
+                    className="petshop-preview-img"
+                    onError={() => setImg("")}
+                  />
+                )}
               </div>
 
               <button type="submit" disabled={isSubmitting} className="petshop-btn">
@@ -385,7 +397,12 @@ const FormAnimal = () => {
                               {animal.peso?.toFixed(2)} Kg
                             </strong>
                             <span className="petshop-stock">
-                              Idade: {idade} {typeof idade === 'number' && idade === 1 ? 'ano' : typeof idade === 'number' ? 'anos' : ''}
+                              Idade: {idade}{" "}
+                              {typeof idade === "number"
+                                ? idade === 1
+                                  ? "ano"
+                                  : "anos"
+                                : ""}
                             </span>
                           </div>
                         </div>
@@ -394,6 +411,9 @@ const FormAnimal = () => {
                             src={`data:image/jpeg;base64,${animal.foto}`}
                             alt={animal.nome}
                             className="catalog-item-image"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                            }}
                           />
                         )}
                         <div className="petshop-actions">
@@ -489,10 +509,7 @@ const FormAnimal = () => {
           )}
         </AnimatePresence>
       </div>
-</div>
       <Footer />
-
-      
     </>
   );
 };

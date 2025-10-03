@@ -10,7 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import "./FormProduto.css";
-import Navbar from "../../../components/Header/Header";
+import Navbar from "../../../components/Header/NavbarFuncionario";
 import Footer from "../../../components/Footer/Footer";
 
 const FormProduto = () => {
@@ -30,31 +30,52 @@ const FormProduto = () => {
 
   const [produtoEditando, setProdutoEditando] = useState(null);
 
-
   useEffect(() => {
+    console.log("--- useEffect: Iniciando carregamento da lista de produtos ---");
     const fetchProdutos = async () => {
       try {
         const res = await api.get("http://localhost:8080/api-salsi/produtos");
+        console.log("Produtos carregados com sucesso:", res.data);
         setUsuarios(res.data);
+        if (res.data.length === 0) {
+          console.log("Nenhum produto encontrado no backend.");
+        }
       } catch (err) {
-        console.error("Erro ao buscar produtos", err);
+        console.error("❌ Erro ao buscar produtos:", err);
         setMessage({ type: "error", text: "Falha ao carregar produtos." });
       }
     };
     fetchProdutos();
-  }, []);
+  }, []); // Executa apenas uma vez, na montagem do componente
+
+  // --- Adicionando console.log para monitorar mudanças no estado `usuarios` ---
+  useEffect(() => {
+    console.log("🔄 Estado 'usuarios' atualizado. Total de produtos:", usuarios.length);
+  }, [usuarios]);
+
+  // --- Adicionando console.log para monitorar mudanças no estado `produtoEditando` ---
+  useEffect(() => {
+    if (produtoEditando !== null) {
+      console.log("✏️ Modo de edição ativado para o produto ID:", produtoEditando);
+    } else {
+      console.log("🆕 Modo de criação ativado.");
+    }
+  }, [produtoEditando]);
 
   // Limpar formulário
   const resetForm = () => {
+    console.log("--- resetForm: Limpando o formulário ---");
     setNome("");
     setDesc("");
     setPreco("");
     setEstoque("");
     setImg("");
     setProdutoEditando(null);
+    console.log("✅ Formulário limpo.");
   };
 
   const handleEdit = (produto) => {
+    console.log("--- handleEdit: Iniciando edição do produto ---", produto);
     setProdutoEditando(produto.id_produto);
     setNome(produto.nome);
     setDesc(produto.descricao || "");
@@ -63,20 +84,32 @@ const FormProduto = () => {
 
     if (produto.foto && produto.foto.startsWith("data:image")) {
       setImg(produto.foto);
+      console.log("🖼️ Imagem do produto carregada para edição.");
     } else {
       setImg("");
+      console.log("⚠️ Produto não possui imagem ou formato inválido.");
     }
+    console.log("✅ Dados do produto carregados para edição.");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("--- handleSubmit: Iniciando envio do formulário ---");
     if (!vnome || !vpreco || !vestoque || !vdesc) {
+      console.warn("⚠️ Campos obrigatórios não preenchidos.");
       setMessage({ type: "error", text: "Preencha os campos obrigatórios." });
       return;
     }
 
     setIsSubmitting(true);
     setMessage(null);
+    console.log("📤 Enviando dados do produto:", {
+      nome: vnome,
+      descricao: vdesc,
+      preco: parseFloat(vpreco),
+      estoque: parseInt(vestoque),
+      foto: vimg ? "Imagem presente (base64)" : "Sem imagem",
+    });
 
     try {
       const payload = {
@@ -90,11 +123,14 @@ const FormProduto = () => {
         payload.foto = vimg;
       }
 
+      let response;
       if (produtoEditando) {
-        const response = await api.put(
+        console.log(`🔄 Atualizando produto existente (ID: ${produtoEditando})...`);
+        response = await api.put(
           `http://localhost:8080/api-salsi/produtos/${produtoEditando}`,
           payload
         );
+        console.log("✅ Produto atualizado com sucesso!", response.data);
         setUsuarios((prev) =>
           prev.map((p) =>
             p.id_produto === produtoEditando ? response.data : p
@@ -105,10 +141,12 @@ const FormProduto = () => {
           text: "Produto atualizado com sucesso!",
         });
       } else {
-        const response = await api.post(
+        console.log("➕ Cadastrando novo produto...");
+        response = await api.post(
           "http://localhost:8080/api-salsi/produtos",
           payload
         );
+        console.log("✅ Produto cadastrado com sucesso!", response.data);
         setUsuarios((prev) => [...prev, response.data]);
         setMessage({
           type: "success",
@@ -118,43 +156,98 @@ const FormProduto = () => {
 
       resetForm();
     } catch (error) {
-      console.error("Erro ao salvar produto", error.response?.data || error.message);
+      console.error("❌ Erro ao salvar produto:", error.response?.data || error.message);
       setMessage({
         type: "error",
         text: error.response?.data?.message || "Erro ao salvar produto.",
       });
     } finally {
       setIsSubmitting(false);
+      console.log("--- handleSubmit: Finalizado ---");
     }
   };
 
   // Iniciar exclusão
   const handleDelete = (produto) => {
+    console.log("--- handleDelete: Solicitando exclusão do produto ---", produto);
     setProductToDelete(produto);
     setShowDeleteModal(true);
+    console.log("🔍 Modal de confirmação de exclusão aberto.");
   };
 
   // Confirmar exclusão
   const confirmDelete = async () => {
     const produto = productToDelete;
+    console.log(`🗑️ Confirmando exclusão do produto ID: ${produto.id_produto} - Nome: ${produto.nome}`);
     setShowDeleteModal(false);
 
     try {
       await api.delete(`http://localhost:8080/api-salsi/produtos/${produto.id_produto}`);
+      console.log("✅ Produto excluído com sucesso do backend.");
       setUsuarios((prev) => prev.filter((p) => p.id_produto !== produto.id_produto));
       setSuccessMessage(`O produto "${produto.nome}" foi excluído com sucesso!`);
       setShowSuccessModal(true);
+      console.log("🔍 Modal de sucesso aberto.");
     } catch (error) {
-      console.error("Erro ao deletar produto", error);
+      console.error("❌ Erro ao deletar produto:", error);
       setMessage({ type: "error", text: "Erro ao excluir produto." });
     }
   };
 
   // Fechar modal de sucesso
   const closeSuccessModal = () => {
+    console.log("--- closeSuccessModal: Fechando modal de sucesso ---");
     setShowSuccessModal(false);
     setProductToDelete(null);
+    console.log("✅ Modal de sucesso fechado.");
   };
+
+  // --- Adicionando console.log para mudança de campos do formulário ---
+  const handleChangeNome = (e) => {
+    const value = e.target.value;
+    setNome(value);
+    console.log("📝 Nome do produto alterado:", value);
+  };
+
+  const handleChangeDesc = (e) => {
+    const value = e.target.value;
+    setDesc(value);
+    console.log("📝 Descrição do produto alterada:", value);
+  };
+
+  const handleChangePreco = (e) => {
+    const value = e.target.value;
+    setPreco(value);
+    console.log("💰 Preço do produto alterado:", value);
+  };
+
+  const handleChangeEstoque = (e) => {
+    const value = e.target.value;
+    setEstoque(value);
+    console.log("📦 Estoque do produto alterado:", value);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log("--- handleFileChange: Arquivo selecionado ---", file?.name);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadstart = () => {
+        console.log("🔄 Iniciando leitura do arquivo...");
+      };
+      reader.onloadend = () => {
+        setImg(reader.result);
+        console.log("✅ Arquivo lido e convertido para base64.");
+      };
+      reader.onerror = (err) => {
+        console.error("❌ Erro ao ler o arquivo:", err);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.log("ℹ️ Nenhum arquivo selecionado ou seleção cancelada.");
+    }
+  };
+
 
   return (
     <>
@@ -201,7 +294,7 @@ const FormProduto = () => {
                 <input
                   type="text"
                   value={vnome}
-                  onChange={(e) => setNome(e.target.value)}
+                  onChange={handleChangeNome} // Usando o handler com log
                   placeholder="Ex: Ração Premium para Cães"
                   required
                 />
@@ -212,7 +305,7 @@ const FormProduto = () => {
                 <input
                   type="text"
                   value={vdesc}
-                  onChange={(e) => setDesc(e.target.value)}
+                  onChange={handleChangeDesc} // Usando o handler com log
                   placeholder="Ex: Ração balanceada com vitaminas"
                 />
               </div>
@@ -223,7 +316,7 @@ const FormProduto = () => {
                   type="number"
                   step="0.01"
                   value={vpreco}
-                  onChange={(e) => setPreco(e.target.value)}
+                  onChange={handleChangePreco} // Usando o handler com log
                   placeholder="0,00"
                   required
                 />
@@ -234,7 +327,7 @@ const FormProduto = () => {
                 <input
                   type="number"
                   value={vestoque}
-                  onChange={(e) => setEstoque(e.target.value)}
+                  onChange={handleChangeEstoque} // Usando o handler com log
                   placeholder="Quantidade disponível"
                   required
                 />
@@ -253,14 +346,7 @@ const FormProduto = () => {
                   id="file-input"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => setImg(reader.result);
-                      reader.readAsDataURL(file);
-                    }
-                  }}
+                  onChange={handleFileChange} // Usando o handler com log
                   style={{ display: "none" }}
                 />
                 {vimg && <img src={vimg} alt="Prévia" className="petshop-preview-img" />}
@@ -368,7 +454,10 @@ const FormProduto = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowDeleteModal(false)}
+              onClick={() => {
+                console.log("--- Modal de exclusão: Fechado ao clicar fora ---");
+                setShowDeleteModal(false);
+              }}
             >
               <motion.div
                 className="modal"
@@ -386,7 +475,10 @@ const FormProduto = () => {
                 </p>
                 <div className="modal-buttons">
                   <button
-                    onClick={() => setShowDeleteModal(false)}
+                    onClick={() => {
+                      console.log("--- Modal de exclusão: Cancelado ---");
+                      setShowDeleteModal(false);
+                    }}
                     className="modal-btn modal-btn-cancel"
                   >
                     Cancelar

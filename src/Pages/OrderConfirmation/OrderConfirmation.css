@@ -1,0 +1,247 @@
+/* src/pages/OrderConfirmation/OrderConfirmation.css */
+
+.order-confirmation-page {
+  min-height: 100vh;
+  padding-top: 80px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #333;
+  transition: all 0.5s ease;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-confirmation-page.dark-mode {
+  background: linear-gradient(135deg, #1e2024 0%, #2a2d34 100%);
+  color: #eee;
+}
+
+.order-confirmation {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.order-confirmation-page.dark-mode .order-confirmation {
+  background: #2a2a2a;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.order-confirmation h2 {
+  font-size: 2.5rem;
+  color: #27ae60;
+  margin-bottom: 20px;
+  animation: bounceIn 0.8s ease-out;
+}
+
+.order-confirmation-page.dark-mode .order-confirmation h2 {
+  color: #2ecc71;
+}
+
+.order-confirmation p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.order-confirmation-page.dark-mode .order-confirmation p {
+  color: #aaa;
+}
+
+/* Detalhes do Pedido */
+.order-details {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 25px 0;
+  text-align: left;
+  border: 1px solid #eee;
+}
+
+.order-confirmation-page.dark-mode .order-details {
+  background: #333;
+  border-color: #444;
+}
+
+.order-details h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #007a87;
+  font-size: 1.3rem;
+}
+
+.order-confirmation-page.dark-mode .order-details h3 {
+  color: #00d1b2;
+}
+
+.order-details p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.order-confirmation-page.dark-mode .order-details p {
+  color: #ccc;
+}
+
+.order-details strong {
+  color: #333;
+}
+
+.order-confirmation-page.dark-mode .order-details strong {
+  color: #eee;
+}
+
+/* Botão */
+.btn-primary {
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #00b7c2 0%, #007a87 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 183, 194, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 183, 194, 0.5);
+}
+
+.order-confirmation-page.dark-mode .btn-primary {
+  background: linear-gradient(135deg, #00d1b2 0%, #00b7c2 100%);
+  box-shadow: 0 4px 15px rgba(0, 209, 178, 0.3);
+}
+
+.order-confirmation-page.dark-mode .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 209, 178, 0.5);
+}
+
+/* Animações */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .order-confirmation-page {
+    padding-top: 60px;
+  }
+  
+  .order-confirmation {
+    padding: 30px 20px;
+    margin: 0 20px;
+  }
+  
+  .order-confirmation h2 {
+    font-size: 2rem;
+  }
+  
+  .order-confirmation p {
+    font-size: 1.1rem;
+  }
+  
+  .order-details {
+    padding: 15px;
+  }
+  
+  .btn-primary {
+    padding: 12px 25px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-confirmation {
+    padding: 25px 15px;
+  }
+  
+  .order-confirmation h2 {
+    font-size: 1.8rem;
+  }
+  
+  .order-confirmation p {
+    font-size: 1rem;
+  }
+  
+  .order-details h3 {
+    font-size: 1.1rem;
+  }
+  
+  .order-details p {
+    font-size: 0.9rem;
+  }
+  
+  .btn-primary {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Scrollbar personalizada para navegadores Webkit */
+.order-confirmation::-webkit-scrollbar {
+  width: 8px;
+}
+
+.order-confirmation::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.order-confirmation::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.order-confirmation::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.order-confirmation-page.dark-mode .order-confirmation::-webkit-scrollbar-track {
+  background: #333;
+}
+
+.order-confirmation-page.dark-mode .order-confirmation::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+.order-confirmation-page.dark-mode .order-confirmation::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}

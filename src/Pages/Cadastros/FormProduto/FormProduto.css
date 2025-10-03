@@ -1,7 +1,3 @@
-/* ==============================
-   CORE STYLES - FormProduto.css
-   ============================== */
-
 :root {
   --pet-cyan: #00b8d4;
   --pet-cyan-light: #80deea;
@@ -455,7 +451,7 @@
 }
 
 .modal-btn-cancel {
-  background: #f0f0f0;
+  background: #0d3fe2;
   color: var(--text);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }

@@ -125,6 +125,51 @@ position: fixed;
     font-size: 1rem;
     padding: 0 1rem;
   }
+
+  .login-link-button {
+  background: transparent;
+  color: white;
+  border: 2px solid var(--primary);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.login-link-button:hover {
+  background: rgba(230, 131, 105, 0.2); /* Fundo suave no hover */
+  border-color: var(--primary-hover);
+  color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.signup-form > input,
+.password-container,
+.power-container,
+.signup-button,
+.login-link-button {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.signup-form > input { animation-delay: 0.3s; }
+.password-container { animation-delay: 0.4s; }
+.password-container:nth-of-type(2) { animation-delay: 0.5s; }
+.power-container { animation-delay: 0.6s; }
+.signup-button { animation-delay: 0.7s; }
+.login-link-button { animation-delay: 0.8s; }
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   
   .signup-form > input::placeholder {
     color: rgb(167, 167, 167);
@@ -137,14 +182,14 @@ position: fixed;
     border-radius: 3rem; 
   }
   
-  .power-container #power-point { 
-    background: var(--error); 
-    min-width: 0.75rem;
-    width: 1%; 
-    height: 100%; 
-    border-radius: 3rem; 
-    transition: all 0.375s;
-  }
+.power-container .power-point { 
+  background: var(--error); 
+  min-width: 0.75rem;
+  width: 1%; 
+  height: 100%; 
+  border-radius: 3rem; 
+  transition: all 0.375s ease;
+}
   
   .signup-form > button {
     cursor: pointer;

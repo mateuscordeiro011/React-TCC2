@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+// src/Pages/Registro/Registro.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Registro.css';
-import api from '../../service/api';
+import { useAuth } from '../../utils/useAuth'; // Importe o hook de autenticação
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import api from '../../service/api';
+import './Registro.css';
 
 const Registro = () => {
+  const { login } = useAuth(); // Pegue a função de login do contexto
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [cpf, setCpf] = useState('');
@@ -18,24 +21,33 @@ const Registro = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    document.body.classList.add('register-page');
-    return () => {
-      document.body.classList.remove('register-page');
-    };
-  }, []);
+  const formatarCPF = (value) => {
+    const numeros = value.replace(/\D/g, '');
+    if (numeros.length <= 11) {
+      if (numeros.length <= 3) return numeros;
+      if (numeros.length <= 6) return `${numeros.slice(0, 3)}.${numeros.slice(3)}`;
+      if (numeros.length <= 9) return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`;
+      return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`;
+    }
+    return value.slice(0, -1);
+  };
 
+  // ✅ Função handleCpfChange (deve vir antes de ser usada)
+  const handleCpfChange = (e) => {
+    const value = e.target.value;
+    setCpf(formatarCPF(value));
+  };
+
+  // Validação de força da senha
   const passwordStrength = (value) => {
     let point = 0;
     const widthPower = ['1%', '25%', '50%', '75%', '100%'];
     const colorPower = ['#D73F40', '#DC6551', '#F2B84F', '#BDE952', '#3ba62f'];
 
     if (value.length >= 6) {
-      const arrayTest = [/[0-9]/, /[a-z]/, /[A-Z]/, /[^0-9a-zA-Z]/];
-      arrayTest.forEach((item) => {
-        if (item.test(value)) {
-          point += 1;
-        }
+      const tests = [/[0-9]/, /[a-z]/, /[A-Z]/, /[^0-9a-zA-Z]/];
+      tests.forEach((test) => {
+        if (test.test(value)) point += 1;
       });
     }
 
@@ -49,6 +61,20 @@ const Registro = () => {
     passwordStrength(value);
   };
 
+  // Validação de CPF
+  const validarCPF = (cpf) => {
+    const match = cpf.match(/\d/g);
+    if (!match || match.length !== 11) return false;
+
+    const [a, b, c, d, e, f, g, h, i, j, k] = match.map(Number);
+    const soma1 = a * 10 + b * 9 + c * 8 + d * 7 + e * 6 + f * 5 + g * 4 + h * 3 + i * 2;
+    const resto1 = (soma1 * 10) % 11 % 10;
+    const soma2 = a * 11 + b * 10 + c * 9 + d * 8 + e * 7 + f * 6 + g * 5 + h * 4 + i * 3 + j * 2;
+    const resto2 = (soma2 * 10) % 11 % 10;
+
+    return resto1 === j && resto2 === k;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -58,24 +84,57 @@ const Registro = () => {
       return;
     }
 
+    if (senha.length < 6) {
+      setShowError(true);
+      setErrorMessage('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+
+    if (!validarCPF(cpf)) {
+      setShowError(true);
+      setErrorMessage('CPF inválido');
+      return;
+    }
+
     try {
-      const response = await api.post('/api-salsi/Cliente', {
+      const response = await api.post('/api-salsi/auth/register', {
         nome,
         email,
         cpf,
         senha,
+        tipo: 'CLIENTE'
       });
-      if (response.status === 201) {
-        sessionStorage.setItem('isLoggedIn', true);
-        sessionStorage.setItem('userData', JSON.stringify(response.data)); 
-        navigate('/');
+
+      console.log('Resposta do registro:', response.data);
+
+      // ✅ Verificar se a resposta contém token (login automático)
+      if (response.data && response.data.token) {
+        // ✅ Fazer login automático usando o hook de autenticação
+        login(response.data.token, response.data.id, response.data.tipo);
+        
+        // ✅ Redirecionar para cadastro de endereço
+        navigate('/endereco-cadastro');
+        
+        alert('Cadastro realizado com sucesso!');
       } else {
-        setShowError(true);
-        setErrorMessage('Erro ao cadastrar. Tente novamente.');
+        // Registro sem login automático
+        if (response.status === 200) {
+          alert('Cadastro realizado com sucesso! Faça login para continuar.');
+          navigate('/login');
+        }
       }
     } catch (error) {
+      console.log('Erro no registro:', error);
+      let mensagem = 'Erro ao cadastrar. Tente novamente.';
+      
+      if (error.response?.data) {
+        mensagem = error.response.data;
+      } else if (error.response?.status === 400) {
+        mensagem = 'Dados inválidos ou já cadastrados.';
+      }
+      
       setShowError(true);
-      setErrorMessage('Erro ao cadastrar. Tente novamente.');
+      setErrorMessage(mensagem);
     }
   };
 
@@ -85,37 +144,40 @@ const Registro = () => {
       <div className="signup-wrapper">
         <h2>Registro</h2>
         <p>Crie sua conta! 🚀</p>
+
         <form className="signup-form" onSubmit={handleSubmit}>
           <input
-            id="nome"
             type="text"
             placeholder="Seu nome"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            required
           />
+
           <input
-            id="email"
             type="email"
             placeholder="Seu email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
-                    <input
-            id="cpf"
-            type="text"
-            placeholder="Seu CPF"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
+            required
           />
 
+          <input
+            type="text"
+            placeholder="Seu CPF (000.000.000-00)"
+            value={cpf}
+            onChange={handleCpfChange}
+            maxLength="14"
+            required
+          />
 
           <div className="password-container">
             <input
-              id="password"
               type={showPassword ? 'text' : 'password'}
               placeholder="Senha"
               value={senha}
               onChange={handlePasswordChange}
+              required
             />
             <button
               type="button"
@@ -128,11 +190,11 @@ const Registro = () => {
 
           <div className="password-container">
             <input
-              id="confirm-password"
               type={showConfirmPassword ? 'text' : 'password'}
-              placeholder="Repita sua Senha"
+              placeholder="Repita sua senha"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              required
             />
             <button
               type="button"
@@ -145,14 +207,25 @@ const Registro = () => {
 
           <div className="power-container">
             <div
-              id="power-point"
+              className="power-point"
               style={{
                 width: powerPointWidth,
                 backgroundColor: powerPointColor,
               }}
             ></div>
           </div>
-          <button type="submit">Criar conta</button>
+
+          <button type="submit" className="signup-button">
+            Criar conta
+          </button>
+
+          <button
+            type="button"
+            className="login-link-button"
+            onClick={() => navigate('/login')}
+          >
+            Já tem uma conta? Faça login
+          </button>
         </form>
       </div>
 
