@@ -1,4 +1,3 @@
-// src/Pages/ClientProfile/PerfilCliente.jsx
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../utils/useAuth";
@@ -7,11 +6,12 @@ import Navbar from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
 
 export default function PerfilCliente() {
-  const { user, logout } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const { darkMode } = useTheme();
   const [clientData, setClientData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isPhotoMenuOpen, setIsPhotoMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     nome: "",
@@ -29,6 +29,8 @@ export default function PerfilCliente() {
   });
   const fileInputRef = useRef(null);
 
+
+
   // Função para buscar CEP
   const buscarCep = async (valor) => {
     const cepLimpo = valor.replace(/\D/g, '');
@@ -40,14 +42,14 @@ export default function PerfilCliente() {
         if (!data.erro) {
           setEditData(prev => ({
             ...prev,
-            rua: data.logradouro || '',
-            bairro: data.bairro || '',
-            cidade: data.localidade || '',
-            estado: data.uf || ''
+            rua: data.logradouro || prev.rua,
+            bairro: data.bairro || prev.bairro,
+            cidade: data.localidade || prev.cidade,
+            estado: data.uf || prev.estado
           }));
         }
       } catch (err) {
-        console.warn('Erro ao buscar CEP:', err.message);
+        console.warn('Erro ao buscar CEP:', err);
       }
     }
   };
@@ -138,20 +140,21 @@ export default function PerfilCliente() {
       if (editData.foto) {
         const formData = new FormData();
         formData.append("email", user.nome);
-        formData.append("foto", editData.foto); // arquivo original
+        formData.append("foto", editData.foto);
 
         const fotoResponse = await fetch(`http://localhost:8080/api-salsi/clientes/perfil/foto`, {
           method: 'POST',
           credentials: 'include',
           body: formData
-          // ⚠️ NÃO use headers com FormData!
         });
 
         if (!fotoResponse.ok) {
           const error = await fotoResponse.json();
           alert(`Foto não atualizada: ${error.erro || "Tente novamente"}`);
-          // Continua mesmo se falhar a foto
         }
+
+        // ✅ Limpa o preview após enviar
+        setEditData(prev => ({ ...prev, foto: null, fotoPreview: null }));
       }
 
       // ✅ 3. Recarrega dados atualizados
@@ -253,6 +256,13 @@ export default function PerfilCliente() {
   };
 
   useEffect(() => {
+    // Se ainda está carregando a sessão → aguarde
+    if (authLoading) {
+      setLoading(true);
+      return;
+    }
+
+    // Se não está carregando, mas não há usuário → erro
     if (!user || user.tipo !== "CLIENTE") {
       setError("Acesso permitido apenas para clientes.");
       setLoading(false);
@@ -291,7 +301,7 @@ export default function PerfilCliente() {
           confirmarSenha: "",
           cep: cepFormatado,
           rua: data.endereco?.rua || "",
-          numero: editData.numero || "",
+          numero: data.endereco?.numero || "",
           complemento: data.endereco?.complemento || "",
           bairro: data.endereco?.bairro || "",
           cidade: data.endereco?.cidade || "",
@@ -305,7 +315,18 @@ export default function PerfilCliente() {
         setError("Não foi possível carregar seu perfil.");
       })
       .finally(() => setLoading(false));
-  }, [user]);
+  }, [user, authLoading]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.profile-photo-container')) {
+        setIsPhotoMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (loading) {
     return (
@@ -363,63 +384,61 @@ export default function PerfilCliente() {
           </header>
 
           {/* Foto do perfil */}
-          <div
-            className="profile-photo-container"
-            onClick={() => fileInputRef.current?.click()} // 👈 Clica no input ao clicar na foto
-            style={{ cursor: 'pointer' }}
-          >
-            <img
-              src={getBase64ImageSrc(foto)}
-              alt="Foto de perfil"
-              className="profile-photo"
-              onError={(e) => {
-                e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
-              }}
-            />
-            <div className="photo-overlay">
-              <div className="photo-actions">
+          <div className="profile-photo-container-wrapper">
+            <div
+              className="profile-photo-container"
+              onAuxClick={() => setIsPhotoMenuOpen(true)}
+              style={{ cursor: 'pointer' }}
+            >
+              <img
+                src={getBase64ImageSrc(foto)}
+                alt="Foto de perfil"
+                className="profile-photo"
+                onError={(e) => {
+                  e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
+                }}
+              />
+              <div className={`photo-menu ${isPhotoMenuOpen ? 'open' : ''}`}>
                 <button
                   type="button"
-                  className="photo-action-btn"
+                  className="menu-btn remove-btn"
                   onClick={(e) => {
-                    e.stopPropagation(); // Evita fechar modal se estiver editando
+                    e.stopPropagation();
                     if (window.confirm("Tem certeza que deseja remover sua foto de perfil?")) {
                       setEditData(prev => ({
                         ...prev,
                         foto: null,
                         fotoPreview: null
                       }));
-                      // Se quiser enviar para o backend imediatamente:
-                      // handleSubmit({ preventDefault: () => {} }); // ou chamar API separada
+                      setIsPhotoMenuOpen(false);
                     }
                   }}
-                  title="Remover foto"
                 >
-                  <i className="fas fa-trash-alt"></i>
+                  REMOVER IMAGEM
                 </button>
                 <button
                   type="button"
-                  className="photo-action-btn"
+                  className="menu-btn change-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     fileInputRef.current?.click();
+                    setIsPhotoMenuOpen(false);
                   }}
-                  title="Alterar foto"
                 >
-                  <i className="fas fa-camera"></i>
+                  TROCAR IMAGEM
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Input de arquivo escondido */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            style={{ display: 'none' }}
-          />
+            {/* Input escondido */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+          </div>
 
           {/* Tipo de usuário */}
           <div className="user-type-badge">

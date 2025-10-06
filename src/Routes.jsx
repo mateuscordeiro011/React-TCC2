@@ -1,79 +1,82 @@
-// src/Routes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./utils/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-//Home cliente
+// Home
 import Home from "./Pages/Home/Home";
+import HomeFuncionario from "./Pages/Home/HomeFuncionario";
 
-//Home Funcionario
-import HomeFuncionario from "./Pages/Home/HomeFuncionario"
-
-//Produto, animal e doação-funcionario apenas funcionario, doação cliente
+// Cadastros
 import FormProduto from "./Pages/Cadastros/FormProduto/FormProduto";
 import FormAnimal from "./Pages/Cadastros/FormAnimal/FormAnimal";
 import DoarAnimal from "./Pages/Cadastros/FormDoarAnimal/DoarAnimal";
-import DoarAnimalFuncionario from "./Pages/Cadastros/FormDoarAnimal/DoarAnimalFuncionario"
+import DoarAnimalFuncionario from "./Pages/Cadastros/FormDoarAnimal/DoarAnimalFuncionario";
 
-//Catalogo produto e animal
+// Catálogos
 import CatalogoProdutos from "./Pages/CatalogoProduto/CatalogoProduto";
 import ProdutoDetalhes from "./Pages/ProdutoDetalhes/ProdutoDetalhes";
 import CatalogoAdocao from "./Pages/CatalogoAnimais/CatalogoAdocao";
+import AgendamentoVisita from "./Pages/AgendamentoVisita/AgendamentoVisita";
 
-//PERFIL DE CLIENTE E PERFIL DE FUNCIONARIO
-
+// Perfil
 import PerfilCliente from "./Pages/Perfil/Cliente/PerfilCliente";
 
-//Checkout e confirmação de pedido
+// Checkout
 import Checkout from "./Pages/Checkout/Checkout";
 import OrderConfirmation from "./Pages/OrderConfirmation/OrderConfirmation";
 
-//Caso esqueça senha
-import RecuperarSenha from "./Pages/RecuperarSenha/RecuperarSenha";
-
-//Registro e Login
+// Autenticação
 import Login from "./Pages/Login/Login";
 import Registro from "./Pages/Registro/Registro";
 import EnderecoCadastro from "./Pages/EnderecoCadastro/EnderecoCadastro";
+import RecuperarSenha from "./Pages/RecuperarSenha/RecuperarSenha";
 
-//Acesso negado
+// Erro
 import AcessoNegado from "./Pages/AcessoNegado";
+import { Import } from "lucide-react";
 
 function RoutesApp() {
-  const { isAuthenticated, isFuncionario, isCliente } = useAuth();
+  const { isAuthenticated, isFuncionario } = useAuth();
 
   return (
     <Routes>
-      {/* Rotas Públicas */}
-      <Route path="/" element={
-        isAuthenticated ? (
-          isFuncionario ? (
+      {/* Rota raiz */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated && isFuncionario ? (
             <Navigate to="/home-funcionario" replace />
           ) : (
             <Home />
           )
-        ) : (
-          <Home />
-        )
-      } />
+        }
+      />
+
+      {/* Rotas públicas */}
       <Route path="/registro" element={<Registro />} />
-      <Route path="/login" element={
-        isAuthenticated ? (
-          isFuncionario ? (
-            <Navigate to="/home-funcionario" replace />
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? (
+            isFuncionario ? (
+              <Navigate to="/home-funcionario" replace />
+            ) : (
+              <Navigate to="/" replace />
+            )
           ) : (
-            <Navigate to="/" replace />
+            <Login />
           )
-        ) : (
-          <Login />
-        )
-      } />
+        }
+      />
       <Route path="/recuperar-senha" element={<RecuperarSenha />} />
       <Route path="/catalogo-produto" element={<CatalogoProdutos />} />
       <Route path="/produto/:id" element={<ProdutoDetalhes />} />
       <Route path="/catalogo-adocao" element={<CatalogoAdocao />} />
 
-      {/* ROTA PROTEGIDA: APENAS CLIENTE */}
+      {/* Rota de cadastro de endereço: pública, mas com verificação interna */}
+      <Route path="/endereco-cadastro" element={<EnderecoCadastro />} />
+
+      {/* Rotas protegidas: CLIENTE */}
       <Route
         path="/checkout"
         element={
@@ -82,7 +85,6 @@ function RoutesApp() {
           </ProtectedRoute>
         }
       />
-      
       <Route
         path="/pedido-confirmado"
         element={
@@ -91,10 +93,32 @@ function RoutesApp() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/formdoacao"
+        element={
+          <ProtectedRoute allowedRoles={['CLIENTE']}>
+            <DoarAnimal />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/perfil-cliente"
+        element={
+          <ProtectedRoute allowedRoles={['CLIENTE']}>
+            <PerfilCliente />
+          </ProtectedRoute>
+        }
+      />
+            <Route
+        path="/formulario-adocao/:id"
+        element={
+          <ProtectedRoute allowedRoles={['CLIENTE']}>
+            <AgendamentoVisita />
+          </ProtectedRoute>
+        }
+      />
 
-      
-
-      {/* ROTA PROTEGIDA: APENAS FUNCIONÁRIO */}
+      {/* Rotas protegidas: FUNCIONÁRIO */}
       <Route
         path="/home-funcionario"
         element={
@@ -103,7 +127,6 @@ function RoutesApp() {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/formproduto"
         element={
@@ -112,7 +135,14 @@ function RoutesApp() {
           </ProtectedRoute>
         }
       />
-
+      <Route
+        path="/formanimal"
+        element={
+          <ProtectedRoute allowedRoles={['FUNCIONARIO']}>
+            <FormAnimal />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/formdoacao-funcionario"
         element={
@@ -122,50 +152,11 @@ function RoutesApp() {
         }
       />
 
-      {/* ROTA PROTEGIDA: APENAS FUNCIONÁRIO */}
-      <Route
-        path="/formanimal"
-        element={
-          <ProtectedRoute allowedRoles={['FUNCIONARIO']}>
-            <FormAnimal />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ROTA PROTEGIDA: APENAS CLIENTE */}
-      <Route
-        path="/formdoacao"
-        element={
-          <ProtectedRoute allowedRoles={['CLIENTE']}>
-            <DoarAnimal />
-          </ProtectedRoute>
-        }
-      />
-
-            <Route
-        path="/perfil-cliente"
-        element={
-          <ProtectedRoute allowedRoles={['CLIENTE']}>
-            <PerfilCliente />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ROTA PROTEGIDA: QUALQUER USUÁRIO LOGADO (CLIENTE ou FUNCIONARIO) */}
-      <Route
-        path="/endereco-cadastro"
-        element={
-          <ProtectedRoute allowedRoles={['CLIENTE', 'FUNCIONARIO']}>
-            <EnderecoCadastro />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* PÁGINA DE ERRO DE ACESSO */}
+      {/* Página de erro */}
       <Route path="/acesso-negado" element={<AcessoNegado />} />
 
-      {/* REDIRECIONAMENTO PARA ROTAS INVÁLIDAS */}
-      <Route path="*" element={<Navigate to="/" />} />
+      {/* Redirecionamento de rotas inválidas */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

@@ -1,4 +1,3 @@
-// src/Pages/Home/Home.jsx
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import Slider from "react-slick";

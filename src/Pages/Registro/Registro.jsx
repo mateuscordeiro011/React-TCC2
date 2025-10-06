@@ -105,34 +105,34 @@ const Registro = () => {
         tipo: 'CLIENTE'
       });
 
+      const { id, token, tipo, nome, email } = response.data;
+
       console.log('Resposta do registro:', response.data);
 
-      // ✅ Verificar se a resposta contém token (login automático)
-      if (response.data && response.data.token) {
-        // ✅ Fazer login automático usando o hook de autenticação
-        login(response.data.token, response.data.id, response.data.tipo);
-        
-        // ✅ Redirecionar para cadastro de endereço
-        navigate('/endereco-cadastro');
-        
+      if (token && id) {
+        // ✅ Salvar no contexto de autenticação (com ID!)
+        login({ id, nome, email, tipo }, token);
+
+        // ✅ Também salva no localStorage como fallback (opcional, mas seguro)
+        localStorage.setItem('userId', id);
+
         alert('Cadastro realizado com sucesso!');
+        navigate('/endereco-cadastro');
       } else {
-        // Registro sem login automático
-        if (response.status === 200) {
-          alert('Cadastro realizado com sucesso! Faça login para continuar.');
-          navigate('/login');
-        }
+        alert('Erro: resposta incompleta do servidor.');
+        navigate('/login');
       }
+
     } catch (error) {
       console.log('Erro no registro:', error);
       let mensagem = 'Erro ao cadastrar. Tente novamente.';
-      
+
       if (error.response?.data) {
         mensagem = error.response.data;
       } else if (error.response?.status === 400) {
         mensagem = 'Dados inválidos ou já cadastrados.';
       }
-      
+
       setShowError(true);
       setErrorMessage(mensagem);
     }

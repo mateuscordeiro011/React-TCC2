@@ -1,10 +1,11 @@
-// src/Pages/EnderecoCadastro/EnderecoCadastro.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../utils/useAuth';
 import api from '../../service/api';
 import './EnderecoCadastro.css';
 
 const EnderecoCadastro = () => {
+  const { isAuthenticated, userId } = useAuth();
   const [cep, setCep] = useState('');
   const [rua, setRua] = useState('');
   const [numero, setNumero] = useState('');
@@ -16,42 +17,52 @@ const EnderecoCadastro = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  // Buscar CEP automaticamente
+  // Redireciona se não autenticado ou sem ID
+  useEffect(() => {
+    if (!isAuthenticated || !userId) {
+      alert('Sessão inválida. Por favor, faça login.');
+      navigate('/login', { replace: true });
+    }
+  }, [isAuthenticated, userId, navigate]);
+
+  // Busca CEP no ViaCEP
   const buscarCep = async (valor) => {
     const cepLimpo = valor.replace(/\D/g, '');
     if (cepLimpo.length === 8) {
       try {
-        // ✅ Corrigido: Removido espaço extra na URL
         const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
         const data = await response.json();
 
         if (!data.erro) {
-          setRua(data.logradouro);
-          setBairro(data.bairro);
-          setCidade(data.localidade);
-          setEstado(data.uf);
+          setRua(data.logradouro || '');
+          setBairro(data.bairro || '');
+          setCidade(data.localidade || '');
+          setEstado(data.uf || '');
         } else {
           throw new Error('CEP não encontrado');
         }
       } catch (err) {
         console.warn('Erro ao buscar CEP:', err.message);
+        setRua('');
+        setBairro('');
+        setCidade('');
+        setEstado('');
       }
     }
   };
 
   const handleCepChange = (e) => {
-    const value = e.target.value;
-    const cepNumeros = value.replace(/\D/g, '');
-    if (cepNumeros.length <= 8) {
-      if (cepNumeros.length <= 5) {
-        setCep(cepNumeros);
-      } else {
-        setCep(`${cepNumeros.slice(0, 5)}-${cepNumeros.slice(5)}`);
-      }
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 8) return;
+
+    if (value.length <= 5) {
+      setCep(value);
+    } else {
+      setCep(`${value.slice(0, 5)}-${value.slice(5)}`);
     }
 
-    if (cepNumeros.length === 8) {
-      buscarCep(cepNumeros);
+    if (value.length === 8) {
+      buscarCep(value);
     }
   };
 
@@ -65,15 +76,7 @@ const EnderecoCadastro = () => {
     }
 
     try {
-      // ✅ Corrigido: Verificar se userId existe
-      const userId = sessionStorage.getItem('userId');
-      console.log('UserId encontrado:', userId); // Para debug
-      
-      if (!userId || userId === 'null' || userId === 'undefined') {
-        throw new Error('ID do usuário não encontrado. Faça login novamente.');
-      }
-
-      const enderecoData = {
+      await api.post(`/api-salsi/clientes/${userId}/enderecos`, {
         cep: cep.replace(/\D/g, ''),
         logradouro: rua,
         numero,
@@ -82,25 +85,19 @@ const EnderecoCadastro = () => {
         cidade,
         estado,
         principal: true,
-      };
+      });
 
-      // ✅ Corrigido: Verificar endpoint correto
-      console.log('Enviando endereço para userId:', userId);
-      await api.post(`/api-salsi/clientes/${userId}/enderecos`, enderecoData);
+      sessionStorage.setItem('userEndereco', JSON.stringify({ cep, rua, numero, bairro, cidade, estado }));
 
-      // Salvar no sessionStorage
-      sessionStorage.setItem('userEndereco', JSON.stringify({
-        cep, rua, numero, bairro, cidade, estado
-      }));
-
-      // Redirecionar para home
+      alert('Endereço cadastrado com sucesso!');
       navigate('/');
     } catch (error) {
-      console.log('Erro ao salvar endereço:', error);
-      const msg = error.response?.data?.message ||
-                 error.response?.data?.mensagem ||
-                 error.message ||
-                 'Erro ao salvar endereço. Tente novamente.';
+      console.error('Erro ao salvar endereço:', error);
+      const msg =
+        error.response?.data?.message ||
+        error.response?.data?.mensagem ||
+        error.message ||
+        'Erro ao salvar endereço.';
       setShowError(true);
       setErrorMessage(msg);
     }

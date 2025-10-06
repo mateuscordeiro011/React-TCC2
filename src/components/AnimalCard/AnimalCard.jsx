@@ -3,18 +3,18 @@ import React from 'react';
 import { getBase64ImageSrc } from '../../utils/imageUtils';
 import './AnimalCard.css';
 
-const AnimalCard = ({ 
-  animal, 
-  onAdopt, 
+const AnimalCard = ({
+  animal,
+  onAdopt,
   onViewDetails,
   showActions = true,
   size = 'normal'
 }) => {
   const cardClass = `animal-card ${size === 'small' ? ' card-small' : size === 'large' ? ' card-large' : ''}`;
-  
+
   return (
     <div className={cardClass}>
-      <div 
+      <div
         className="animal-image-container"
         onClick={() => onViewDetails && onViewDetails(animal)}
       >
@@ -30,7 +30,7 @@ const AnimalCard = ({
           <i className="fas fa-search-plus"></i>
         </div>
       </div>
-      
+
       <div className="animal-content">
         <h3 className="animal-title">{animal.nome}</h3>
         <p className="animal-category">{animal.especie || "Sem espécie"} • {animal.raca || "Sem raça"}</p>
@@ -40,14 +40,11 @@ const AnimalCard = ({
         <p className="animal-description">
           {animal.descricao?.substring(0, 100)}...
         </p>
-        
+
         {showActions && (
           <div className="buttons">
-            <button
-              className="btn-adopt"
-              onClick={() => onAdopt && onAdopt(animal)}
-            >
-              ❤️ Adotar
+            <button className="btn-adopt" onClick={() => onAdopt && onAdopt(animal)}>
+              🐾 Agendar Visita
             </button>
           </div>
         )}

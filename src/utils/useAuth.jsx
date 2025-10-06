@@ -16,14 +16,9 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // console.log("🔍 Iniciando verificação de sessão após refresh...");
-
     const token = localStorage.getItem('token');
-    // console.log("Token encontrado:", token ? "✅ Sim" : "❌ Não");
-
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // console.log("✅ Header Authorization configurado globalmente");
       checkSession();
     } else {
       setLoading(false);
@@ -35,22 +30,21 @@ export function AuthProvider({ children }) {
       const response = await api.get('/api-salsi/auth/me');
       const sessionData = response.data;
 
-
-      // ✅ CORRETO: usa 'logado' (exatamente como seu backend envia)
       if (sessionData.logado === true) {
+        // ✅ Tenta obter o ID do localStorage como fallback
+        const userId = sessionData.id || localStorage.getItem('userId');
+
         const userData = {
+          id: userId,
           nome: sessionData.nome || "Usuário",
           tipo: sessionData.tipo || "CLIENTE",
-          // Seu backend NÃO envia ID, então deixamos null ou omitimos
         };
         setUser(userData);
-        // console.log("✅ Sessão válida! Usuário:", userData);
       } else {
-        //console.warn("⚠️ Sessão inválida (logado: false)");
         logout();
       }
     } catch (error) {
-      console.error("❌ Erro ao validar sessão:", error.response?.status || error.message);
+      console.error("Erro ao validar sessão:", error);
       logout();
     } finally {
       setLoading(false);
@@ -58,27 +52,31 @@ export function AuthProvider({ children }) {
   };
 
   const login = (userData, token) => {
-    console.log("✅ Login bem-sucedido.");
     localStorage.setItem('token', token);
+    if (userData.id) {
+      localStorage.setItem('userId', userData.id); // ✅ salva ID
+    }
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(userData);
   };
 
   const logout = () => {
-    console.log("🚪 Logout: encerrando a sessão");
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
+  // ✅ Expor userId diretamente
   const value = {
     user,
+    userId: user?.id,
+    isAuthenticated: !!user,
+    isCliente: user?.tipo === 'CLIENTE',
+    isFuncionario: user?.tipo === 'FUNCIONARIO',
     login,
     logout,
     loading,
-    isAuthenticated: !!user,
-    isCliente: user?.tipo === 'CLIENTE',
-    isFuncionario: user?.tipo === 'FUNCIONARIO'
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
