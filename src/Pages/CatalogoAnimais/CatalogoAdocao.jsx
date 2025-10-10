@@ -5,7 +5,6 @@ import { useAnimals } from "../../hooks/useAnimals";
 import AnimalCard from "../../components/AnimalCard/AnimalCard";
 import AnimalModal from "../../components/AnimalModal/AnimalModal";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
-import Navbar from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import "./CatalogoAdocao.css";
@@ -28,14 +27,21 @@ export default function CatalogoAdocao() {
   });
   const [sortOption, setSortOption] = useState("nome");
 
-  const handleAdopt = (animal) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
-    navigate(`/formulario-adocao/${animal.id}`);
-  };
+const handleAdopt = (animal) => {
+  if (!user) {
+    setShowLoginModal(true);
+    return;
+  }
 
+  console.log("Tentando adotar animal:", animal);
+
+  if (animal.id == null) {
+    alert("Erro: este animal não tem ID válido.");
+    return;
+  }
+
+  navigate(`/agendamento-visita/temp`, { state: { animal } });
+};
   const handleOpenModal = (animal) => {
     setSelectedAnimal(animal);
     setShowAnimalModal(true);
@@ -88,7 +94,6 @@ export default function CatalogoAdocao() {
 
   return (
     <>
-      <Navbar />
       <div className={`catalogo-page ${darkMode ? "dark-mode" : "light-mode"}`}>
 
         <section className="catalogo-hero">
@@ -203,7 +208,7 @@ export default function CatalogoAdocao() {
               <div className="catalogo-grid">
                 {filteredAndSortedItems.map((animal) => (
                   <AnimalCard
-                    key={animal.id} 
+                    key={animal.id}
                     animal={animal}
                     onAdopt={handleAdopt}
                     onViewDetails={handleOpenModal}

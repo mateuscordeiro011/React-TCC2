@@ -1,8 +1,6 @@
-// src/pages/OrderConfirmation/OrderConfirmation.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import './OrderConfirmation.css';
-import Navbar from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 
 export default function OrderConfirmation() {
@@ -17,11 +15,10 @@ export default function OrderConfirmation() {
 
   return (
     <>
-      <Navbar />
       <div className={`order-confirmation-page ${darkMode ? 'dark-mode' : 'light-mode'}`}>
         <div className="order-confirmation">
           <h2>🎉 Pedido Confirmado!</h2>
-          <p>Obrigado pela sua compra. Seu pedido foi processado com sucesso.</p>
+          <p>Obrigado pela sua compra. Seu pedido foi processado com sucesso e enviado no seu email!</p>
           
           {order && (
             <div className="order-details">

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../utils/useAuth";
-import Navbar from "../../components/Header/NavbarFuncionario";
 import Footer from "../../components/Footer/Footer";
 import "./Home.css"; 
 
@@ -43,7 +42,6 @@ export default function HomeFuncionario() {
 
   return (
     <>
-      <Navbar />
       <div className={`home ${darkMode ? "dark-mode" : ""}`}>
 
         <section className="hero-carousel">

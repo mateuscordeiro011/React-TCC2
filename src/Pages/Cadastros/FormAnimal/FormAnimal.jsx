@@ -10,7 +10,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import "./FormAnimal.css";
-import Navbar from "../../../components/Header/NavbarFuncionario";
 import Footer from "../../../components/Footer/Footer";
 
 const FormAnimal = () => {
@@ -196,7 +195,6 @@ const FormAnimal = () => {
 
   return (
     <>
-      <Navbar />
 
       <AnimatePresence>
         {message && (

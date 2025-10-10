@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../utils/useAuth";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
 import "./AgendamentoVisita.css";
 import api from "../../service/api";
 
 export default function AgendamentoVisita() {
-  const { id } = useParams();
+  const { animalId } = useParams();
   const { user } = useAuth();
   const { darkMode } = useTheme();
   const navigate = useNavigate();
-  
+
   const [animal, setAnimal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,25 +19,70 @@ export default function AgendamentoVisita() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
 
-  // Carregar dados do animal
-  useEffect(() => {
-    const fetchAnimal = async () => {
-      try {
-        const response = await fetch(`/api-salsi/animais/${id}`);
-        if (!response.ok) throw new Error("Animal não encontrado");
-        const data = await response.json();
-        setAnimal(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const calculateAge = (dataNascimento) => {
+    if (!dataNascimento) return "Idade não informada";
+    const birthDate = new Date(dataNascimento);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 0 ? `${age} anos` : "Recém-nascido";
+  };
 
-    fetchAnimal();
-  }, [id]);
+useEffect(() => {
+  // Debug
+  console.log("Parâmetro animalId:", animalId);
 
-  // Gerar horários disponíveis (9h às 17h)
+  if (!animalId || animalId === "undefined" || animalId === "null") {
+    setError("ID do animal inválido.");
+    setLoading(false);
+    return;
+  }
+
+  const idNumber = Number(animalId);
+  if (isNaN(idNumber) || idNumber <= 0) {
+    setError("ID do animal inválido.");
+    setLoading(false);
+    return;
+  }
+
+  // ✅ DECLARA fetchAnimal DENTRO do useEffect
+  const fetchAnimal = async () => {
+    try {
+      const response = await api.get(`/api-salsi/animais/${idNumber}`);
+      const animalData = response.data;
+
+      // Formata o animal (igual ao useAnimals)
+      const idadeExibicao = calculateAge(animalData.data_nascimento);
+      
+      setAnimal({
+        id: animalData.id_animal,
+        Nome: animalData.nome,          // 👈 PascalCase para compatibilidade
+        Especie: animalData.especie,
+        Raca: animalData.raca,
+        porte: animalData.peso
+          ? animalData.peso < 10 ? "Pequeno" : animalData.peso < 25 ? "Médio" : "Grande"
+          : "Não informado",
+        idade: idadeExibicao,
+        Sexo: animalData.sexo === "M" ? "Macho" : "Fêmea",
+        peso: animalData.peso,
+        foto: animalData.foto,
+        descricao: animalData.descricao || `Espécie: ${animalData.especie}. Raça: ${animalData.raca}.`
+      });
+      setError(null);
+    } catch (err) {
+      console.error("Erro ao buscar animal:", err);
+      setError("Animal não encontrado.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchAnimal(); 
+}, [animalId]);
+
   const generateTimeSlots = () => {
     const slots = [];
     for (let hour = 9; hour <= 17; hour++) {
@@ -51,27 +94,24 @@ export default function AgendamentoVisita() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     if (!selectedDate || !selectedTime) return;
-    
+
     setIsSubmitting(true);
     try {
-      // Simular chamada à API de agendamento
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Aqui você faria a chamada real:
-      // await fetch(`${API_BASE_URL}/agendamentos`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     animalId: id,
-      //     userId: user.id,
-      //     dataVisita: `${selectedDate}T${selectedTime}`,
-      //     status: 'agendado'
-      //   })
-      // });
-      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      console.log('Agendamento:', {
+        animalId: animalId,
+        userId: user.id,
+        dataVisita: `${selectedDate}T${selectedTime}`
+      });
+
       setSuccessMessage(true);
-      setTimeout(() => navigate('/meus-agendamentos'), 2000);
+      setTimeout(() => navigate('/catalogo-adocao'), 2000);
     } catch (err) {
       setError("Erro ao agendar visita. Tente novamente.");
     } finally {
@@ -82,12 +122,10 @@ export default function AgendamentoVisita() {
   if (loading) {
     return (
       <div className={`agendamento-page ${darkMode ? "dark-mode" : "light-mode"}`}>
-        <Navbar />
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Carregando informações do animal...</p>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -95,46 +133,58 @@ export default function AgendamentoVisita() {
   if (error) {
     return (
       <div className={`agendamento-page ${darkMode ? "dark-mode" : "light-mode"}`}>
-        <Navbar />
         <div className="error-container">
           <p className="error-message">⚠️ {error}</p>
-          <button 
-            className="retry-button" 
-            onClick={() => window.location.reload()}
+          <button
+            className="retry-button"
+            onClick={() => navigate('/catalogo-adocao')}
           >
-            Tentar novamente
+            Voltar para o catálogo
           </button>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className={`agendamento-page ${darkMode ? "dark-mode" : "light-mode"}`}>
-      <Navbar />
-      
       <section className="agendamento-hero">
         <div className="hero-content">
           <h1>📅 Agendar Visita</h1>
-          <p>Conheça {animal.nome} antes de adotar!</p>
+          <p>Conheça {animal.Nome} antes de adotar!</p>
         </div>
       </section>
 
       <section className="agendamento-container">
         <div className="animal-preview">
           <div className="animal-image">
-            <img 
-              src={animal.imagem || "/default-pet.png"} 
-              alt={animal.nome} 
+            <img
+              src={animal.foto ? `data:image/jpeg;base64,${animal.foto}` : "/default-pet.png"}
+              alt={animal.Nome}
             />
           </div>
           <div className="animal-info">
-            <h2>{animal.nome}</h2>
-            <p><strong>Espécie:</strong> {animal.especie}</p>
-            <p><strong>Raça:</strong> {animal.raca || "Não informado"}</p>
-            <p><strong>Porte:</strong> {animal.porte}</p>
-            <p><strong>Idade:</strong> {animal.idade}</p>
+            <h2>{animal.Nome}</h2>
+            <div className="info-grid">
+              <p><strong>Espécie:</strong> {animal.Especie}</p>
+              <p><strong>Raça:</strong> {animal.Raca || "Não informado"}</p>
+              <p><strong>Porte:</strong> {animal.porte}</p>
+              <p><strong>Idade:</strong> {animal.idade}</p>
+              <p><strong>Sexo:</strong> {animal.Sexo || "Não informado"}</p>
+              <p><strong>Peso:</strong> {animal.peso ? `${animal.peso} kg` : "Não informado"}</p>
+            </div>
+            {animal.descricao && (
+              <div className="animal-description">
+                <h3>Sobre {animal.Nome}:</h3>
+                <p>{animal.descricao}</p>
+              </div>
+            )}
+            {animal.observacoes && (
+              <div className="animal-observations">
+                <h3>Observações importantes:</h3>
+                <p>{animal.observacoes}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -167,19 +217,12 @@ export default function AgendamentoVisita() {
             </select>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="submit-button"
             disabled={!selectedDate || !selectedTime || isSubmitting}
           >
-            {isSubmitting ? (
-              <span className="button-content">
-                <span className="spinner"></span>
-                Agendando...
-              </span>
-            ) : (
-              "Confirmar Visita"
-            )}
+            {isSubmitting ? "Agendando..." : "Confirmar Visita"}
           </button>
         </form>
       </section>
@@ -193,12 +236,10 @@ export default function AgendamentoVisita() {
               </svg>
             </div>
             <h3>Visita agendada com sucesso!</h3>
-            <p>Você receberá um e-mail com os detalhes da visita.</p>
+            <p>Você receberá um e-mail com os detalhes.</p>
           </div>
         </div>
       )}
-
-      <Footer />
     </div>
   );
 }

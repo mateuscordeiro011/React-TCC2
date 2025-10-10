@@ -49,7 +49,6 @@ const ProductModal = ({ product, onClose, onAddToCart, onBuyNow }) => {
 
   if (!product) return null;
 
-  // Avaliações de exemplo (agora com nomes compatíveis com profileImages)
   const reviews = product.comentarios || [
     { id: 1, user: 'Neyma', rating: 5, comment: 'Excelente produto! Meu pet adorou.', date: '2025-01-15' },
     { id: 2, user: 'Meci', rating: 4, comment: 'Bom produto, entrega rápida.', date: '2025-01-10' },

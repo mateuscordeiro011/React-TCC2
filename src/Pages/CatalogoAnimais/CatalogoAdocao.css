@@ -1,7 +1,3 @@
-/* src/pages/CatalogoAdocao/CatalogoAdocao.css */
-/* Reutilizando o CSS do catálogo de produtos com pequenas modificações */
-/* Todo o CSS do catálogo de produtos pode ser reutilizado */
-
 .catalogo-page {
   min-height: 100vh;
   padding-top: 80px;
@@ -18,7 +14,6 @@
   color: #eee;
 }
 
-/* Hero Section */
 .catalogo-hero {
   background: linear-gradient(120deg, #00b7c2 0%, #007a87 100%);
   padding: 80px 20px;

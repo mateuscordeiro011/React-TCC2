@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getBase64ImageSrc } from "../../utils/imageUtils";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
 import "./ProdutoDetalhes.css";
-import Navbar from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 
 export default function ProdutoDetalhes() {
@@ -73,7 +72,7 @@ export default function ProdutoDetalhes() {
   if (loading) {
     return (
       <>
-        <Navbar />
+
         <div className={`produto-detalhes-page ${darkMode ? "dark-mode" : "light-mode"}`}>
           <div className="loading-container">
             <div className="loading-spinner"></div>
@@ -88,7 +87,7 @@ export default function ProdutoDetalhes() {
   if (error) {
     return (
       <>
-        <Navbar />
+
         <div className={`produto-detalhes-page ${darkMode ? "dark-mode" : "light-mode"}`}>
           <div className="error-container">
             <p className="error-message">⚠️ {error}</p>
@@ -108,7 +107,7 @@ export default function ProdutoDetalhes() {
   if (!product) {
     return (
       <>
-        <Navbar />
+
         <div className={`produto-detalhes-page ${darkMode ? "dark-mode" : "light-mode"}`}>
           <div className="error-container">
             <p className="error-message">Produto não encontrado.</p>
@@ -155,7 +154,6 @@ export default function ProdutoDetalhes() {
 
   return (
     <>
-      <Navbar />
       <div className={`produto-detalhes-page ${darkMode ? "dark-mode" : "light-mode"}`}>
         {/* Hero Section */}
         <section className="produto-hero">

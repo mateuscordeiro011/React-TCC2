@@ -5,7 +5,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useAuth } from "../../utils/useAuth";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
+import Footer from "../../components/Footer/Footer";
 import "./Home.css";
+
 import promo1 from "../../IMG/promo1.png";
 import promo2 from "../../IMG/promo2.jpg";
 import promo3 from "../../IMG/promo3.jpg";
@@ -409,6 +411,7 @@ export default function Home() {
           onClose={() => setShowLoginModal(false)}
         />
       </div>
+      <Footer/>
     </>
   );
 }

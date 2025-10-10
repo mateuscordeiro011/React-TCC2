@@ -1,19 +1,16 @@
+// hooks/useAnimals.js
 import { useState, useEffect } from "react";
 
 const calculateAge = (birthDate) => {
   if (!birthDate) return "Desconhecida";
-
   const dob = new Date(birthDate);
   if (isNaN(dob.getTime())) return "Desconhecida";
-
   const today = new Date();
   let age = today.getFullYear() - dob.getFullYear();
   const monthDiff = today.getMonth() - dob.getMonth();
-
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
     age--;
   }
-
   return age;
 };
 
@@ -32,7 +29,11 @@ export const useAnimals = () => {
         const data = await response.json();
 
         const formattedAnimals = data.map(animal => {
-          const rawAge = calculateAge(animal.data_nascimento || animal.nascimento || animal.dataNascimento);
+          const id = animal.id;
+
+          const rawAge = calculateAge(
+            animal.data_nascimento || animal.nascimento || animal.dataNascimento
+          );
 
           const idadeExibicao = rawAge === "Desconhecida"
             ? "Idade desconhecida"
@@ -43,13 +44,13 @@ export const useAnimals = () => {
           const idadeNumerica = typeof rawAge === 'number' ? rawAge : null;
 
           return {
-            id: animal.id,
+            id,
             nome: animal.nome || "Sem nome",
             especie: animal.especie || "Não informado",
             raca: animal.raca || "Sem raça definida",
             dataNascimento: animal.data_nascimento || animal.nascimento || animal.dataNascimento, 
             idade: idadeExibicao,
-            idadeNumerica, // para ordenação
+            idadeNumerica,
             sexo: animal.sexo === "M" ? "Macho" : animal.sexo === "F" ? "Fêmea" : "Não informado",
             porte: animal.peso
               ? animal.peso < 10

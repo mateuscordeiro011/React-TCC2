@@ -1,4 +1,3 @@
-// src/components/AnimalCard/AnimalCard.jsx
 import React from 'react';
 import { getBase64ImageSrc } from '../../utils/imageUtils';
 import './AnimalCard.css';
@@ -37,9 +36,7 @@ const AnimalCard = ({
         <p className="animal-info">
           {animal.idade} • {animal.sexo} • {animal.porte}
         </p>
-        <p className="animal-description">
-          {animal.descricao?.substring(0, 100)}...
-        </p>
+
 
         {showActions && (
           <div className="buttons">

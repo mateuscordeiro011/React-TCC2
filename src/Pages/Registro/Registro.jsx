@@ -75,68 +75,68 @@ const Registro = () => {
     return resto1 === j && resto2 === k;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (senha !== confirmPassword) {
-      setShowError(true);
-      setErrorMessage('As senhas não coincidem');
-      return;
+  if (senha !== confirmPassword) {
+    setShowError(true);
+    setErrorMessage('As senhas não coincidem');
+    return;
+  }
+
+  if (senha.length < 6) {
+    setShowError(true);
+    setErrorMessage('A senha deve ter pelo menos 6 caracteres');
+    return;
+  }
+
+  if (!validarCPF(cpf)) {
+    setShowError(true);
+    setErrorMessage('CPF inválido');
+    return;
+  }
+
+  try {
+    const response = await api.post('/api-salsi/auth/register', {
+      nome,
+      email,
+      cpf,
+      senha,
+      tipo: 'CLIENTE'
+    });
+
+    const { id, token, tipo, nome: nomeResposta, email: emailResposta } = response.data;
+
+    console.log('Resposta do registro:', response.data);
+
+    if (token && id) {
+      // ✅ CORRIGIDO: passa email como primeiro argumento
+      login(emailResposta, token, { id, nome: nomeResposta, tipo });
+
+      // Salva ID no localStorage como fallback (opcional)
+      localStorage.setItem('userId', id);
+
+      alert('Cadastro realizado com sucesso!');
+      navigate('/endereco-cadastro');
+    } else {
+      alert('Erro: resposta incompleta do servidor.');
+      navigate('/login');
     }
 
-    if (senha.length < 6) {
-      setShowError(true);
-      setErrorMessage('A senha deve ter pelo menos 6 caracteres');
-      return;
+  } catch (error) {
+    console.log('Erro no registro:', error);
+    let mensagem = 'Erro ao cadastrar. Tente novamente.';
+
+    if (error.response?.data) {
+      mensagem = error.response.data;
+    } else if (error.response?.status === 400) {
+      mensagem = 'Dados inválidos ou já cadastrados.';
     }
 
-    if (!validarCPF(cpf)) {
-      setShowError(true);
-      setErrorMessage('CPF inválido');
-      return;
-    }
-
-    try {
-      const response = await api.post('/api-salsi/auth/register', {
-        nome,
-        email,
-        cpf,
-        senha,
-        tipo: 'CLIENTE'
-      });
-
-      const { id, token, tipo, nome, email } = response.data;
-
-      console.log('Resposta do registro:', response.data);
-
-      if (token && id) {
-        // ✅ Salvar no contexto de autenticação (com ID!)
-        login({ id, nome, email, tipo }, token);
-
-        // ✅ Também salva no localStorage como fallback (opcional, mas seguro)
-        localStorage.setItem('userId', id);
-
-        alert('Cadastro realizado com sucesso!');
-        navigate('/endereco-cadastro');
-      } else {
-        alert('Erro: resposta incompleta do servidor.');
-        navigate('/login');
-      }
-
-    } catch (error) {
-      console.log('Erro no registro:', error);
-      let mensagem = 'Erro ao cadastrar. Tente novamente.';
-
-      if (error.response?.data) {
-        mensagem = error.response.data;
-      } else if (error.response?.status === 400) {
-        mensagem = 'Dados inválidos ou já cadastrados.';
-      }
-
-      setShowError(true);
-      setErrorMessage(mensagem);
-    }
-  };
+    setShowError(true);
+    setErrorMessage(mensagem);
+  }
+};
 
   return (
     <div className="register">

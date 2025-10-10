@@ -108,7 +108,7 @@ const AnimalModal = ({ animal, onClose, onAdopt }) => {
               }}
             />
           </div>
-
+          <h1>{animal.nome}</h1>
           <div className="modal-details-grid">
             {animal.especie && (
               <div className="detail-badge">

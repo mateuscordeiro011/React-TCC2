@@ -1,9 +1,8 @@
-// src/Pages/Login/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../utils/useAuth';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import api from '../../service/api';
+import api from '../../service/api'; 
 import './Login.css';
 
 const Login = () => {
@@ -19,7 +18,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validação básica do lado do cliente
     if (!email || !senha) {
       setErrorMessage('Por favor, preencha todos os campos.');
       setShowError(true);
@@ -27,60 +25,38 @@ const Login = () => {
     }
 
     try {
-      console.log('Enviando dados de login:', { email, senha });
-      
       const response = await api.post('/api-salsi/auth/login', { 
         email, 
         senha 
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true 
       });
-      
-      console.log('Resposta do login:', response.data);
 
-      const userData = response.data;
-      const { token, tipo } = userData;
+      const { token, tipo, id, nome } = response.data;
 
-      // Verifica se recebeu token e tipo
       if (!token || !tipo) {
         throw new Error('Resposta inválida do servidor');
       }
 
-      // Usa o hook useAuth para fazer login
-      login(userData, token);
+      // ✅ Usa o novo formato: login(email, token, dadosExtras)
+      login(email, token, { id, nome, tipo });
 
       if (tipo === 'FUNCIONARIO') {
-        console.log('Redirecionando para home do funcionário');
         navigate('/home-funcionario');
       } else if (tipo === 'CLIENTE') {
-        console.log('Redirecionando para home do cliente');
         navigate('/');
       }
 
     } catch (error) {
-      console.error('Erro detalhado no login:', error);
+      console.error('Erro no login:', error);
       
-      if (error.response) {
-        
-        if (error.response.status === 401) {
-          setErrorMessage('Email ou senha inválidos.');
-        } else if (error.response.status === 400) {
-          setErrorMessage('Dados de login inválidos.');
-        } else if (error.response.status === 500) {
-          setErrorMessage('Erro no servidor. Tente novamente mais tarde.');
-        } else {
-          setErrorMessage(`Erro ao fazer login: ${error.response.status}`);
-        }
+      if (error.response?.status === 401) {
+        setErrorMessage('Email ou senha inválidos.');
+      } else if (error.response?.status === 400) {
+        setErrorMessage('Dados de login inválidos.');
+      } else if (error.response?.status === 500) {
+        setErrorMessage('Erro no servidor. Tente novamente mais tarde.');
       } else if (error.request) {
-        // A requisição foi feita mas não houve resposta
-        console.error('Erro de requisição:', error.request);
         setErrorMessage('Erro de conexão. Verifique se o servidor está rodando.');
       } else {
-        // Algo aconteceu ao configurar a requisição
-        console.error('Erro:', error.message);
         setErrorMessage('Erro inesperado. Tente novamente.');
       }
       
@@ -91,7 +67,6 @@ const Login = () => {
   return (
     <div className="login">
       <div className="login-background"></div>
-
       <div className="login-container">
         <div className="login-card">
           <h2>Bem-vindo de volta! 👋</h2>

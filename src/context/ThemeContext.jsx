@@ -11,17 +11,15 @@ export function ThemeProvider({ children }) {
     document.body.classList.toggle("dark-mode", savedMode);
   }, []);
 
-  const toggleDarkMode = () => {
+  const toggleTheme = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
-    localStorage.setItem("darkMode", newMode);
+    localStorage.setItem("darkMode", String(newMode));
     document.body.classList.toggle("dark-mode", newMode);
-    // Dispara evento para atualizar outros componentes (opcional)
-    window.dispatchEvent(new Event("darkModeChange"));
   };
 
   return (
-    <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
+    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

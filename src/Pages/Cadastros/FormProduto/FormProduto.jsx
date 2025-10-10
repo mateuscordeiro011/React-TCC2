@@ -10,8 +10,6 @@ import {
   AlertCircle,
 } from "lucide-react";
 import "./FormProduto.css";
-import Navbar from "../../../components/Header/NavbarFuncionario";
-import Footer from "../../../components/Footer/Footer";
 
 const FormProduto = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -251,7 +249,6 @@ const FormProduto = () => {
 
   return (
     <>
-      <Navbar />
 
       {/* Alert animado (topo) */}
       <AnimatePresence>
@@ -528,7 +525,6 @@ const FormProduto = () => {
         </AnimatePresence>
       </div>
 
-      <Footer />
     </>
   );
 };

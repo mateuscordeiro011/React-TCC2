@@ -11,9 +11,10 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [hasScroll, setHasScroll] = useState(false);
-  const [navbarSearchQuery, setNavbarSearchQuery] = useState(""); // Nome específico para evitar conflitos
+  const [navbarSearchQuery, setNavbarSearchQuery] = useState("");
 
-  const { darkMode, toggleDarkMode } = useTheme();
+  // ✅ Corrigido: toggleTheme em vez de toggleDarkMode
+  const { darkMode, toggleTheme } = useTheme();
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
@@ -56,11 +57,9 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  // Função para lidar com a pesquisa da navbar
   const handleNavbarSearch = (e) => {
     e.preventDefault();
     if (navbarSearchQuery.trim()) {
-      // Redireciona para a página de catálogo com o termo de busca
       navigate(`/catalogo-produto?search=${encodeURIComponent(navbarSearchQuery)}`);
     }
   };
@@ -69,7 +68,9 @@ export default function Navbar() {
     <nav
       className={`navbar ${nav ? "visible" : "hidden"} ${darkMode ? "dark" : "light"}`}
       style={{
-        background: nav ? (darkMode ? "rgba(20, 20, 20, 0.8)" : "rgba(255, 255, 255, 0.15)") : "transparent",
+        background: nav 
+          ? (darkMode ? "rgba(20, 20, 20, 0.8)" : "rgba(255, 255, 255, 0.15)") 
+          : "transparent",
         color: darkMode ? "#eee" : "#fff",
         backdropFilter: nav ? "blur(10px)" : "none",
         WebkitBackdropFilter: nav ? "blur(10px)" : "none",
@@ -77,6 +78,7 @@ export default function Navbar() {
       }}
     >
       <RouterLink to="/" className="logo">
+        {/* ✅ Correto: modo escuro → logo claro */}
         <img src={darkMode ? logoLight : logoDark} alt="Logo" id="header-logo" />
       </RouterLink>
 
@@ -87,7 +89,7 @@ export default function Navbar() {
             placeholder="Pesquisar produtos..."
             value={navbarSearchQuery}
             onChange={(e) => setNavbarSearchQuery(e.target.value)}
-            className="navbar-search-input" // Classe específica para a navba
+            className="navbar-search-input"
           />
         </form>
       </div>
@@ -104,7 +106,13 @@ export default function Navbar() {
         <li><RouterLink to="/formdoacao">Doações</RouterLink></li>
       </ul>
 
-      <button className="mode-toggle" onClick={toggleDarkMode} aria-label="Alternar modo escuro">
+      {/* ✅ Corrigido: onClick={toggleTheme} */}
+      <button 
+        className="mode-toggle" 
+        onClick={toggleTheme} 
+        aria-label={darkMode ? "Mudar para modo claro" : "Mudar para modo escuro"}
+        title={darkMode ? "Modo Claro" : "Modo Escuro"}
+      >
         <i className={`fas ${darkMode ? "fa-sun" : "fa-moon"}`}></i>
       </button>
 

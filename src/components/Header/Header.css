@@ -290,6 +290,60 @@
   }
 }
 
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-login,
+.btn-register {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.btn-login {
+  background: transparent;
+  border: 1.5px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-login:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-register {
+  background: var(--primary-color);
+  color: white;
+  border: 1.5px solid var(--primary-color);
+}
+
+.btn-register:hover {
+  background: transparent;
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .auth-buttons {
+    display: none;
+  }
+
+}
+
+:root {
+  --primary-color: #4a6cf7; /* ou sua cor principal */
+}
+
+.dark-mode {
+  --primary-color: #6366f1;
+}
+
 /* ==============================
    DARK MODE - Estilos Globais
    ============================== */

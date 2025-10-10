@@ -1,6 +1,3 @@
-/* ==============================
-   FOOTER - Base
-   ============================== */
 .footer {
   background-color: transparent;
   color: #fff;
@@ -211,4 +208,25 @@ body.dark-mode .back-to-top:hover {
   .col-copyright {
     order: -1;
   }
+}
+
+/* Garante que o footer não force altura mínima */
+.footer {
+  margin-top: 60px; /* Espaço para a navbar fixa */
+  padding: 40px 0;
+  background-color: #f5f7fa;
+  color: #333;
+  transition: all 0.4s ease;
+  opacity: 0.95;
+}
+
+body.dark-mode .footer {
+  background-color: #1e2024;
+  color: #eee;
+}
+
+/* Evita que o footer fique acima do conteúdo */
+main {
+  min-height: calc(100vh - 180px); /* Ajuste conforme necessário */
+  padding-bottom: 80px; /* Espaço para o footer */
 }

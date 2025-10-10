@@ -1,11 +1,9 @@
-// src/pages/Checkout/Checkout.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../utils/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import LoginRequiredModal from '../../components/LoginRequiredModal/LoginRequiredModal';
 import './Checkout.css';
-import Navbar from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 
 export default function Checkout() {
@@ -24,7 +22,6 @@ export default function Checkout() {
     paymentMethod: 'pix'
   });
 
-  // Carregar produtos do carrinho
   useEffect(() => {
     if (!user) {
       setShowLoginModal(true);
@@ -59,7 +56,6 @@ export default function Checkout() {
       return;
     }
 
-    // Simular geração de pedido
     console.log('Pedido confirmado:', order);
     
     // Aqui você faria a chamada para sua API
@@ -93,7 +89,6 @@ export default function Checkout() {
   if (!user) {
     return (
       <>
-        <Navbar />
         <div className={`checkout-page ${darkMode ? 'dark-mode' : 'light-mode'}`}>
           <div className="checkout-content">
             <div className="checkout-section">
@@ -116,7 +111,6 @@ export default function Checkout() {
     
     return (
       <>
-        <Navbar />
         <div className={`checkout-page ${darkMode ? 'dark-mode' : 'light-mode'}`}>
           <div className="checkout-content">
             <div className="checkout-section">
@@ -172,7 +166,6 @@ export default function Checkout() {
 
   return (
     <>
-      <Navbar />
       <div className={`checkout-page ${darkMode ? 'dark-mode' : 'light-mode'}`}>
         {/* Hero Section */}
         <section className="checkout-hero">

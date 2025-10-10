@@ -3,7 +3,6 @@ import api from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, Image as ImageIcon, CheckCircle, AlertCircle, PawPrint } from "lucide-react";
 import "./DoarAnimal.css";
-import Navbar from "../../../components/Header/NavbarFuncionario";
 import Footer from "../../../components/Footer/Footer";
 import { getUserRole } from "../../../utils/auth";
 
@@ -108,8 +107,6 @@ const DoarAnimal = () => {
 
   return (
     <>
-        <Navbar />
-
     <div className="petshop-container">
       <AnimatePresence>
         {message && (
