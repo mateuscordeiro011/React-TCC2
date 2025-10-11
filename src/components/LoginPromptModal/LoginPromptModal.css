@@ -1,0 +1,265 @@
+.login-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+  animation: fadeIn 0.4s ease-out;
+  backdrop-filter: blur(2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login-prompt-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  width: 400px;
+  max-width: 90vw;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+body.dark-mode .login-prompt-modal {
+  background: #2a2a2a;
+  color: #eee;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.login-prompt-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .login-prompt-close {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.login-prompt-close:hover {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.1);
+  transform: rotate(90deg);
+}
+
+.login-prompt-icon {
+  font-size: 3.2rem;
+  margin-bottom: 16px;
+  display: block;
+  color: #00b7c2;
+  animation: pulseIcon 1.8s infinite ease-in-out;
+  text-shadow: 0 0 10px rgba(0, 183, 194, 0.4);
+}
+
+body.dark-mode .login-prompt-icon {
+  color: #00d1b2;
+  text-shadow: 0 0 12px rgba(0, 209, 178, 0.5);
+}
+
+@keyframes pulseIcon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
+.login-prompt-content h2 {
+  font-size: 1.8rem;
+  margin: 0 0 8px;
+  color: #5d4037;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .login-prompt-content h2 {
+  color: #d4af37;
+  text-shadow: 1px 1px 6px rgba(212, 175, 55, 0.5);
+}
+
+.login-prompt-content p {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  padding: 0 10px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body.dark-mode .login-prompt-content p {
+  color: #ccc;
+}
+
+.login-prompt-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.login-prompt-btn {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  flex: 1;
+  max-width: 160px;
+  white-space: nowrap;
+  height: auto;
+  line-height: 1.4;
+}
+
+.login-prompt-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: left 0.5s ease;
+  z-index: -1;
+}
+
+.login-prompt-btn:hover::before {
+  left: 0;
+}
+
+.login-prompt-btn.login {
+  background: linear-gradient(135deg, #00b7c2, #009fa8);
+  color: white;
+}
+
+.login-prompt-btn.register {
+  background: linear-gradient(135deg, #d4af37, #c0a080);
+  color: white;
+}
+
+.login-prompt-btn.login:hover {
+  background: linear-gradient(135deg, #00d1b2, #00b7c2);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.login-prompt-btn.register:hover {
+  background: linear-gradient(135deg, #c0a080, #d4af37);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.login-prompt-btn i {
+  margin-right: 6px;
+  font-size: 1rem;
+}
+
+body.dark-mode .login-prompt-btn.login {
+  background: linear-gradient(135deg, #00d1b2, #00b7c2);
+}
+
+body.dark-mode .login-prompt-btn.register {
+  background: linear-gradient(135deg, #c0a080, #d4af37);
+}
+
+body.dark-mode .login-prompt-btn.login:hover {
+  background: linear-gradient(135deg, #00b7c2, #009fa8);
+  color: white;
+}
+
+body.dark-mode .login-prompt-btn.register:hover {
+  background: linear-gradient(135deg, #d4af37, #c0a080);
+  color: #333;
+}
+
+/* Responsivo */
+@media (max-width: 560px) {
+  .login-prompt-modal {
+    width: 90vw;
+    padding: 28px 20px;
+  }
+
+  .login-prompt-content h2 {
+    font-size: 1.6rem;
+  }
+
+  .login-prompt-content p {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+
+  .login-prompt-actions {
+    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .login-prompt-btn {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+
+  .login-prompt-icon {
+    font-size: 2.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .login-prompt-modal {
+    padding: 24px 16px;
+  }
+
+  .login-prompt-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-prompt-btn {
+    font-size: 0.85rem;
+    padding: 12px;
+  }
+}

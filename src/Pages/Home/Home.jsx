@@ -6,12 +6,14 @@ import "slick-carousel/slick/slick-theme.css";
 import { useAuth } from "../../utils/useAuth";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
 import "./Home.css";
+import LoginPromptModal from "../../components/LoginPromptModal/LoginPromptModal";
 import promo1 from "../../IMG/promo1.png";
 import promo2 from "../../IMG/promo2.jpg";
 import promo3 from "../../IMG/promo3.jpg";
 import promo4 from "../../IMG/promo4.jpg";
 import promo5 from "../../IMG/promo5.jpg";
 import promo6 from "../../IMG/promo6.jpg";
+
 
 export default function Home() {
   const { user } = useAuth();
@@ -131,8 +133,8 @@ export default function Home() {
     }
 
     if (imageDataStr.startsWith('http://') || imageDataStr.startsWith('https://')) {
-       console.warn("getBase64ImageSrc: Recebido uma URL em vez de Base64:", imageDataStr);
-       return fallbackSVG;
+      console.warn("getBase64ImageSrc: Recebido uma URL em vez de Base64:", imageDataStr);
+      return fallbackSVG;
     }
 
     if (imageDataStr.startsWith("iVBOR")) {
@@ -404,7 +406,7 @@ export default function Home() {
         )}
 
         {/* Modal de Login */}
-        <LoginRequiredModal
+        <LoginPromptModal
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />

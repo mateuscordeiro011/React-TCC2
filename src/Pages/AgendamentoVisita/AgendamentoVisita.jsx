@@ -6,7 +6,7 @@ import "./AgendamentoVisita.css";
 import api from "../../service/api";
 
 export default function AgendamentoVisita() {
-  const { animalId } = useParams();
+  const { id } = useParams();
   const { user } = useAuth();
   const { darkMode } = useTheme();
   const navigate = useNavigate();
@@ -33,33 +33,31 @@ export default function AgendamentoVisita() {
 
 useEffect(() => {
   // Debug
-  console.log("Parâmetro animalId:", animalId);
+  console.log("Parâmetro animalId:", id);
 
-  if (!animalId || animalId === "undefined" || animalId === "null") {
+  if (!id || id === "undefined" || id === "null") {
     setError("ID do animal inválido.");
     setLoading(false);
     return;
   }
 
-  const idNumber = Number(animalId);
+  const idNumber = Number(id);
   if (isNaN(idNumber) || idNumber <= 0) {
     setError("ID do animal inválido.");
     setLoading(false);
     return;
   }
 
-  // ✅ DECLARA fetchAnimal DENTRO do useEffect
   const fetchAnimal = async () => {
     try {
       const response = await api.get(`/api-salsi/animais/${idNumber}`);
       const animalData = response.data;
 
-      // Formata o animal (igual ao useAnimals)
-      const idadeExibicao = calculateAge(animalData.data_nascimento);
+      const idadeExibicao = calculateAge(animalData.nascimento);
       
       setAnimal({
-        id: animalData.id_animal,
-        Nome: animalData.nome,          // 👈 PascalCase para compatibilidade
+        id: animalData.id,
+        Nome: animalData.nome,       
         Especie: animalData.especie,
         Raca: animalData.raca,
         porte: animalData.peso
@@ -81,7 +79,7 @@ useEffect(() => {
   };
 
   fetchAnimal(); 
-}, [animalId]);
+}, [id]);
 
   const generateTimeSlots = () => {
     const slots = [];
@@ -105,7 +103,7 @@ useEffect(() => {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('Agendamento:', {
-        animalId: animalId,
+        id: id,
         userId: user.id,
         dataVisita: `${selectedDate}T${selectedTime}`
       });

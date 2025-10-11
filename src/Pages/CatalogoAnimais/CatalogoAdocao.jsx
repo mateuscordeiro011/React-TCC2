@@ -40,7 +40,7 @@ const handleAdopt = (animal) => {
     return;
   }
 
-  navigate(`/agendamento-visita/temp`, { state: { animal } });
+  navigate(`/agendamento-visita/${animal.id}`);
 };
   const handleOpenModal = (animal) => {
     setSelectedAnimal(animal);

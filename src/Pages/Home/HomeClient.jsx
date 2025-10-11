@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -23,6 +24,9 @@ export default function Home() {
   const [animals, setAnimals] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedAnimal, setSelectedAnimal] = useState(null);
+  const navigate = useNavigate();
+  const [showAddToCartPopup, setShowAddToCartPopup] = useState(false);
+  const [popupProduct, setPopupProduct] = useState(null);
 
   const heroSettings = {
     dots: true,
@@ -36,14 +40,51 @@ export default function Home() {
     fade: true,
   };
 
-  const handleAddToCart = (item) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
-    console.log("Adicionando ao carrinho:", item.nome);
-    // Aqui você pode adicionar ao carrinho real
-  };
+const handleAddToCart = (item) => {
+  if (!user) {
+    setShowLoginModal(true);
+    return;
+  }
+
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const existing = cart.find(p => p.id_produto === item.id_produto || p.id_produto === item.id);
+
+  if (existing) {
+    existing.quantidade += 1;
+  } else {
+    cart.push({
+      id_produto: item.id_produto || item.id,
+      nome: item.nome,
+      preco: item.preco,
+      foto: item.foto,
+      quantidade: 1
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  setPopupProduct(item);
+  setShowAddToCartPopup(true);
+
+  setTimeout(() => {
+    setShowAddToCartPopup(false);
+    setPopupProduct(null);
+  }, 3000);
+};
+
+const handleBuyNow = (product) => {
+  if (!user) {
+    setShowLoginModal(true);
+    return;
+  }
+  
+  navigate('/checkout', { 
+    state: { 
+      products: [{...product, quantity: 1}] 
+    } 
+  });
+};
+
 
   // 🔁 Carregar Produtos
   useEffect(() => {
@@ -133,8 +174,8 @@ export default function Home() {
     }
 
     if (imageDataStr.startsWith('http://') || imageDataStr.startsWith('https://')) {
-       console.warn("getBase64ImageSrc: Recebido uma URL em vez de Base64:", imageDataStr);
-       return fallbackSVG;
+      console.warn("getBase64ImageSrc: Recebido uma URL em vez de Base64:", imageDataStr);
+      return fallbackSVG;
     }
 
     if (imageDataStr.startsWith("iVBOR")) {
@@ -411,7 +452,41 @@ export default function Home() {
           onClose={() => setShowLoginModal(false)}
         />
       </div>
-      <Footer/>
+
+      {/* Pop-up de "Adicionado ao Carrinho" */}
+{showAddToCartPopup && popupProduct && (
+  <div className="add-to-cart-popup-overlay">
+    <div className="add-to-cart-popup">
+      <div className="popup-icon">🛒</div>
+      <h3>Produto Adicionado!</h3>
+      <div className="popup-product">
+        <img
+          src={getBase64ImageSrc(popupProduct.foto)}
+          alt={popupProduct.nome}
+          className="popup-product-img"
+          onError={(e) => {
+            e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
+          }}
+        />
+        <div>
+          <p className="popup-product-name">{popupProduct.nome}</p>
+          <p className="popup-product-price">R$ {popupProduct.preco?.toFixed(2)}</p>
+        </div>
+      </div>
+      <button
+        className="popup-view-cart-btn"
+        onClick={() => {
+          setShowAddToCartPopup(false);
+          navigate('/carrinho');
+        }}
+      >
+        Ver Carrinho
+      </button>
+    </div>
+  </div>
+)}
+
+      <Footer />
     </>
   );
 }
