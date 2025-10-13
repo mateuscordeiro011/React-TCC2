@@ -6,7 +6,7 @@ import AnimalCard from "../../components/AnimalCard/AnimalCard";
 import AnimalModal from "../../components/AnimalModal/AnimalModal";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
 import Footer from "../../components/Footer/Footer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./CatalogoAdocao.css";
 
 export default function CatalogoAdocao() {
@@ -15,6 +15,7 @@ export default function CatalogoAdocao() {
   const [showAnimalModal, setShowAnimalModal] = useState(false);
   const { darkMode } = useTheme();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { animals, loading, error } = useAnimals();
   const [selectedAnimal, setSelectedAnimal] = useState(null);
@@ -23,9 +24,16 @@ export default function CatalogoAdocao() {
     raca: "",
     porte: "",
     sexo: "",
-    searchTerm: ""
+    searchTerm: searchParams.get('search') || ""
   });
   const [sortOption, setSortOption] = useState("nome");
+  
+  useEffect(() => {
+    const searchQuery = searchParams.get('search');
+    if (searchQuery) {
+      setFilters(prev => ({ ...prev, searchTerm: searchQuery }));
+    }
+  }, [searchParams]);
 
 const handleAdopt = (animal) => {
   if (!user) {

@@ -1,4 +1,3 @@
-// src/utils/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../service/api';
 
@@ -42,8 +41,7 @@ export const AuthProvider = ({ children }) => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const userData = {
           id: payload.id,
-          // nome: payload.nome, // só se seu token tiver "nome"
-          email: payload.sub, // assumindo que "sub" é o e-mail
+          email: payload.sub,
           tipo: payload.tipo,
         };
 

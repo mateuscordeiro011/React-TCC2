@@ -7,7 +7,7 @@ import ProductModal from "../../components/ProductModal/ProductModal";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
 import "./CatalogoProdutos.css";
 import Footer from "../../components/Footer/Footer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getBase64ImageSrc } from "../../utils/imageUtils"; 
 
 export default function CatalogoProdutos() {
@@ -16,6 +16,7 @@ export default function CatalogoProdutos() {
   const [showProductModal, setShowProductModal] = useState(false);
   const { darkMode } = useTheme();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
   const { items, loading, error } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -23,9 +24,16 @@ export default function CatalogoProdutos() {
     categoria: "",
     precoMin: "",
     precoMax: "",
-    searchTerm: ""
+    searchTerm: searchParams.get('search') || ""
   });
   const [sortOption, setSortOption] = useState("nome");
+  
+  useEffect(() => {
+    const searchQuery = searchParams.get('search');
+    if (searchQuery) {
+      setFilters(prev => ({ ...prev, searchTerm: searchQuery }));
+    }
+  }, [searchParams]);
 
   // Estados para o pop-up de carrinho
   const [showAddToCartPopup, setShowAddToCartPopup] = useState(false);

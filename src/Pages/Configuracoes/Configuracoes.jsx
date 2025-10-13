@@ -14,7 +14,6 @@ export default function Configuracoes() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [mensagem, setMensagem] = useState(null);
 
-  // Carrega notas do localStorage ao montar
   useEffect(() => {
     const saved = localStorage.getItem("localNotes");
     if (saved) {
@@ -26,7 +25,6 @@ export default function Configuracoes() {
     }
   }, []);
 
-  // Salva notas no localStorage sempre que mudar
   useEffect(() => {
     localStorage.setItem("localNotes", JSON.stringify(notes));
   }, [notes]);
@@ -69,7 +67,6 @@ export default function Configuracoes() {
   return (
     <>
       <div className={`configuracoes-page ${darkMode ? "dark-mode" : "light-mode"}`}>
-        {/* Popup de feedback */}
         {mensagem && (
           <div className={`popup ${mensagem.tipo}`}>
             <p>{mensagem.texto}</p>
@@ -80,7 +77,7 @@ export default function Configuracoes() {
         <div className="local-notes-container">
           <h1>Minhas Configurações</h1>
 
-          {/* Seção: Conta */}
+          {/* Conta */}
           <div className="config-section">
             <h2>Conta</h2>
             <div className="config-item">
@@ -96,7 +93,7 @@ export default function Configuracoes() {
             </button>
           </div>
 
-          {/* Seção: Aparência */}
+          {/* Aparência */}
           <div className="config-section">
             <h2>Aparência</h2>
             <div className="config-item theme-toggle">
@@ -112,7 +109,7 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          {/* Seção: Notificações (não funcional) */}
+          {/*Notificações (não funcional) */}
           <div className="config-section">
             <h2>Notificações</h2>
             <div className="config-item">
@@ -131,7 +128,7 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          {/* Seção: Privacidade (não funcional) */}
+          {/*Privacidade (não funcional) */}
           <div className="config-section">
             <h2>Privacidade</h2>
             <div className="config-item">
@@ -150,7 +147,7 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          {/* Seção: Idioma (não funcional) */}
+          {/*Idioma (não funcional) */}
           <div className="config-section">
             <h2>Idioma</h2>
             <div className="config-item">
@@ -163,7 +160,7 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          {/* Seção: Minhas Notas Locais */}
+          {/*Minhas Notas Locais */}
           <div className="config-section">
             <h2>Minhas Notas Locais</h2>
             <div className="local-notes-input">

@@ -9,5 +9,12 @@ export default defineConfig({
     port: 5173,
     cors: true,
     cookieDomainRewrite: "",
+    proxy: {
+      '/api-salsi': {
+        target: 'http://localhost:8080', 
+        changeOrigin: true,
+        secure: false,
+    },
+  },
   },
 });

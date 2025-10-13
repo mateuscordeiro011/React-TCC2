@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import logoLight from "../../IMG/logowhite.png";
 import logoDark from "../../IMG/logodark.png";
 import "../Header/Header.css";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../utils/useAuth.jsx";
+import api from "../../service/api";
 
 export default function Navbar() {
   const [nav, setNav] = useState(true);
@@ -12,6 +13,10 @@ export default function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [hasScroll, setHasScroll] = useState(false);
   const [navbarSearchQuery, setNavbarSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
+  const suggestionsRef = useRef(null);
 
   // ✅ Corrigido: toggleTheme em vez de toggleDarkMode
   const { darkMode, toggleTheme } = useTheme();
@@ -57,12 +62,78 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
-  const handleNavbarSearch = (e) => {
-    e.preventDefault();
-    if (navbarSearchQuery.trim()) {
-      navigate(`/catalogo-produto?search=${encodeURIComponent(navbarSearchQuery)}`);
+  const handleNavbarSearch = (e, searchTerm = navbarSearchQuery) => {
+    e?.preventDefault();
+    if (searchTerm.trim()) {
+      const query = searchTerm.toLowerCase();
+      const animalKeywords = ['cachorro', 'gato', 'cão', 'felino', 'canino', 'pet', 'animal', 'adoção', 'adotar'];
+      
+      if (animalKeywords.some(keyword => query.includes(keyword))) {
+        navigate(`/catalogo-adocao?search=${encodeURIComponent(searchTerm)}`);
+      } else {
+        navigate(`/catalogo-produto?search=${encodeURIComponent(searchTerm)}`);
+      }
+      setShowSuggestions(false);
+      setNavbarSearchQuery("");
     }
   };
+
+  const fetchSuggestions = async (query) => {
+    if (!query.trim() || query.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const [productsRes, animalsRes] = await Promise.allSettled([
+        api.get('/api-salsi/produtos'),
+        api.get('/api-salsi/animais')
+      ]);
+
+      const products = productsRes.status === 'fulfilled' ? productsRes.value.data : [];
+      const animals = animalsRes.status === 'fulfilled' ? animalsRes.value.data : [];
+
+      const productSuggestions = products
+        .filter(p => p.nome?.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 3)
+        .map(p => ({ name: p.nome, type: 'produto', icon: 'fas fa-box' }));
+
+      const animalSuggestions = animals
+        .filter(a => a.nome?.toLowerCase().includes(query.toLowerCase()) || 
+                    a.especie?.toLowerCase().includes(query.toLowerCase()) ||
+                    a.raca?.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 3)
+        .map(a => ({ name: a.nome || `${a.especie} ${a.raca}`, type: 'animal', icon: 'fas fa-paw' }));
+
+      setSuggestions([...productSuggestions, ...animalSuggestions]);
+      setShowSuggestions(true);
+    } catch (error) {
+      console.error('Erro ao buscar sugestões:', error);
+      setSuggestions([]);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setNavbarSearchQuery(value);
+    fetchSuggestions(value);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    handleNavbarSearch(null, suggestion.name);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <nav
@@ -82,15 +153,37 @@ export default function Navbar() {
         <img src={darkMode ? logoLight : logoDark} alt="Logo" id="header-logo" />
       </RouterLink>
 
-      <div className="search-container">
+      <div className="search-container" ref={searchRef}>
         <form onSubmit={handleNavbarSearch} className="navbar-search-form">
           <input
             type="text"
-            placeholder="Pesquisar produtos..."
+            placeholder="Pesquisar produtos e animais..."
             value={navbarSearchQuery}
-            onChange={(e) => setNavbarSearchQuery(e.target.value)}
+            onChange={handleInputChange}
+            onFocus={() => navbarSearchQuery.length >= 2 && setShowSuggestions(true)}
             className="navbar-search-input"
           />
+          {showSuggestions && (
+            <div className="search-suggestions" ref={suggestionsRef}>
+              {suggestions.length > 0 ? (
+                suggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className="suggestion-item"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    <i className={`suggestion-icon ${suggestion.icon}`}></i>
+                    <span className="suggestion-text">{suggestion.name}</span>
+                    <span className="suggestion-type">{suggestion.type}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="no-suggestions">
+                  Nenhuma sugestão encontrada
+                </div>
+              )}
+            </div>
+          )}
         </form>
       </div>
 

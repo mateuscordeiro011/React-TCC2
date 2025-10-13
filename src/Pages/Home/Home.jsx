@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useAuth } from "../../utils/useAuth";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
+import Footer from "../../components/Footer/Footer";
 import "./Home.css";
 import LoginPromptModal from "../../components/LoginPromptModal/LoginPromptModal";
 import promo1 from "../../IMG/promo1.png";
@@ -13,7 +14,6 @@ import promo3 from "../../IMG/promo3.jpg";
 import promo4 from "../../IMG/promo4.jpg";
 import promo5 from "../../IMG/promo5.jpg";
 import promo6 from "../../IMG/promo6.jpg";
-
 
 export default function Home() {
   const { user } = useAuth();
@@ -32,7 +32,7 @@ export default function Home() {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
-    arrows: true,
+    arrows: false,
     fade: true,
   };
 
@@ -42,10 +42,8 @@ export default function Home() {
       return;
     }
     console.log("Adicionando ao carrinho:", item.nome);
-    // Aqui você pode adicionar ao carrinho real
   };
 
-  // 🔁 Carregar Produtos
   useEffect(() => {
     fetch("http://localhost:8080/api-salsi/produtos", {
       method: 'GET',
@@ -62,7 +60,6 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar produtos:", err));
   }, []);
 
-  // 🔁 Carregar Animais
   useEffect(() => {
     fetch("http://localhost:8080/api-salsi/animais", {
       method: 'GET',
@@ -70,7 +67,6 @@ export default function Home() {
     })
       .then((res) => {
         if (res.status === 401) {
-          console.warn("Não autorizado: redirecionar para login?");
           setAnimals([]);
           return;
         }
@@ -87,21 +83,16 @@ export default function Home() {
       });
   }, []);
 
-  // Calcular idade
   const calculateAge = (birthDate) => {
     if (!birthDate) return "Desconhecida";
-
     const dob = new Date(birthDate);
     if (isNaN(dob.getTime())) return "Desconhecida";
-
     const today = new Date();
     let age = today.getFullYear() - dob.getFullYear();
     const monthDiff = today.getMonth() - dob.getMonth();
-
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
       age--;
     }
-
     return age;
   };
 
@@ -111,55 +102,21 @@ export default function Home() {
   const openAnimalModal = (animal) => setSelectedAnimal(animal);
   const closeAnimalModal = () => setSelectedAnimal(null);
 
-  // Tratar imagens Base64 
   const getBase64ImageSrc = (imageData) => {
-    // Imagem SVG fallback
     const fallbackSVG = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
-
-    if (!imageData) {
-      console.warn("getBase64ImageSrc: imageData é null/undefined");
-      return fallbackSVG;
-    }
-
+    if (!imageData) return fallbackSVG;
     const imageDataStr = String(imageData).trim();
-
-    if (imageDataStr === "") {
-      console.warn("getBase64ImageSrc: imageData é string vazia");
-      return fallbackSVG;
-    }
-
-    if (imageDataStr.startsWith('data:image/')) {
-      return imageDataStr;
-    }
-
-    if (imageDataStr.startsWith('http://') || imageDataStr.startsWith('https://')) {
-      console.warn("getBase64ImageSrc: Recebido uma URL em vez de Base64:", imageDataStr);
-      return fallbackSVG;
-    }
-
-    if (imageDataStr.startsWith("iVBOR")) {
-      // PNG
-      return `data:image/png;base64,${imageDataStr}`;
-    }
-    if (imageDataStr.startsWith("R0lGO")) {
-      // GIF
-      return `data:image/gif;base64,${imageDataStr}`;
-    }
-    if (imageDataStr.startsWith("/9j/")) {
-      // JPEG
-      return `data:image/jpeg;base64,${imageDataStr}`;
-    }
-
-    // 5. Tentativa padrão como JPEG com validação
+    if (imageDataStr === "") return fallbackSVG;
+    if (imageDataStr.startsWith('data:image/')) return imageDataStr;
+    if (imageDataStr.startsWith('http://') || imageDataStr.startsWith('https://')) return fallbackSVG;
+    if (imageDataStr.startsWith("iVBOR")) return `data:image/png;base64,${imageDataStr}`;
+    if (imageDataStr.startsWith("R0lGO")) return `data:image/gif;base64,${imageDataStr}`;
+    if (imageDataStr.startsWith("/9j/")) return `data:image/jpeg;base64,${imageDataStr}`;
     try {
-      // Tenta validar a string Base64
-      // atob só lança erro se tiver caracteres inválidos ou padding errado
       atob(imageDataStr);
-      // Se passou, assume como JPEG
-      console.log("getBase64ImageSrc: Usando imagem Base64 como JPEG");
       return `data:image/jpeg;base64,${imageDataStr}`;
     } catch (e) {
-      console.error("getBase64ImageSrc: Base64 inválido, usando fallback:", e.message, "Dados recebidos (primeiros 50 chars):", imageDataStr.substring(0, 50));
+      console.error("Base64 inválido, usando fallback:", e.message);
       return fallbackSVG;
     }
   };
@@ -167,82 +124,35 @@ export default function Home() {
   return (
     <>
       <div className={`home ${darkMode ? "dark-mode" : "light-mode"}`}>
-        {/* Carrossel de Promoções */}
-        <section className="hero-carousel">
-          <Slider {...heroSettings}>
-            <div className="hero-slide">
-              <img src={promo1} alt="Adoção" className="hero-image" />
-              <div className="hero-content">
-                <h1>ADOÇÃO</h1>
-                <p>
-                  Adote um novo amigo e faça parte de uma comunidade que ama animais. 🐶🐱✨<br />
-                  <i>"Dê um lar amoroso a um animal que precisa de você!"</i>
-                </p>
-                <button className="cta-button">ADOTAR</button>
-              </div>
-            </div>
+<section className="hero-carousel">
+  <Slider {...heroSettings}>
+    {[
+      { img: promo1, title: "ADOÇÃO", text: "Adote um novo amigo e faça parte de uma comunidade que ama animais. 🐶🐱✨<br /><i>\"Dê um lar amoroso a um animal que precisa de você!\"</i>", button: "ADOTAR" },
+      { img: promo2, title: "BAIXE JÁ!", text: "Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br /><i>\"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão.\"</i>" },
+      { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>", button: "VER CATÁLOGO" },
+      { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "NÃO PERCA!" },
+      { img: promo5, title: "PROMOÇÕES", text: "Apenas no app: até 90% de desconto em produtos selecionados. 🐢🐠🐱🐶<br /><i>\"Ofertas imperdíveis só para quem usa o nosso aplicativo!\"</i>", button: "APROVEITE!" },
+      { img: promo6, title: "FRETE GRÁTIS", text: "Produtos com até 50% de desconto. 🐶🐱🐾<br /><i>\"Compre agora e economize ainda mais com frete grátis e ótimos descontos!\"</i>", button: "APROVEITE!" }
+    ].map((slide, idx) => (
+      <div key={idx} className="hero-slide">
+        <div className="hero-slide-content">
+          <div className="hero-image-wrapper">
+            <img src={slide.img} alt={`Promoção ${idx + 1}`} className="hero-image" />
+          </div>
 
-            <div className="hero-slide">
-              <img src={promo2} alt="Baixe o app" className="hero-image" />
-              <div className="hero-content">
-                <h1>BAIXE JÁ!</h1>
-                <p>
-                  Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br />
-                  <i>"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão."</i>
-                </p>
-              </div>
-            </div>
+          <div className="hero-text-wrapper">
+            <h1>{slide.title}</h1>
+            <p dangerouslySetInnerHTML={{ __html: slide.text }}></p>
+            {slide.button && (
+              <button className="cta-button">{slide.button}</button>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </Slider>
+</section>
 
-            <div className="hero-slide">
-              <img src={promo3} alt="Cashback no app" className="hero-image" />
-              <div className="hero-content">
-                <h1>APENAS NO APP</h1>
-                <p>
-                  Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br />
-                  <i>"Faça suas compras pelo app e ganhe recompensas extras!"</i>
-                </p>
-              </div>
-            </div>
-
-            <div className="hero-slide">
-              <img src={promo4} alt="Primeira compra" className="hero-image" />
-              <div className="hero-content">
-                <h1>PRIMEIRA COMPRA</h1>
-                <p>
-                  60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br />
-                  <i>"Comece com um grande desconto e aproveite nossos produtos incríveis!"</i>
-                </p>
-                <button className="cta-button">VER CATÁLOGO</button>
-              </div>
-            </div>
-
-            <div className="hero-slide">
-              <img src={promo5} alt="Promoções" className="hero-image" />
-              <div className="hero-content">
-                <h1>PROMOÇÕÕES</h1>
-                <p>
-                  Apenas no app: até 90% de desconto em produtos selecionados. 🐢🐠🐱🐶<br />
-                  <i>"Ofertas imperdíveis só para quem usa o nosso aplicativo!"</i>
-                </p>
-                <button className="cta-button">NÃO PERCA!</button>
-              </div>
-            </div>
-
-            <div className="hero-slide">
-              <img src={promo6} alt="Frete grátis" className="hero-image" />
-              <div className="hero-content">
-                <h1>FRETE GRÁTIS</h1>
-                <p>
-                  Produtos com até 50% de desconto. 🐶🐱🐾<br />
-                  <i>"Compre agora e economize ainda mais com frete grátis e ótimos descontos!"</i>
-                </p>
-                <button className="cta-button">APROVEITE!</button>
-              </div>
-            </div>
-          </Slider>
-        </section>
-
-        {/* Seção de Produtos */}
         <section className="catalog-section">
           <div className="section-header">
             <h2 className="catalog-title">Nossos Produtos</h2>
@@ -252,43 +162,51 @@ export default function Home() {
           {items.length === 0 ? (
             <p className="no-items">Nenhum produto encontrado.</p>
           ) : (
-            <div className="catalog-grid">
-              {items.map((item) => (
-                <div
-                  key={item.id_produto || item.id}
-                  className="catalog-item"
-                  onClick={() => openProductModal(item)}
-                >
-                  <img
-                    src={getBase64ImageSrc(item.foto)}
-                    alt={item.nome}
-                    className="catalog-item-image"
-                    onError={(e) => {
-                      // Fallback inline caso a imagem falhe
-                      e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
-                    }}
-                  />
-                  <h3 className="catalog-item-title">{item.nome}</h3>
-                  <p className="catalog-item-price">
-                    R$ {item.preco?.toFixed(2)}
-                  </p>
-                  <button
-                    className="catalog-item-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(item);
-                    }}
-                  >
-                    Adicionar ao Carrinho
-                  </button>
-                  <i className="fas fa-search zoom-icon"></i>
-                </div>
-              ))}
+            <div className="catalog-carousel">
+              <Slider
+                dots={false}
+                infinite={true}
+                speed={500}
+                slidesToShow={4}
+                slidesToScroll={1}
+                autoplay={true}
+                autoplaySpeed={3000}
+                arrows={true}
+                responsive={[
+                  { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                  { breakpoint: 768, settings: { slidesToShow: 2 } },
+                  { breakpoint: 480, settings: { slidesToShow: 1 } },
+                ]}
+              >
+                {items.map((item) => (
+                  <div key={item.id_produto || item.id} className="catalog-item" onClick={() => openProductModal(item)}>
+                    <img
+                      src={getBase64ImageSrc(item.foto)}
+                      alt={item.nome}
+                      className="catalog-item-image"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
+                      }}
+                    />
+                    <h3 className="catalog-item-title">{item.nome}</h3>
+                    <p className="catalog-item-price">R$ {item.preco?.toFixed(2)}</p>
+                    <button
+                      className="catalog-item-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(item);
+                      }}
+                    >
+                      Adicionar ao Carrinho
+                    </button>
+                    <i className="fas fa-search zoom-icon"></i>
+                  </div>
+                ))}
+              </Slider>
             </div>
           )}
         </section>
 
-        {/* Seção de Adoção */}
         <section className="catalog-section adoption-section">
           <div className="section-header">
             <h2 className="catalog-title">Animais para Adoção</h2>
@@ -298,53 +216,65 @@ export default function Home() {
           {animals.length === 0 ? (
             <p className="no-items">Nenhum animal disponível para adoção.</p>
           ) : (
-            <div className="catalog-grid">
-              {animals.map((animal) => (
-                <div
-                  key={animal.id_animal || animal.id}
-                  className="catalog-item"
-                  onClick={() => openAnimalModal(animal)}
-                >
-                  <img
-                    src={getBase64ImageSrc(animal.foto)}
-                    alt={animal.nome}
-                    className="catalog-item-image"
-                    onError={(e) => {
-                      // Fallback inline caso a imagem falhe
-                      e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
-                    }}
-                  />
-                  <h3 className="catalog-item-title">{animal.nome}</h3>
-                  <p className="catalog-item-info">
-                    <strong>Espécie:</strong> {animal.especie}<br />
-                    <strong>Raça:</strong> {animal.raca}<br />
-                    <strong>Idade:</strong> {calculateAge(animal.data_nascimento || animal.nascimento)} anos<br />
-                    <strong>Peso:</strong> {animal.peso} kg<br />
-                    <strong>Sexo:</strong> {animal.sexo}
-                  </p>
-                  <button
-                    className="catalog-item-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(animal);
-                    }}
+            <div className="catalog-carousel">
+              <Slider
+                dots={false}
+                infinite={true}
+                speed={500}
+                slidesToShow={4}
+                slidesToScroll={1}
+                autoplay={true}
+                autoplaySpeed={3000}
+                arrows={true}
+                responsive={[
+                  { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                  { breakpoint: 768, settings: { slidesToShow: 2 } },
+                  { breakpoint: 480, settings: { slidesToShow: 1 } },
+                ]}
+              >
+                {animals.map((animal) => (
+                  <div
+                    key={animal.id_animal || animal.id}
+                    className="catalog-item"
+                    onClick={() => openAnimalModal(animal)}
                   >
-                    Quero Adotar
-                  </button>
-                  <i className="fas fa-search zoom-icon"></i>
-                </div>
-              ))}
+                    <img
+                      src={getBase64ImageSrc(animal.foto)}
+                      alt={animal.nome}
+                      className="catalog-item-image"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
+                      }}
+                    />
+                    <h3 className="catalog-item-title">{animal.nome}</h3>
+                    <p className="catalog-item-info">
+                      <strong>Espécie:</strong> {animal.especie}<br />
+                      <strong>Raça:</strong> {animal.raca}<br />
+                      <strong>Idade:</strong> {calculateAge(animal.data_nascimento || animal.nascimento)} anos<br />
+                      <strong>Peso:</strong> {animal.peso} kg<br />
+                      <strong>Sexo:</strong> {animal.sexo}
+                    </p>
+                    <button
+                      className="catalog-item-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(animal);
+                      }}
+                    >
+                      Quero Adotar
+                    </button>
+                    <i className="fas fa-search zoom-icon"></i>
+                  </div>
+                ))}
+              </Slider>
             </div>
           )}
         </section>
 
-        {/* Modal de Produto */}
         {selectedProduct && (
           <div className="modal-overlay" onClick={closeProductModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <button className="modal-close" onClick={closeProductModal}>
-                ×
-              </button>
+              <button className="modal-close" onClick={closeProductModal}>×</button>
               <img
                 src={getBase64ImageSrc(selectedProduct.foto)}
                 alt={selectedProduct.nome}
@@ -372,13 +302,10 @@ export default function Home() {
           </div>
         )}
 
-        {/* Modal de Animal */}
         {selectedAnimal && (
           <div className="modal-overlay" onClick={closeAnimalModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <button className="modal-close" onClick={closeAnimalModal}>
-                ×
-              </button>
+              <button className="modal-close" onClick={closeAnimalModal}>×</button>
               <img
                 src={getBase64ImageSrc(selectedAnimal.foto)}
                 alt={selectedAnimal.nome}
@@ -405,12 +332,13 @@ export default function Home() {
           </div>
         )}
 
-        {/* Modal de Login */}
         <LoginPromptModal
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
       </div>
+
+      <Footer />
     </>
   );
 }

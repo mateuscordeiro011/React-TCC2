@@ -6,9 +6,8 @@ import "./Footer.css";
 
 export default function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const { darkMode } = useTheme(); // ✅ Usa o tema do contexto
+  const { darkMode } = useTheme(); 
 
-  // Mostra/oculta botão "voltar ao topo"
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 300);
@@ -23,7 +22,6 @@ export default function Footer() {
       <div className="footer-top">
         <div className="container">
           <div className="row">
-            {/* Logo */}
             <div className="col col-logo">
               <img
                 src={darkMode ? logoLight : logoDark}
@@ -86,7 +84,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Botão Voltar ao Topo */}
       {showBackToTop && (
         <button
           className="back-to-top"

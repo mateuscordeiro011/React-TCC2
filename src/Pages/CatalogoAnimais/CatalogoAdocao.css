@@ -1,7 +1,7 @@
 .catalogo-page {
   min-height: 100vh;
   padding-top: 80px;
-  background: linear-gradient(135deg, #87a9db 0%, #c3cfe2 100%);
+  background-color: #9DBCEA; /* ✅ Fundo suave da paleta */
   color: #333;
   transition: all 0.5s ease;
   font-family: 'Poppins', sans-serif;
@@ -10,33 +10,16 @@
 }
 
 .catalogo-page.dark-mode {
-  background: linear-gradient(135deg, #1e2024 0%, #2a2d34 100%);
-  color: #eee;
+  background-color: #1a1a1a;
 }
 
+/* Hero Section */
 .catalogo-hero {
-  background: linear-gradient(120deg, #00b7c2 0%, #007a87 100%);
+  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%); /* ✅ Marrom → Azul suave */
   padding: 80px 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-
-.catalogo-hero::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  animation: rotate 20s linear infinite;
-  z-index: 0;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 .hero-content {
@@ -64,9 +47,9 @@
 /* Filtros */
 .catalogo-filters {
   padding: 30px 20px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(139, 115, 101, 0.2); /* ✅ Marrom translúcido */
   position: sticky;
   top: 80px;
   z-index: 100;
@@ -93,10 +76,9 @@
 }
 
 .search-input,
-.filter-select,
-.price-input {
+.filter-select {
   padding: 12px 15px;
-  border: 2px solid #00b7c2;
+  border: 2px solid #00C4CC; /* ✅ Turquesa */
   border-radius: 30px;
   font-size: 1rem;
   outline: none;
@@ -106,25 +88,22 @@
 }
 
 .catalogo-page.dark-mode .search-input,
-.catalogo-page.dark-mode .filter-select,
-.catalogo-page.dark-mode .price-input {
+.catalogo-page.dark-mode .filter-select {
   background: #2a2a2a;
   color: #eee;
-  border-color: #00d1b2;
+  border-color: #00C4CC;
 }
 
 .search-input:focus,
-.filter-select:focus,
-.price-input:focus {
-  border-color: #007a87;
-  box-shadow: 0 0 0 3px rgba(0, 183, 194, 0.3);
+.filter-select:focus {
+  border-color: #0097a7; /* ✅ Turquesa mais escuro */
+  box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.3);
 }
 
 .catalogo-page.dark-mode .search-input:focus,
-.catalogo-page.dark-mode .filter-select:focus,
-.catalogo-page.dark-mode .price-input:focus {
-  border-color: #00d1b2;
-  box-shadow: 0 0 0 3px rgba(0, 209, 178, 0.3);
+.catalogo-page.dark-mode .filter-select:focus {
+  border-color: #00C4CC;
+  box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.3);
 }
 
 /* Resultados */
@@ -169,8 +148,8 @@
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid rgba(0, 183, 194, 0.3);
-  border-top: 5px solid #00b7c2;
+  border: 5px solid rgba(0, 196, 204, 0.3); /* ✅ Turquesa translúcido */
+  border-top: 5px solid #00C4CC; /* ✅ Turquesa */
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -192,14 +171,14 @@
 }
 
 .error-message {
-  color: #e74c3c;
+  color: #F48A73; /* ✅ Laranja-rosado */
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
 .retry-button {
   padding: 12px 25px;
-  background: #00b7c2;
+  background: #00C4CC; /* ✅ Turquesa */
   color: white;
   border: none;
   border-radius: 30px;
@@ -209,7 +188,7 @@
 }
 
 .retry-button:hover {
-  background: #007a87;
+  background: #0097a7; /* ✅ Turquesa mais escuro */
   transform: translateY(-2px);
 }
 
@@ -234,8 +213,7 @@
   }
   
   .search-input,
-  .filter-select,
-  .price-input {
+  .filter-select {
     width: 100%;
     max-width: 300px;
   }

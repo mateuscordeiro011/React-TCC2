@@ -14,7 +14,6 @@ export default function Carrinho() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Carregar carrinho do localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
@@ -37,7 +36,7 @@ export default function Carrinho() {
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
-  const handleFinalizarPedido = async () => {
+  const handleFinalizarPedido = () => {
     if (!user) {
       alert("Você precisa estar logado para finalizar o pedido.");
       return;
@@ -47,45 +46,23 @@ export default function Carrinho() {
       return;
     }
 
-    setLoading(true);
-    setMessage("");
 
-    // ⚠️ TEMPORÁRIO: sem animal. Você pode adicionar depois.
-    const pedidoData = {
-      id_usuario: user.id,
-      // id_animal será adicionado depois
-      itens: cartItems.map(item => ({
-        id_produto: item.id_produto,
-        quantidade: item.quantidade
-      }))
-    };
+    const products = cartItems.map(item => ({
+      id_produto: item.id_produto,
+      nome: item.nome,
+      preco: item.preco,
+      quantity: item.quantidade,
+      foto: item.foto
+    }));
 
-    try {
-      const response = await fetch("/api/pedidos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(pedidoData),
-      });
-
-      if (response.ok) {
-        localStorage.removeItem("cart");
-        setCartItems([]);
-        setMessage("✅ Pedido realizado com sucesso!");
-        setTimeout(() => navigate("/pedido-confirmado"), 1500);
-      } else {
-        const error = await response.text();
-        setMessage(`❌ Erro ao criar pedido: ${error}`);
-      }
-    } catch (err) {
-      setMessage(`❌ Erro de conexão: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
+    navigate('/checkout', { 
+      state: { 
+        products: products 
+      } 
+    });
   };
 
-    // Tratar imagens Base64 
+  // Tratar imagens Base64 
   const getBase64ImageSrc = (imageData) => {
     // Imagem SVG fallback
     const fallbackSVG = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
@@ -126,8 +103,6 @@ export default function Carrinho() {
 
     // 5. Tentativa padrão como JPEG com validação
     try {
-      // Tenta validar a string Base64
-      // atob só lança erro se tiver caracteres inválidos ou padding errado
       atob(imageDataStr);
       // Se passou, assume como JPEG
       console.log("getBase64ImageSrc: Usando imagem Base64 como JPEG");
@@ -137,7 +112,6 @@ export default function Carrinho() {
       return fallbackSVG;
     }
   };
-
 
   const total = cartItems.reduce((sum, item) => sum + item.preco * item.quantidade, 0);
 
@@ -236,7 +210,7 @@ export default function Carrinho() {
                     onClick={handleFinalizarPedido}
                     disabled={loading}
                   >
-                    {loading ? "Processando..." : "Finalizar Compra"}
+                    {loading ? "Processando..." : "Ir para Checkout"} 
                   </button>
                   <p className="secure-checkout">🔒 Compra segura e criptografada</p>
                 </div>
