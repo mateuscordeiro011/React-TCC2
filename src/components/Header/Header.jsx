@@ -78,6 +78,37 @@ export default function Navbar() {
     }
   };
 
+  const getBase64ImageSrc = (imageData) => {
+    const fallbackSVG = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzk5OSI+Pz88L3RleHQ+PC9zdmc+";
+    if (!imageData) return fallbackSVG;
+    const imageDataStr = String(imageData).trim();
+    if (imageDataStr === "") return fallbackSVG;
+    if (imageDataStr.startsWith('data:image/')) return imageDataStr;
+    if (imageDataStr.startsWith('http://') || imageDataStr.startsWith('https://')) return fallbackSVG;
+    if (imageDataStr.startsWith("iVBOR")) return `data:image/png;base64,${imageDataStr}`;
+    if (imageDataStr.startsWith("R0lGO")) return `data:image/gif;base64,${imageDataStr}`;
+    if (imageDataStr.startsWith("/9j/")) return `data:image/jpeg;base64,${imageDataStr}`;
+    try {
+      atob(imageDataStr);
+      return `data:image/jpeg;base64,${imageDataStr}`;
+    } catch (e) {
+      return fallbackSVG;
+    }
+  };
+
+  const detectSearchType = (query) => {
+    const lowerQuery = query.toLowerCase();
+    const animalKeywords = ['cachorro', 'gato', 'cão', 'felino', 'canino', 'pet', 'animal', 'adoção', 'adotar', 'filhote', 'poodle', 'labrador', 'siamês', 'persa', 'vira-lata'];
+    const productKeywords = ['ração', 'brinquedo', 'coleira', 'cama', 'comedouro', 'bebedouro', 'shampoo', 'medicamento', 'produto', 'comprar'];
+    
+    const animalScore = animalKeywords.filter(keyword => lowerQuery.includes(keyword)).length;
+    const productScore = productKeywords.filter(keyword => lowerQuery.includes(keyword)).length;
+    
+    if (animalScore > productScore) return 'animal';
+    if (productScore > animalScore) return 'produto';
+    return 'ambos';
+  };
+
   const fetchSuggestions = async (query) => {
     if (!query.trim() || query.length < 2) {
       setSuggestions([]);
@@ -86,6 +117,7 @@ export default function Navbar() {
     }
 
     try {
+      const searchType = detectSearchType(query);
       const [productsRes, animalsRes] = await Promise.allSettled([
         api.get('/api-salsi/produtos'),
         api.get('/api-salsi/animais')
@@ -94,19 +126,42 @@ export default function Navbar() {
       const products = productsRes.status === 'fulfilled' ? productsRes.value.data : [];
       const animals = animalsRes.status === 'fulfilled' ? animalsRes.value.data : [];
 
-      const productSuggestions = products
-        .filter(p => p.nome?.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 3)
-        .map(p => ({ name: p.nome, type: 'produto', icon: 'fas fa-box' }));
+      let suggestions = [];
 
-      const animalSuggestions = animals
-        .filter(a => a.nome?.toLowerCase().includes(query.toLowerCase()) || 
-                    a.especie?.toLowerCase().includes(query.toLowerCase()) ||
-                    a.raca?.toLowerCase().includes(query.toLowerCase()))
-        .slice(0, 3)
-        .map(a => ({ name: a.nome || `${a.especie} ${a.raca}`, type: 'animal', icon: 'fas fa-paw' }));
+      if (searchType === 'produto' || searchType === 'ambos') {
+        const productSuggestions = products
+          .filter(p => p.nome?.toLowerCase().includes(query.toLowerCase()) || 
+                      p.descricao?.toLowerCase().includes(query.toLowerCase()))
+          .slice(0, searchType === 'produto' ? 5 : 3)
+          .map(p => ({ 
+            name: p.nome, 
+            type: 'produto', 
+            icon: 'fas fa-box',
+            image: getBase64ImageSrc(p.foto),
+            price: p.preco,
+            data: p
+          }));
+        suggestions = [...suggestions, ...productSuggestions];
+      }
 
-      setSuggestions([...productSuggestions, ...animalSuggestions]);
+      if (searchType === 'animal' || searchType === 'ambos') {
+        const animalSuggestions = animals
+          .filter(a => a.nome?.toLowerCase().includes(query.toLowerCase()) || 
+                      a.especie?.toLowerCase().includes(query.toLowerCase()) ||
+                      a.raca?.toLowerCase().includes(query.toLowerCase()))
+          .slice(0, searchType === 'animal' ? 5 : 3)
+          .map(a => ({ 
+            name: a.nome || `${a.especie} ${a.raca}`, 
+            type: 'animal', 
+            icon: 'fas fa-paw',
+            image: getBase64ImageSrc(a.foto),
+            info: `${a.especie} • ${a.raca}`,
+            data: a
+          }));
+        suggestions = [...suggestions, ...animalSuggestions];
+      }
+
+      setSuggestions(suggestions);
       setShowSuggestions(true);
     } catch (error) {
       console.error('Erro ao buscar sugestões:', error);
@@ -172,9 +227,27 @@ export default function Navbar() {
                     className="suggestion-item"
                     onClick={() => handleSuggestionClick(suggestion)}
                   >
-                    <i className={`suggestion-icon ${suggestion.icon}`}></i>
-                    <span className="suggestion-text">{suggestion.name}</span>
-                    <span className="suggestion-type">{suggestion.type}</span>
+                    <img 
+                      src={suggestion.image} 
+                      alt={suggestion.name}
+                      className="suggestion-image"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzk5OSI+Pz88L3RleHQ+PC9zdmc+";
+                      }}
+                    />
+                    <div className="suggestion-content">
+                      <span className="suggestion-text">{suggestion.name}</span>
+                      {suggestion.price && (
+                        <span className="suggestion-price">R$ {suggestion.price.toFixed(2)}</span>
+                      )}
+                      {suggestion.info && (
+                        <span className="suggestion-info">{suggestion.info}</span>
+                      )}
+                    </div>
+                    <div className="suggestion-meta">
+                      <i className={`suggestion-icon ${suggestion.icon}`}></i>
+                      <span className="suggestion-type">{suggestion.type}</span>
+                    </div>
                   </div>
                 ))
               ) : (

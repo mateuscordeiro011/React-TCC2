@@ -86,11 +86,11 @@ body.dark-mode .search-suggestions {
 .suggestion-item {
   padding: 12px 15px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   border-bottom: 1px solid #f1f3f4;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 0.95rem;
 }
 
@@ -104,36 +104,94 @@ body.dark-mode .suggestion-item {
 
 .suggestion-item:hover {
   background-color: rgba(0, 123, 255, 0.1);
+  transform: translateX(2px);
 }
 
 body.dark-mode .suggestion-item:hover {
   background-color: rgba(88, 166, 255, 0.15);
 }
 
-.suggestion-icon {
-  color: #6c757d;
-  font-size: 0.9rem;
-  width: 16px;
-  text-align: center;
+.suggestion-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #e9ecef;
+  transition: border-color 0.2s ease;
 }
 
-body.dark-mode .suggestion-icon {
-  color: #8b949e;
+body.dark-mode .suggestion-image {
+  border-color: #30363d;
+}
+
+.suggestion-item:hover .suggestion-image {
+  border-color: #007bff;
+}
+
+body.dark-mode .suggestion-item:hover .suggestion-image {
+  border-color: #58a6ff;
+}
+
+.suggestion-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .suggestion-text {
   color: #2c3e50;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
 }
 
 body.dark-mode .suggestion-text {
   color: #f0f6fc;
 }
 
-.suggestion-type {
+.suggestion-price {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+body.dark-mode .suggestion-price {
+  color: #3fb950;
+}
+
+.suggestion-info {
   color: #6c757d;
   font-size: 0.8rem;
-  margin-left: auto;
+  font-style: italic;
+}
+
+body.dark-mode .suggestion-info {
+  color: #8b949e;
+}
+
+.suggestion-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.suggestion-icon {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+body.dark-mode .suggestion-icon {
+  color: #8b949e;
+}
+
+.suggestion-type {
+  color: #6c757d;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 body.dark-mode .suggestion-type {

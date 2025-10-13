@@ -301,12 +301,10 @@ body.dark-mode .hero-carousel .slick-dots li.slick-active button {
 
 /* === CATALOG SECTIONS === */
 .catalog-section {
-  padding: 80px 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 80px 0;
+  width: 100%;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
   margin-bottom: 40px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease;
@@ -323,6 +321,11 @@ body.dark-mode .catalog-section {
   align-items: center;
   margin-bottom: 50px;
   position: relative;
+  padding: 0 20px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
 }
 
 .catalog-title {
@@ -393,15 +396,17 @@ body.dark-mode .view-more-btn:hover {
 
 /* === CATALOG CAROUSEL === */
 .catalog-carousel {
-  padding: 0 10px;
+  padding: 0 20px;
+  width: 100%;
 }
 
 .catalog-carousel .slick-slider {
-  margin: 0 -15px;
+  margin: 0;
+  width: 100%;
 }
 
 .catalog-carousel .slick-slide {
-  padding: 0 15px;
+  padding: 0 10px;
 }
 
 .catalog-item {
@@ -413,6 +418,7 @@ body.dark-mode .view-more-btn:hover {
   cursor: pointer;
   position: relative;
   border: 2px solid transparent;
+  min-height: 420px;
 }
 
 body.dark-mode .catalog-item {
@@ -434,13 +440,17 @@ body.dark-mode .catalog-item:hover {
 
 .catalog-item-image {
   width: 100%;
-  height: 200px;
+  height: 250px;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.6s ease;
+  border-radius: 15px 15px 0 0;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .catalog-item:hover .catalog-item-image {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .catalog-item-title {
