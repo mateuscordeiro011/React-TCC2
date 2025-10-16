@@ -52,55 +52,6 @@ export default function EmployeeDashboard() {
         return age;
     };
 
-    // Simular logs de atividades (já que o endpoint pode não existir)
-    const generateMockLogs = () => {
-        const mockLogs = [
-            {
-                id: 1,
-                tipo_acao: "COMPRA",
-                usuario_nome: "João Silva",
-                descricao: "Comprou ração Premium para cães - 15kg",
-                valor: 89.90,
-                data_hora: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 min atrás
-                status: "CONCLUÍDA"
-            },
-            {
-                id: 2,
-                tipo_acao: "DOACAO",
-                usuario_nome: "Maria Santos",
-                descricao: "Cadastrou gato 'Mimi' para doação",
-                data_hora: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2h atrás
-                status: "PENDENTE"
-            },
-            {
-                id: 3,
-                tipo_acao: "ADOCAO",
-                usuario_nome: "Pedro Costa",
-                descricao: "Iniciou processo de adoção do cão 'Rex'",
-                data_hora: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(), // 4h atrás
-                status: "EM_ANDAMENTO"
-            },
-            {
-                id: 4,
-                tipo_acao: "CADASTRO",
-                usuario_nome: "Ana Oliveira",
-                descricao: "Novo cliente cadastrado no sistema",
-                data_hora: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6h atrás
-                status: "ATIVO"
-            },
-            {
-                id: 5,
-                tipo_acao: "COMPRA",
-                usuario_nome: "Carlos Lima",
-                descricao: "Comprou kit higiene felina + brinquedos",
-                valor: 156.50,
-                data_hora: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(), // 8h atrás
-                status: "CONCLUÍDA"
-            }
-        ];
-        return mockLogs;
-    };
-
     // Carregar todos os dados
     useEffect(() => {
         const loadAllData = async () => {
@@ -108,15 +59,26 @@ export default function EmployeeDashboard() {
                 setLoading(true);
                 setError(null);
 
-                // Carregar animais
+                // Carregar animais (funcionários + doações de clientes)
                 try {
-                    const adoptionsRes = await fetch("http://localhost:8080/api-salsi/animais", {
-                        credentials: "include",
-                    });
-                    if (adoptionsRes.ok) {
-                        const adoptionsData = await adoptionsRes.json();
-                        setAdoptions(Array.isArray(adoptionsData) ? adoptionsData : []);
+                    const [animaisRes, doacoesRes] = await Promise.all([
+                        fetch("http://localhost:8080/api-salsi/animais"),
+                        fetch("http://localhost:8080/api-salsi/doacoes/disponiveis")
+                    ]);
+                    
+                    let allAnimals = [];
+                    
+                    if (animaisRes.ok) {
+                        const animaisData = await animaisRes.json();
+                        allAnimals = [...allAnimals, ...(Array.isArray(animaisData) ? animaisData : [])];
                     }
+                    
+                    if (doacoesRes.ok) {
+                        const doacoesData = await doacoesRes.json();
+                        allAnimals = [...allAnimals, ...(Array.isArray(doacoesData) ? doacoesData : [])];
+                    }
+                    
+                    setAdoptions(allAnimals);
                 } catch (err) {
                     console.warn("Erro ao carregar animais:", err);
                     setAdoptions([]);
@@ -164,20 +126,18 @@ export default function EmployeeDashboard() {
                     setClients([]);
                 }
 
-                // Carregar logs (ou usar mock se não existir)
+                // Carregar logs da API
                 try {
-                    const logsRes = await fetch("http://localhost:8080/api-salsi/logs", {
-                        credentials: "include",
-                    });
+                    const logsRes = await fetch("http://localhost:8080/api-salsi/logs/recentes");
                     if (logsRes.ok) {
                         const logsData = await logsRes.json();
-                        setLogs(Array.isArray(logsData) ? logsData : generateMockLogs());
+                        setLogs(Array.isArray(logsData) ? logsData : []);
                     } else {
-                        setLogs(generateMockLogs());
+                        setLogs([]);
                     }
                 } catch (err) {
-                    console.warn("Endpoint de logs não disponível, usando dados simulados");
-                    setLogs(generateMockLogs());
+                    console.warn("Erro ao carregar logs:", err);
+                    setLogs([]);
                 }
 
             } catch (err) {
@@ -305,24 +265,6 @@ export default function EmployeeDashboard() {
                         >
                             📝 Log de Atividades
                         </button>
-                        <button 
-                            className={activeTab === 'animals' ? 'active' : ''}
-                            onClick={() => setActiveTab('animals')}
-                        >
-                            🐾 Animais
-                        </button>
-                        <button 
-                            className={activeTab === 'products' ? 'active' : ''}
-                            onClick={() => setActiveTab('products')}
-                        >
-                            📦 Produtos
-                        </button>
-                        <button 
-                            className={activeTab === 'sales' ? 'active' : ''}
-                            onClick={() => setActiveTab('sales')}
-                        >
-                            💳 Vendas
-                        </button>
                     </nav>
 
                     {/* Conteúdo das Abas */}
@@ -361,134 +303,39 @@ export default function EmployeeDashboard() {
                             <section className="logs-section">
                                 <h2>📝 Log Completo de Atividades</h2>
                                 <div className="logs-container">
-                                    {logs.map(log => (
-                                        <div key={log.id} className="log-item">
-                                            <div className="log-header">
-                                                <span className="log-icon">{getActionIcon(log.tipo_acao)}</span>
-                                                <div className="log-info">
-                                                    <h4>{log.tipo_acao}</h4>
-                                                    <p><strong>Usuário:</strong> {log.usuario_nome}</p>
-                                                </div>
-                                                <div className="log-meta">
-                                                    <span 
-                                                        className="log-status"
-                                                        style={{ backgroundColor: getStatusColor(log.status) }}
-                                                    >
-                                                        {log.status}
-                                                    </span>
-                                                    <small>{formatDateTime(log.data_hora)}</small>
-                                                </div>
-                                            </div>
-                                            <div className="log-description">
-                                                <p>{log.descricao}</p>
-                                                {log.valor && (
-                                                    <p className="log-value">
-                                                        <strong>Valor:</strong> {formatCurrency(log.valor)}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {/*Animais */}
-                        {activeTab === 'animals' && (
-                            <section className="animals-section">
-                                <h2>🐾 Animais para Adoção</h2>
-                                {adoptions.length === 0 ? (
-                                    <p className="no-data">Nenhum animal cadastrado para adoção.</p>
-                                ) : (
-                                    <div className="catalog-grid">
-                                        {adoptions.map((animal) => (
-                                            <div key={animal.id_animal || animal.id} className="catalog-item">
-                                                <img
-                                                    src={getBase64ImageSrc(animal.foto)}
-                                                    alt={animal.nome}
-                                                    className="catalog-item-image"
-                                                />
-                                                <h3 className="catalog-item-title">{animal.nome}</h3>
-                                                <p className="catalog-item-info">
-                                                    <strong>Espécie:</strong> {animal.especie || "—"}<br />
-                                                    <strong>Raça:</strong> {animal.raca || "—"}<br />
-                                                    <strong>Idade:</strong> {calculateAge(animal.data_nascimento)} anos<br />
-                                                    <strong>Peso:</strong> {animal.peso || "—"} kg<br />
-                                                    <strong>Sexo:</strong> {animal.sexo || "—"}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
-                        )}
-
-                        {/*Produtos */}
-                        {activeTab === 'products' && (
-                            <section className="products-section">
-                                <h2>📦 Produtos Cadastrados</h2>
-                                {products.length === 0 ? (
-                                    <p className="no-data">Nenhum produto cadastrado.</p>
-                                ) : (
-                                    <div className="catalog-grid">
-                                        {products.map((product) => (
-                                            <div key={product.id_produto || product.id} className="catalog-item">
-                                                <img
-                                                    src={getBase64ImageSrc(product.foto)}
-                                                    alt={product.nome}
-                                                    className="catalog-item-image"
-                                                />
-                                                <h3 className="catalog-item-title">{product.nome}</h3>
-                                                <p className="catalog-item-price">
-                                                    {formatCurrency(product.preco || 0)}
-                                                </p>
-                                                <p className="catalog-item-info">
-                                                    <strong>Categoria:</strong> {product.categoria || "—"}<br />
-                                                    <strong>Estoque:</strong> {product.estoque || "—"} unidades
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </section>
-                        )}
-
-                        {/* Vendas */}
-                        {activeTab === 'sales' && (
-                            <section className="sales-section">
-                                <h2>💳 Histórico de Vendas</h2>
-                                {purchases.length === 0 ? (
-                                    <p className="no-data">Nenhuma venda registrada.</p>
-                                ) : (
-                                    <div className="sales-grid">
-                                        {purchases.map((sale) => (
-                                            <div key={sale.id_pedido || sale.id} className="sale-item">
-                                                <div className="sale-header">
-                                                    <h4>🛒 Pedido #{sale.id_pedido || sale.id}</h4>
-                                                    <span className="sale-total">
-                                                        {formatCurrency(sale.total || 0)}
-                                                    </span>
-                                                </div>
-                                                <div className="sale-details">
-                                                    <p><strong>Cliente ID:</strong> {sale.id_usuario || "—"}</p>
-                                                    <p><strong>Itens:</strong> {Array.isArray(sale.itens) ? sale.itens.length : "—"}</p>
-                                                    {sale.data && (
-                                                        <p><strong>Data:</strong> {formatDateTime(sale.data)}</p>
-                                                    )}
-                                                    <p>
-                                                        <strong>Status:</strong> 
+                                    {logs.length === 0 ? (
+                                        <p>Nenhuma atividade registrada.</p>
+                                    ) : (
+                                        logs.map(log => (
+                                            <div key={log.id} className="log-item">
+                                                <div className="log-header">
+                                                    <span className="log-icon">{getActionIcon(log.tipo_acao)}</span>
+                                                    <div className="log-info">
+                                                        <h4>{log.tipo_acao}</h4>
+                                                        <p><strong>Usuário:</strong> {log.usuario_nome}</p>
+                                                    </div>
+                                                    <div className="log-meta">
                                                         <span 
-                                                            className="sale-status"
-                                                            style={{ color: getStatusColor(sale.status || 'CONCLUÍDA') }}
+                                                            className="log-status"
+                                                            style={{ backgroundColor: getStatusColor(log.status) }}
                                                         >
-                                                            {sale.status || 'CONCLUÍDA'}
+                                                            {log.status}
                                                         </span>
-                                                    </p>
+                                                        <small>{formatDateTime(log.data_hora)}</small>
+                                                    </div>
+                                                </div>
+                                                <div className="log-description">
+                                                    <p>{log.descricao}</p>
+                                                    {log.valor && (
+                                                        <p className="log-value">
+                                                            <strong>Valor:</strong> {formatCurrency(log.valor)}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
+                                        ))
+                                    )}
+                                </div>
                             </section>
                         )}
                     </div>

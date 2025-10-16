@@ -1,8 +1,9 @@
 .configuracoes-page {
   min-height: 100vh;
   padding: 20px 0;
-  background-color: #9DBCEA; 
-  transition: background-color 0.4s ease;
+  background: linear-gradient(135deg, #9DBCEA 0%, #E3F2FD 100%);
+  transition: all 0.4s ease;
+  font-family: 'Poppins', sans-serif;
 }
 
 .configuracoes-page.dark-mode {
@@ -12,11 +13,13 @@
 .local-notes-container {
   max-width: 900px;
   margin: 60px auto;
-  padding: 30px;
-  background: #ffffff; 
-  border-radius: 20px;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .configuracoes-page.dark-mode .local-notes-container {
@@ -195,15 +198,17 @@
 }
 
 .note-card {
-  background: #ffffff;
-  border-left: 6px solid #00C4CC; 
-  border-radius: 16px;
-  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-left: 6px solid #00C4CC;
+  border-radius: 20px;
+  padding: 20px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(0, 196, 204, 0.1);
 }
 
 .configuracoes-page.dark-mode .note-card {
@@ -214,8 +219,9 @@
 }
 
 .note-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  border-color: #00C4CC;
 }
 
 .configuracoes-page.dark-mode .note-card:hover {

@@ -7,7 +7,6 @@ import { useAuth } from "../../utils/useAuth";
 import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequiredModal";
 import Footer from "../../components/Footer/Footer";
 import "./Home.css";
-import LoginPromptModal from "../../components/LoginPromptModal/LoginPromptModal";
 import promo1 from "../../IMG/promo1.png";
 import promo2 from "../../IMG/promo2.jpg";
 import promo3 from "../../IMG/promo3.jpg";
@@ -23,6 +22,7 @@ export default function Home() {
   const [animals, setAnimals] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedAnimal, setSelectedAnimal] = useState(null);
+
 
   const heroSettings = {
     dots: true,
@@ -43,6 +43,32 @@ export default function Home() {
     }
     console.log("Adicionando ao carrinho:", item.nome);
   };
+
+  const handleAdopt = (animal) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    console.log("Tentando adotar:", animal.nome);
+  };
+
+  const handleViewProduct = (product) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    openProductModal(product);
+  };
+
+  const handleViewAnimal = (animal) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    openAnimalModal(animal);
+  };
+
+
 
   useEffect(() => {
     fetch("http://localhost:8080/api-salsi/produtos", {
@@ -179,7 +205,7 @@ export default function Home() {
                 ]}
               >
                 {items.map((item) => (
-                  <div key={item.id_produto || item.id} className="catalog-item" onClick={() => openProductModal(item)}>
+                  <div key={item.id_produto || item.id} className="catalog-item" onClick={() => handleViewProduct(item)}>
                     <img
                       src={getBase64ImageSrc(item.foto)}
                       alt={item.nome}
@@ -236,7 +262,7 @@ export default function Home() {
                   <div
                     key={animal.id_animal || animal.id}
                     className="catalog-item"
-                    onClick={() => openAnimalModal(animal)}
+                    onClick={() => handleViewAnimal(animal)}
                   >
                     <img
                       src={getBase64ImageSrc(animal.foto)}
@@ -258,7 +284,7 @@ export default function Home() {
                       className="catalog-item-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(animal);
+                        handleAdopt(animal);
                       }}
                     >
                       Quero Adotar
@@ -332,10 +358,12 @@ export default function Home() {
           </div>
         )}
 
-        <LoginPromptModal
+        <LoginRequiredModal
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
+
+
       </div>
 
       <Footer />

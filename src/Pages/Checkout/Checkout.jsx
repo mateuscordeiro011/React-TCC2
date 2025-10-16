@@ -50,6 +50,45 @@ export default function Checkout() {
     });
   };
 
+  // Função para criar pedido na API e enviar email
+  const criarPedidoNaAPI = async (orderData) => {
+    try {
+      console.log('📦 Enviando dados do pedido para API...');
+      console.log('user.id:', user.id, typeof user.id);
+      
+      const pedidoPayload = {
+        idUsuario: Number(user.id),
+        total: parseFloat((orderData.total + 15).toFixed(2))
+      };
+      
+      console.log('📋 Payload:', pedidoPayload);
+
+      const response = await fetch('http://localhost:8080/api-salsi/pedidos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        credentials: 'include',
+        body: JSON.stringify(pedidoPayload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro ${response.status}: ${errorText}`);
+      }
+      
+      const pedidoCriado = await response.json();
+      console.log('✅ Pedido criado com sucesso:', pedidoCriado);
+      console.log('📧 Email de confirmação enviado automaticamente!');
+      return pedidoCriado;
+      
+    } catch (error) {
+      console.error('❌ Erro ao criar pedido:', error);
+      throw error;
+    }
+  };
+
   const handleConfirmOrder = () => {
     if (!user) {
       setShowLoginModal(true);
@@ -58,21 +97,23 @@ export default function Checkout() {
 
     console.log('Pedido confirmado:', order);
     
-    // Aqui você faria a chamada para sua API
-    // fetch('/api/pedidos', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${user.token}`
-    //   },
-    //   body: JSON.stringify(order)
-    // })
-    
     if (selectedPaymentMethod === 'pix') {
       setShowPixCode(true);
     } else {
-      // Para outros métodos de pagamento
+      // Para outros métodos de pagamento, criar pedido diretamente
+      handleFinalizarPedido();
+    }
+  };
+
+  const handleFinalizarPedido = async () => {
+    try {
+      console.log('🔄 Finalizando pedido...');
+      await criarPedidoNaAPI(order);
+      console.log('✅ Pedido finalizado e email enviado!');
       navigate('/pedido-confirmado', { state: { order } });
+    } catch (error) {
+      console.error('❌ Erro ao finalizar pedido:', error);
+      alert('Erro ao finalizar pedido. Tente novamente.');
     }
   };
 
@@ -150,7 +191,17 @@ export default function Checkout() {
                   </button>
                   <button 
                     className="btn-primary"
-                    onClick={() => navigate('/pedido-confirmado', { state: { order } })}
+                    onClick={async () => {
+                      try {
+                        console.log('🔄 Finalizando pagamento PIX...');
+                        await criarPedidoNaAPI(order);
+                        console.log('✅ Pedido criado e email enviado!');
+                        navigate('/pedido-confirmado', { state: { order } });
+                      } catch (error) {
+                        console.error('❌ Erro ao finalizar PIX:', error);
+                        alert('Erro ao finalizar pagamento. Tente novamente.');
+                      }
+                    }}
                   >
                     Pagamento Realizado
                   </button>

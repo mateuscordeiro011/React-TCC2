@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import './OrderConfirmation.css';
@@ -8,6 +9,11 @@ export default function OrderConfirmation() {
   const navigate = useNavigate();
   const location = useLocation();
   const order = location.state?.order;
+
+  useEffect(() => {
+    // Limpar carrinho quando o pedido for confirmado
+    localStorage.removeItem('cart');
+  }, []);
 
   const handleBackToHome = () => {
     navigate('/');

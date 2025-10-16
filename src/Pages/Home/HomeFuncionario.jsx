@@ -15,6 +15,8 @@ export default function HomeFuncionario() {
     clientes: 0,
   });
 
+  const [recentLogs, setRecentLogs] = useState([]);
+
   // 🔁 Carregar estatísticas
   useEffect(() => {
     const loadStats = async () => {
@@ -22,8 +24,8 @@ export default function HomeFuncionario() {
         const [produtosRes, animaisRes, doacoesRes, clientesRes] = await Promise.all([
           fetch("http://localhost:8080/api-salsi/produtos").then(r => r.json()),
           fetch("http://localhost:8080/api-salsi/animais").then(r => r.json()),
-          fetch("http://localhost:8080/api-salsi/doacoes").then(r => r.json()),
-          fetch("http://localhost:8080/api-salsi/usuarios?role=CLIENTE").then(r => r.json()),
+          fetch("http://localhost:8080/api-salsi/doacoes/disponiveis").then(r => r.json()),
+          fetch("http://localhost:8080/api-salsi/clientes").then(r => r.json()),
         ]);
 
         setStats({
@@ -32,6 +34,17 @@ export default function HomeFuncionario() {
           doacoes: Array.isArray(doacoesRes) ? doacoesRes.length : 0,
           clientes: Array.isArray(clientesRes) ? clientesRes.length : 0,
         });
+
+        // Carregar logs recentes
+        try {
+          const logsRes = await fetch("http://localhost:8080/api-salsi/logs/recentes");
+          if (logsRes.ok) {
+            const logsData = await logsRes.json();
+            setRecentLogs(Array.isArray(logsData) ? logsData.slice(0, 3) : []);
+          }
+        } catch (err) {
+          console.warn("Erro ao carregar logs:", err);
+        }
       } catch (err) {
         console.error("Erro ao carregar estatísticas:", err);
       }
@@ -129,7 +142,7 @@ export default function HomeFuncionario() {
               <p className="catalog-item-info">
                 Total recebidas: <strong>{stats.doacoes}</strong>
               </p>
-              <a href="/formdoacao" className="catalog-item-button" style={{ marginTop: '10px' }}>
+              <a href="/formdoacao-funcionario" className="catalog-item-button" style={{ marginTop: '10px' }}>
                 Ver Registro
               </a>
             </div>
@@ -150,8 +163,8 @@ export default function HomeFuncionario() {
               <p className="catalog-item-info">
                 Ativos: <strong>{stats.clientes}</strong>
               </p>
-              <a href="/clientes" className="catalog-item-button" style={{ marginTop: '10px' }}>
-                Ver Lista
+              <a href="/relatorio" className="catalog-item-button" style={{ marginTop: '10px' }}>
+                Ver Relatório
               </a>
             </div>
           </div>
@@ -176,10 +189,10 @@ export default function HomeFuncionario() {
             <a href="/formanimal" className="view-more-btn" style={{ minWidth: '200px' }}>
               🐶 Cadastrar Animal
             </a>
-            <a href="/formdoacao" className="view-more-btn" style={{ minWidth: '200px' }}>
+            <a href="/formdoacao-funcionario" className="view-more-btn" style={{ minWidth: '200px' }}>
               ❤️ Ver Doações
             </a>
-            <a href="/relatorios" className="view-more-btn" style={{ minWidth: '200px' }}>
+            <a href="/relatorio" className="view-more-btn" style={{ minWidth: '200px' }}>
               📊 Relatórios
             </a>
           </div>
@@ -198,18 +211,24 @@ export default function HomeFuncionario() {
             boxShadow: darkMode ? '0 8px 25px rgba(0,0,0,0.4)' : '0 8px 25px rgba(0,0,0,0.1)',
             margin: '0 15px'
           }}>
-            <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: darkMode ? '1px dashed #555' : '1px dashed #ddd' }}>
-              <span style={{ color: darkMode ? '#ccc' : '#666', fontSize: '0.9rem' }}>[10/04/2025]</span>
-              <span style={{ marginLeft: '10px', color: darkMode ? '#eee' : '#333' }}>Novo produto cadastrado: "Ração Premium"</span>
-            </div>
-            <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: darkMode ? '1px dashed #555' : '1px dashed #ddd' }}>
-              <span style={{ color: darkMode ? '#ccc' : '#666', fontSize: '0.9rem' }}>[09/04/2025]</span>
-              <span style={{ marginLeft: '10px', color: darkMode ? '#eee' : '#333' }}>Doação recebida: Luna (SRD)</span>
-            </div>
-            <div>
-              <span style={{ color: darkMode ? '#ccc' : '#666', fontSize: '0.9rem' }}>[08/04/2025]</span>
-              <span style={{ marginLeft: '10px', color: darkMode ? '#eee' : '#333' }}>Animal adotado: Bob (Poodle)</span>
-            </div>
+            {recentLogs.length === 0 ? (
+              <p style={{ color: darkMode ? '#ccc' : '#666', textAlign: 'center' }}>Nenhuma atividade recente registrada.</p>
+            ) : (
+              recentLogs.map((log, index) => (
+                <div key={log.id} style={{ 
+                  marginBottom: index < recentLogs.length - 1 ? '20px' : '0', 
+                  paddingBottom: index < recentLogs.length - 1 ? '20px' : '0', 
+                  borderBottom: index < recentLogs.length - 1 ? (darkMode ? '1px dashed #555' : '1px dashed #ddd') : 'none' 
+                }}>
+                  <span style={{ color: darkMode ? '#ccc' : '#666', fontSize: '0.9rem' }}>
+                    [{new Date(log.dataHora).toLocaleString('pt-BR')}]
+                  </span>
+                  <span style={{ marginLeft: '10px', color: darkMode ? '#eee' : '#333' }}>
+                    {log.usuarioNome}: {log.descricao}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </section>
 

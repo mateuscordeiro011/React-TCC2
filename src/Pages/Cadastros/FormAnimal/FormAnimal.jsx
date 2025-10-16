@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "axios";
+import api from "../../../service/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -46,7 +46,7 @@ const FormAnimal = () => {
   useEffect(() => {
     const fetchAnimais = async () => {
       try {
-        const res = await api.get("http://localhost:8080/api-salsi/animais");
+        const res = await api.get("/api-salsi/animais");
         setUsuarios(res.data);
       } catch (err) {
         console.error("Erro ao buscar animais", err);
@@ -137,7 +137,7 @@ const FormAnimal = () => {
       let response;
       if (animalEditando) {
         response = await api.put(
-          `http://localhost:8080/api-salsi/animais/${animalEditando}`,
+          `/api-salsi/animais/${animalEditando}`,
           payload
         );
         setUsuarios((prev) =>
@@ -145,7 +145,7 @@ const FormAnimal = () => {
         );
         setMessage({ type: "success", text: "Animal atualizado com sucesso!" });
       } else {
-        response = await api.post("http://localhost:8080/api-salsi/animais", payload);
+        response = await api.post("/api-salsi/animais", payload);
         setUsuarios((prev) => [...prev, response.data]);
         setMessage({ type: "success", text: "Animal cadastrado com sucesso!" });
       }
@@ -172,7 +172,7 @@ const FormAnimal = () => {
     setShowDeleteModal(false);
 
     try {
-      await api.delete(`http://localhost:8080/api-salsi/animais/${animal.id_animal}`);
+      await api.delete(`/api-salsi/animais/${animal.id_animal}`);
       setUsuarios((prev) => prev.filter((p) => p.id_animal !== animal.id_animal));
       setSuccessMessage(`O animal "${animal.nome}" foi excluído com sucesso!`);
       setShowSuccessModal(true);

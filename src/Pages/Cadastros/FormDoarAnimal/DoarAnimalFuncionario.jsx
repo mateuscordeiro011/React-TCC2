@@ -1,283 +1,219 @@
 import { useState, useEffect } from "react";
-import api from "axios";
+import api from "../../../service/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Image as ImageIcon, CheckCircle, AlertCircle, PawPrint } from "lucide-react";
+import { Eye, PawPrint, CheckCircle, AlertCircle, User } from "lucide-react";
 import "./DoarAnimal.css";
 import Footer from "../../../components/Footer/Footer";
-import { getUserRole } from "../../../utils/auth";
+import NavbarFuncionario from "../../../components/Header/NavbarFuncionario";
+import { useAuth } from "../../../utils/useAuth";
 
-const DoarAnimal = () => {
-  const [animais, setAnimais] = useState([]);
-  const [doacoes, setDoacoes] = useState([]); 
-  const [vnome, setNome] = useState("");
-  const [vraca, setRaca] = useState("");
-  const [vidade, setIdade] = useState("");
-  const [vpelagem, setPelagem] = useState("");
-  const [vimg, setImg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const DoarAnimalFuncionario = () => {
+  const [doacoes, setDoacoes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
+  const [selectedDoacao, setSelectedDoacao] = useState(null);
 
-  const userRole = getUserRole(); 
+  const { user, isFuncionario } = useAuth();
 
-  // Busca animais cadastrados (público)
   useEffect(() => {
-    const fetchAnimais = async () => {
-      try {
-        const res = await api.get("http://localhost:8080/api-salsi/animais");
-        setAnimais(res.data);
-      } catch (err) {
-        console.error("Erro ao buscar animais", err);
-        setMessage({ type: "error", text: "Falha ao carregar animais." });
-      }
-    };
-    fetchAnimais();
-  }, []);
-
-  // Busca LOG de doações (só se for funcionário)
-  useEffect(() => {
-    if (userRole === 'FUNCIONARIO') {
-      const fetchDoacoes = async () => {
-        try {
-          const res = await api.get("http://localhost:8080/api-salsi/doacoes");
-          setDoacoes(res.data);
-        } catch (err) {
-          console.error("Erro ao buscar doações", err);
-          setMessage({ type: "error", text: "Falha ao carregar histórico de doações." });
-        }
-      };
-      fetchDoacoes();
+    if (isFuncionario) {
+      loadDoacoes();
     }
-  }, [userRole]);
+  }, [isFuncionario]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!vnome || !vraca) {
-      setMessage({ type: "error", text: "Preencha os campos obrigatórios." });
-      return;
-    }
-
-    setIsSubmitting(true);
-    setMessage(null);
-
+  const loadDoacoes = async () => {
     try {
-      const response = await api.post("http://localhost:8080/api-salsi/doacoes", {
-        nome: vnome,
-        raca: vraca,
-        idade: parseInt(vidade),
-        pelagem: vpelagem,
-        imagem: vimg,
-        dataDoacao: new Date().toISOString(), // opcional
-      });
-
-      // Atualiza lista local (opcional)
-      if (userRole === 'FUNCIONARIO') {
-        setDoacoes((prev) => [...prev, response.data]);
-      }
-
-      resetForm();
-      setMessage({ type: "success", text: "Doação registrada com sucesso!" });
+      setLoading(true);
+      const response = await api.get("/api-salsi/doacoes/disponiveis");
+      console.log("Doações recebidas:", response.data);
+      
+      // Para cada doação, buscar dados do cliente doador
+      const doacoesComCliente = await Promise.all(
+        response.data.map(async (doacao) => {
+          console.log("Processando doação:", doacao.id_animal, "Cliente ID:", doacao.id_cliente_doador);
+          
+          if (!doacao.id_cliente_doador) {
+            console.warn("Doação sem id_cliente_doador:", doacao);
+            return {
+              ...doacao,
+              cliente: { nome: "ID do cliente não informado", email: "N/A" }
+            };
+          }
+          
+          try {
+            const clienteResponse = await api.get(`/api-salsi/clientes/${doacao.id_cliente_doador}`);
+            console.log("Cliente encontrado:", clienteResponse.data);
+            return {
+              ...doacao,
+              cliente: clienteResponse.data
+            };
+          } catch (error) {
+            console.error(`Erro ao buscar cliente ${doacao.id_cliente_doador}:`, error.response?.status, error.response?.data);
+            return {
+              ...doacao,
+              cliente: { nome: "Cliente não encontrado", email: "N/A" }
+            };
+          }
+        })
+      );
+      
+      setDoacoes(doacoesComCliente);
     } catch (error) {
-      console.error("Erro ao registrar doação", error);
-      setMessage({ type: "error", text: "Erro ao registrar doação." });
+      console.error("Erro ao carregar doações:", error);
+      setMessage({ type: "error", text: "Erro ao carregar doações." });
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  const handleDeleteDoacao = async (id) => {
-    if (!window.confirm("Tem certeza que deseja excluir este registro de doação?")) return;
-
-    try {
-      await api.delete(`http://localhost:8080/api-salsi/doacoes/${id}`);
-      setDoacoes((prev) => prev.filter((d) => d.id !== id));
-      setMessage({ type: "success", text: "Registro excluído com sucesso!" });
-    } catch (error) {
-      console.log("Erro ao deletar doação", error);
-      setMessage({ type: "error", text: "Erro ao excluir registro." });
-    }
+  const handleViewDoacao = (doacao) => {
+    setSelectedDoacao(doacao);
   };
 
-  const resetForm = () => {
-    setNome("");
-    setRaca("");
-    setIdade("");
-    setPelagem("");
-    setImg("");
+  const closeModal = () => {
+    setSelectedDoacao(null);
   };
+
+  const renderImage = (foto) => {
+    if (!foto) return <div className="petshop-no-image">Sem foto</div>;
+    return <img src={`data:image/jpeg;base64,${foto}`} alt="Animal" className="petshop-thumb" />;
+  };
+
+  const renderClienteImage = (foto) => {
+    if (!foto) return <div className="petshop-cliente-avatar"><User size={24} /></div>;
+    return <img src={`data:image/jpeg;base64,${foto}`} alt="Cliente" className="petshop-cliente-avatar" />;
+  };
+
+  if (!isFuncionario) {
+    return (
+      <>
+        <NavbarFuncionario />
+        <div className="petshop-container">
+          <div className="petshop-access-denied">
+            <h2>Acesso Negado</h2>
+            <p>Esta página é restrita a funcionários.</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
-    <div className="petshop-container">
-      <AnimatePresence>
-        {message && (
-          <motion.div
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            className={`petshop-alert petshop-alert-${message.type}`}
-          >
-            {message.type === "success" ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
-            <span>{message.text}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <NavbarFuncionario />
+      <div className="petshop-container">
+        <AnimatePresence>
+          {message && (
+            <motion.div
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              className={`petshop-alert petshop-alert-${message.type}`}
+            >
+              {message.type === "success" ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+              <span>{message.text}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <div className="petshop-grid">
-        {/* FORMULÁRIO DE DOAÇÃO */}
         <motion.section
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="petshop-card petshop-form-card"
+          className="petshop-card petshop-full-width"
         >
           <div className="petshop-header">
             <div className="petshop-icon-wrapper">
               <PawPrint className="petshop-icon" />
             </div>
-            <h2>Doar um Animal</h2>
+            <h2>Doações de Animais - Painel Funcionário</h2>
           </div>
 
-          <form onSubmit={handleSubmit} className="petshop-form">
-            <div className="petshop-input-group">
-              <label>Nome do Animal *</label>
-              <input
-                type="text"
-                value={vnome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder="Ex: Luna"
-                required
-              />
+          {loading ? (
+            <div className="petshop-loading">Carregando doações...</div>
+          ) : doacoes.length === 0 ? (
+            <div className="petshop-empty">Nenhuma doação encontrada.</div>
+          ) : (
+            <div className="petshop-doacoes-grid">
+              {doacoes.map((doacao) => (
+                <motion.div
+                  key={doacao.id_animal}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="petshop-doacao-card"
+                >
+                  {renderImage(doacao.foto)}
+                  <div className="petshop-doacao-info">
+                    <h3>{doacao.nome}</h3>
+                    <p><strong>Espécie:</strong> {doacao.especie}</p>
+                    <p><strong>Raça:</strong> {doacao.raca || "Não informada"}</p>
+                    <p><strong>Status:</strong> {doacao.status}</p>
+                    
+                    <div className="petshop-cliente-info">
+                      <User size={16} />
+                      <span><strong>Doador:</strong> {doacao.cliente?.nome || "Carregando..."}</span>
+                    </div>
+                    {doacao.id_cliente_doador && (
+                      <p style={{fontSize: '0.8rem', color: '#999'}}>ID Cliente: {doacao.id_cliente_doador}</p>
+                    )}
+                    
+                    <button
+                      onClick={() => handleViewDoacao(doacao)}
+                      className="petshop-btn petshop-btn-small"
+                    >
+                      <Eye size={16} />
+                      Ver Detalhes
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
             </div>
-
-            <div className="petshop-input-group">
-              <label>Raça *</label>
-              <input
-                type="text"
-                value={vraca}
-                onChange={(e) => setRaca(e.target.value)}
-                placeholder="Ex: Vira-lata, SRD, Poodle"
-                required
-              />
-            </div>
-
-            <div className="petshop-input-group">
-              <label>Idade (meses)</label>
-              <input
-                type="number"
-                value={vidade}
-                onChange={(e) => setIdade(e.target.value)}
-                placeholder="Ex: 12"
-              />
-            </div>
-
-            <div className="petshop-input-group">
-              <label>Pelagem</label>
-              <input
-                type="text"
-                value={vpelagem}
-                onChange={(e) => setPelagem(e.target.value)}
-                placeholder="Ex: Curta, Preta"
-              />
-            </div>
-
-            <div className="petshop-input-group">
-              <label>Foto do Animal</label>
-              <div className="petshop-file-upload" onClick={() => document.getElementById('file-input').click()}>
-                <PawPrint size={20} />
-                <span>{vimg ? "Foto carregada" : "Clique para selecionar foto"}</span>
-              </div>
-              <input
-                id="file-input"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => setImg(reader.result);
-                    reader.readAsDataURL(file);
-                  }
-                }}
-                style={{ display: 'none' }}
-              />
-              {vimg && <img src={vimg} alt="Prévia" className="petshop-preview-img" />}
-            </div>
-
-            <button type="submit" disabled={isSubmitting} className="petshop-btn">
-              {isSubmitting ? (
-                <>
-                  <div className="petshop-spinner"></div>
-                  <span>Registrando...</span>
-                </>
-              ) : (
-                <>
-                  <Plus size={18} />
-                  <span>Registrar Doação</span>
-                </>
-              )}
-            </button>
-          </form>
+          )}
         </motion.section>
 
-        {/* LOG DE DOAÇÕES — APENAS FUNCIONÁRIO */}
-        {userRole === 'FUNCIONARIO' && (
-          <motion.section
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="petshop-card petshop-list-card"
-          >
-            <div className="petshop-header">
-              <div className="petshop-icon-wrapper">
-                <PawPrint className="petshop-icon" />
-              </div>
-              <h2>Histórico de Doações</h2>
-            </div>
-
-            <ul className="petshop-list">
-              <AnimatePresence>
-                {doacoes.length === 0 ? (
-                  <li className="petshop-empty">Nenhuma doação registrada.</li>
-                ) : (
-                  doacoes.map((doacao) => (
-                    <motion.li
-                      key={doacao.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="petshop-list-item"
-                    >
-                      <div className="petshop-product-info">
-                        <h3>{doacao.nome} ({doacao.raca})</h3>
-                        <p>Pelagem: {doacao.pelagem || 'Não informado'}</p>
-                        <div className="petshop-meta">
-                          <span>Idade: {doacao.idade || '?'} meses</span>
-                          <span className="petshop-date">
-                            {new Date(doacao.dataDoacao).toLocaleDateString('pt-BR')}
-                          </span>
-                        </div>
+        {/* Modal de Detalhes */}
+        {selectedDoacao && (
+          <div className="petshop-modal-overlay" onClick={closeModal}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="petshop-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="petshop-modal-close" onClick={closeModal}>×</button>
+              
+              <div className="petshop-modal-content">
+                <h2>{selectedDoacao.nome}</h2>
+                {renderImage(selectedDoacao.foto)}
+                
+                <div className="petshop-modal-details">
+                  <p><strong>Espécie:</strong> {selectedDoacao.especie}</p>
+                  <p><strong>Raça:</strong> {selectedDoacao.raca || "Não informada"}</p>
+                  <p><strong>Sexo:</strong> {selectedDoacao.sexo || "Não informado"}</p>
+                  <p><strong>Peso:</strong> {selectedDoacao.peso ? `${selectedDoacao.peso} kg` : "Não informado"}</p>
+                  <p><strong>Data de Nascimento:</strong> {selectedDoacao.data_nascimento ? new Date(selectedDoacao.data_nascimento).toLocaleDateString('pt-BR') : "Não informada"}</p>
+                  <p><strong>Status:</strong> {selectedDoacao.status}</p>
+                  
+                  <div className="petshop-cliente-details">
+                    <h3>Informações do Doador:</h3>
+                    <div className="petshop-cliente-info-with-photo">
+                      {renderClienteImage(selectedDoacao.cliente?.foto)}
+                      <div className="petshop-cliente-text">
+                        <p><strong>Nome:</strong> {selectedDoacao.cliente?.nome}</p>
+                        <p><strong>Email:</strong> {selectedDoacao.cliente?.email}</p>
                       </div>
-                      {doacao.imagem && (
-                        <img src={doacao.imagem} alt={doacao.nome} className="petshop-thumb" />
-                      )}
-                      <button
-                        onClick={() => handleDeleteDoacao(doacao.id)}
-                        className="petshop-delete-btn"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </motion.li>
-                  ))
-                )}
-              </AnimatePresence>
-            </ul>
-          </motion.section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </div>
-    </div>
       <Footer />
     </>
   );
 };
 
-export default DoarAnimal;
+export default DoarAnimalFuncionario;

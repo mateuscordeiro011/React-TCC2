@@ -309,8 +309,19 @@
 }
 
 .catalog-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.catalog-item:hover .catalog-item-image {
+  filter: brightness(1.2) contrast(1.25) saturate(1.3) sharpen(2px);
+  -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.3);
+  transform: scale(1.05);
+}
+
+.employee-dashboard-page.dark-mode .catalog-item:hover .catalog-item-image {
+  filter: brightness(1.3) contrast(1.35) saturate(1.35) sharpen(2px);
+  -webkit-filter: brightness(1.3) contrast(1.35) saturate(1.35);
 }
 
 .employee-dashboard-page.dark-mode .catalog-item:hover {
@@ -319,13 +330,23 @@
 
 .catalog-item-image {
   width: 100%;
-  height: 180px;
+  height: 280px;
   object-fit: cover;
   background: #f0f0f0;
+  filter: brightness(1.1) contrast(1.15) saturate(1.2) sharpen(1px);
+  -webkit-filter: brightness(1.1) contrast(1.15) saturate(1.2);
+  transition: all 0.4s ease;
+  border-radius: 12px 12px 0 0;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  display: block;
+  margin: 0 auto;
 }
 
 .employee-dashboard-page.dark-mode .catalog-item-image {
   background: #444;
+  filter: brightness(1.2) contrast(1.25) saturate(1.25) sharpen(1px);
+  -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.25);
 }
 
 .catalog-item-title {
