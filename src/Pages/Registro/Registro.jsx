@@ -1,13 +1,12 @@
-// src/Pages/Registro/Registro.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../utils/useAuth'; // Importe o hook de autenticação
+import { useAuth } from '../../utils/useAuth';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import api from '../../service/api';
 import './Registro.css';
 
 const Registro = () => {
-  const { login } = useAuth(); // Pegue a função de login do contexto
+  const { login } = useAuth(); 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [cpf, setCpf] = useState('');
@@ -32,13 +31,12 @@ const Registro = () => {
     return value.slice(0, -1);
   };
 
-  // ✅ Função handleCpfChange (deve vir antes de ser usada)
   const handleCpfChange = (e) => {
     const value = e.target.value;
     setCpf(formatarCPF(value));
   };
 
-  // Validação de força da senha
+  // Validarde força da senha
   const passwordStrength = (value) => {
     let point = 0;
     const widthPower = ['1%', '25%', '50%', '75%', '100%'];
@@ -61,7 +59,7 @@ const Registro = () => {
     passwordStrength(value);
   };
 
-  // Validação de CPF
+  // Validar de CPF
   const validarCPF = (cpf) => {
     const match = cpf.match(/\d/g);
     if (!match || match.length !== 11) return false;
@@ -105,22 +103,18 @@ const handleSubmit = async (e) => {
       tipo: 'CLIENTE'
     });
 
-    const { id, token, tipo, nome: nomeResposta, email: emailResposta } = response.data;
-
     console.log('Resposta do registro:', response.data);
 
-    if (token && id) {
-      // ✅ CORRIGIDO: passa email como primeiro argumento
-      login(emailResposta, token, { id, nome: nomeResposta, tipo });
-
-      // Salva ID no localStorage como fallback (opcional)
+    if (response.data.token && response.data.id) {
+      const { id, token, tipo, nome: nomeResposta, email: emailResposta } = response.data;
+      
+      login(emailResposta || email, token, { id, nome: nomeResposta || nome, tipo });
       localStorage.setItem('userId', id);
-
-      alert('Cadastro realizado com sucesso!');
+      
       navigate('/endereco-cadastro');
     } else {
-      alert('Erro: resposta incompleta do servidor.');
-      navigate('/login');
+      setShowError(true);
+      setErrorMessage('Erro: dados incompletos na resposta do servidor.');
     }
 
   } catch (error) {

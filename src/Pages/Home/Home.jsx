@@ -8,11 +8,9 @@ import LoginRequiredModal from "../../components/LoginRequiredModal/LoginRequire
 import Footer from "../../components/Footer/Footer";
 import "./Home.css";
 import promo1 from "../../IMG/promo1.png";
-import promo2 from "../../IMG/promo2.jpg";
-import promo3 from "../../IMG/promo3.jpg";
-import promo4 from "../../IMG/promo4.jpg";
-import promo5 from "../../IMG/promo5.jpg";
-import promo6 from "../../IMG/promo6.jpg";
+import promo2 from "../../IMG/promo2.png";
+import promo3 from "../../IMG/promo3.png";
+import promo4 from "../../IMG/promo4.png";
 
 export default function Home() {
   const { user } = useAuth();
@@ -157,8 +155,7 @@ export default function Home() {
       { img: promo2, title: "BAIXE JÁ!", text: "Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br /><i>\"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão.\"</i>" },
       { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>", button: "VER CATÁLOGO" },
       { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "NÃO PERCA!" },
-      { img: promo5, title: "PROMOÇÕES", text: "Apenas no app: até 90% de desconto em produtos selecionados. 🐢🐠🐱🐶<br /><i>\"Ofertas imperdíveis só para quem usa o nosso aplicativo!\"</i>", button: "APROVEITE!" },
-      { img: promo6, title: "FRETE GRÁTIS", text: "Produtos com até 50% de desconto. 🐶🐱🐾<br /><i>\"Compre agora e economize ainda mais com frete grátis e ótimos descontos!\"</i>", button: "APROVEITE!" }
+
     ].map((slide, idx) => (
       <div key={idx} className="hero-slide">
         <div className="hero-slide-content">

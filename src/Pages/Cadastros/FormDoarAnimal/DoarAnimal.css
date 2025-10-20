@@ -45,6 +45,10 @@
   z-index: -1;
 }
 
+a {
+  list-style: none;
+}
+
 body.dark-mode .petshop-container {
   background: linear-gradient(135deg, var(--fundo-suave-dark) 0%, #16213E 50%, #2D1B69 100%);
   color: var(--cinza-claro);

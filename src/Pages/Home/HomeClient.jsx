@@ -9,11 +9,9 @@ import Footer from "../../components/Footer/Footer";
 import "./Home.css";
 import LoginPromptModal from "../../components/LoginPromptModal/LoginPromptModal";
 import promo1 from "../../IMG/promo1.png";
-import promo2 from "../../IMG/promo2.jpg";
-import promo3 from "../../IMG/promo3.jpg";
-import promo4 from "../../IMG/promo4.jpg";
-import promo5 from "../../IMG/promo5.jpg";
-import promo6 from "../../IMG/promo6.jpg";
+import promo2 from "../../IMG/promo2.png";
+import promo3 from "../../IMG/promo3.png";
+import promo4 from "../../IMG/promo4.png";
 
 export default function Home() {
   const { user } = useAuth();
@@ -129,10 +127,9 @@ export default function Home() {
             {[
               { img: promo1, title: "ADOÇÃO", text: "Adote um novo amigo e faça parte de uma comunidade que ama animais. 🐶🐱✨<br /><i>\"Dê um lar amoroso a um animal que precisa de você!\"</i>", button: "ADOTAR" },
               { img: promo2, title: "BAIXE JÁ!", text: "Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br /><i>\"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão.\"</i>" },
-              { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>" },
-              { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "VER CATÁLOGO" },
-              { img: promo5, title: "PROMOÇÕÕES", text: "Apenas no app: até 90% de desconto em produtos selecionados. 🐢🐠🐱🐶<br /><i>\"Ofertas imperdíveis só para quem usa o nosso aplicativo!\"</i>", button: "NÃO PERCA!" },
-              { img: promo6, title: "FRETE GRÁTIS", text: "Produtos com até 50% de desconto. 🐶🐱🐾<br /><i>\"Compre agora e economize ainda mais com frete grátis e ótimos descontos!\"</i>", button: "APROVEITE!" }
+              { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>", button: "VER CATÁLOGO" },
+              { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "NÃO PERCA!" },
+
             ].map((slide, idx) => (
               <div key={idx} className="hero-slide">
                 <div className="hero-slide-content">
@@ -207,69 +204,69 @@ export default function Home() {
           )}
         </section>
 
-       <section className="catalog-section adoption-section">
-  <div className="section-header">
-    <h2 className="catalog-title">Animais para Adoção</h2>
-    <a href="/catalogo-adocao" className="view-more-btn">VER MAIS</a>
-  </div>
-
-  {animals.length === 0 ? (
-    <p className="no-items">Nenhum animal disponível para adoção.</p>
-  ) : (
-    <div className="catalog-carousel">
-      <Slider
-        dots={false}
-        infinite={true}
-        speed={500}
-        slidesToShow={4}
-        slidesToScroll={1}
-        autoplay={true}
-        autoplaySpeed={3000}
-        arrows={true}
-        responsive={[
-          { breakpoint: 1024, settings: { slidesToShow: 3 } },
-          { breakpoint: 768, settings: { slidesToShow: 2 } },
-          { breakpoint: 480, settings: { slidesToShow: 1 } },
-        ]}
-      >
-        {animals.map((animal) => (
-          <div
-            key={animal.id_animal || animal.id}
-            className="catalog-item"
-            onClick={() => openAnimalModal(animal)}
-          >
-            <img
-              src={getBase64ImageSrc(animal.foto)}
-              alt={animal.nome}
-              className="catalog-item-image"
-              onError={(e) => {
-                e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
-              }}
-            />
-            <h3 className="catalog-item-title">{animal.nome}</h3>
-            <p className="catalog-item-info">
-              <strong>Espécie:</strong> {animal.especie}<br />
-              <strong>Raça:</strong> {animal.raca}<br />
-              <strong>Idade:</strong> {calculateAge(animal.data_nascimento || animal.nascimento)} anos<br />
-              <strong>Peso:</strong> {animal.peso} kg<br />
-              <strong>Sexo:</strong> {animal.sexo}
-            </p>
-            <button
-              className="catalog-item-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddToCart(animal);
-              }}
-            >
-              Quero Adotar
-            </button>
-            <i className="fas fa-search zoom-icon"></i>
+        <section className="catalog-section adoption-section">
+          <div className="section-header">
+            <h2 className="catalog-title">Animais para Adoção</h2>
+            <a href="/catalogo-adocao" className="view-more-btn">VER MAIS</a>
           </div>
-        ))}
-      </Slider>
-    </div>
-  )}
-</section>
+
+          {animals.length === 0 ? (
+            <p className="no-items">Nenhum animal disponível para adoção.</p>
+          ) : (
+            <div className="catalog-carousel">
+              <Slider
+                dots={false}
+                infinite={true}
+                speed={500}
+                slidesToShow={4}
+                slidesToScroll={1}
+                autoplay={true}
+                autoplaySpeed={3000}
+                arrows={true}
+                responsive={[
+                  { breakpoint: 1024, settings: { slidesToShow: 3 } },
+                  { breakpoint: 768, settings: { slidesToShow: 2 } },
+                  { breakpoint: 480, settings: { slidesToShow: 1 } },
+                ]}
+              >
+                {animals.map((animal) => (
+                  <div
+                    key={animal.id_animal || animal.id}
+                    className="catalog-item"
+                    onClick={() => openAnimalModal(animal)}
+                  >
+                    <img
+                      src={getBase64ImageSrc(animal.foto)}
+                      alt={animal.nome}
+                      className="catalog-item-image"
+                      onError={(e) => {
+                        e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
+                      }}
+                    />
+                    <h3 className="catalog-item-title">{animal.nome}</h3>
+                    <p className="catalog-item-info">
+                      <strong>Espécie:</strong> {animal.especie}<br />
+                      <strong>Raça:</strong> {animal.raca}<br />
+                      <strong>Idade:</strong> {calculateAge(animal.data_nascimento || animal.nascimento)} anos<br />
+                      <strong>Peso:</strong> {animal.peso} kg<br />
+                      <strong>Sexo:</strong> {animal.sexo}
+                    </p>
+                    <button
+                      className="catalog-item-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(animal);
+                      }}
+                    >
+                      Quero Adotar
+                    </button>
+                    <i className="fas fa-search zoom-icon"></i>
+                  </div>
+                ))}
+              </Slider>
+            </div>
+          )}
+        </section>
 
         {selectedProduct && (
           <div className="modal-overlay" onClick={closeProductModal}>

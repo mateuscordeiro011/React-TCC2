@@ -100,17 +100,18 @@ useEffect(() => {
 
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      console.log('Agendamento:', {
-        id: id,
-        userId: user.id,
-        dataVisita: `${selectedDate}T${selectedTime}`
+      const dataVisita = `${selectedDate} às ${selectedTime}`;
+      
+      await api.post('/api-salsi/agendamentos/visita', {
+        animalId: id,
+        clienteId: user.id,
+        dataVisita: dataVisita
       });
 
       setSuccessMessage(true);
-      setTimeout(() => navigate('/catalogo-adocao'), 2000);
+      setTimeout(() => navigate('/catalogo-adocao'), 3000);
     } catch (err) {
+      console.error('Erro ao agendar visita:', err);
       setError("Erro ao agendar visita. Tente novamente.");
     } finally {
       setIsSubmitting(false);

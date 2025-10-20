@@ -1,4 +1,3 @@
-// src/Pages/RecuperarSenha/RecuperarSenha.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -25,9 +24,13 @@ const RecuperarSenha = () => {
     setSuccess('');
 
     try {
-      const response = await api.get(`api-salsi/clientes/esqueci-senha`, {
-        params: { identificador }
+      console.log('Enviando identificador:', identificador);
+      
+      const response = await api.get('/api-salsi/clientes/esqueci-senha', {
+        params: { identificador: identificador.trim() }
       });
+
+      console.log('Resposta do servidor:', response.data);
 
       const { token } = response.data;
       if (!token) {
@@ -37,11 +40,11 @@ const RecuperarSenha = () => {
       setTokenRecuperacao(token);
       setEtapa(2);
       setSuccess('Token gerado! Redefina sua senha.');
-      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
+      console.error('Erro completo:', err);
+      console.error('Resposta do erro:', err.response?.data);
       
       const mensagem = err.response?.data?.mensagem ||
-                       err.response?.data?.message ||
                        'Usuário não encontrado. Verifique email ou CPF.';
       setError(mensagem);
     } finally {
@@ -68,8 +71,7 @@ const RecuperarSenha = () => {
     setLoading(true);
 
     try {
-  
-      await api.post(`api-salsi/clientes/redefinir-senha`, null, {
+      await api.post('/api-salsi/clientes/redefinir-senha', null, {
         params: {
           token: tokenRecuperacao,
           novaSenha: novaSenha
@@ -77,13 +79,9 @@ const RecuperarSenha = () => {
       });
 
       setSuccess('Senha redefinida com sucesso!');
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+      setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
-
       const mensagem = err.response?.data?.mensagem ||
-                       err.response?.data?.message ||
                        'Erro ao redefinir senha. Token inválido ou expirado.';
       setError(mensagem);
     } finally {

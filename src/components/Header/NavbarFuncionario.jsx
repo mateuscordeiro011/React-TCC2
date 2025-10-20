@@ -100,7 +100,7 @@ export default function NavbarFuncionario() {
               </Link>
             </li>
             <li>
-              <Link to="/configuracoes-funcionario" onClick={() => setDropdownOpen(false)}>
+              <Link to="/configuracoes" onClick={() => setDropdownOpen(false)}>
                 <i className="fas fa-cog"></i> Configurações
               </Link>
             </li>

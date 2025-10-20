@@ -1,11 +1,11 @@
 .footer {
-  background-color: #8B7365; 
+  background: linear-gradient(135deg, #8B7365 0%, #9DBCEA 100%);
   color: #fff;
-  padding: 40px 0;
+  padding: 50px 0 30px;
   font-size: 14px;
   transition: all 0.4s ease;
-  opacity: 0.98;
-  margin-top: 60px;
+  margin-top: 0;
+  width: 100%;
 }
 
 .footer:hover {
@@ -143,8 +143,8 @@ hr {
 
 
 body.dark-mode .footer {
-  background-color: #1a1a1a;
-  color: #eee;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2d34 100%);
+  color: #f0f6fc;
 }
 
 body.dark-mode .footer-top h3 {
