@@ -11,8 +11,8 @@ export default function NavbarFuncionario() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [hasScroll, setHasScroll] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); 
 
-  // ✅ Corrigido: toggleTheme
   const { darkMode, toggleTheme } = useTheme();
   const { logout, user } = useAuth();
   const navigate = useNavigate();
@@ -48,12 +48,18 @@ export default function NavbarFuncionario() {
     return () => window.removeEventListener("scroll", controlNavbar);
   }, [lastScrollY, hasScroll]);
 
+  // Fecha todos os menus
+  const closeAllMenus = () => {
+    setDropdownOpen(false);
+    setMobileMenuOpen(false);
+  };
+
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
-    setDropdownOpen(false);
+    closeAllMenus();
   };
 
   return (
@@ -69,18 +75,31 @@ export default function NavbarFuncionario() {
         transition: "all 0.4s ease",
       }}
     >
-      <Link to="/home-funcionario" className="logo">
+      <Link to="/home-funcionario" className="logo" onClick={closeAllMenus}>
         <img src={darkMode ? logoLight : logoDark} alt="Logo" id="header-logo" />
       </Link>
 
-      <ul className="menu">
-        <li><Link to="/formproduto">Produtos</Link></li>
-        <li><Link to="/formanimal">Animais</Link></li>
-        <li><Link to="/formdoacao-funcionario">Doações (Ver)</Link></li>
-        <li><Link to="/relatorio">Relatórios</Link></li>
+      <input 
+        className="menu-btn" 
+        type="checkbox" 
+        id="menu-btn" 
+        checked={mobileMenuOpen}
+        onChange={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Alternar menu"
+      />
+      <label className="menu-icon" htmlFor="menu-btn">
+        <span className="nav-icon"></span>
+        <span className="nav-icon"></span>
+        <span className="nav-icon"></span>
+      </label>
+
+      <ul className={`menu ${mobileMenuOpen ? 'menu-open' : ''}`}>
+        <li><Link to="/formproduto" onClick={closeAllMenus}>Produtos</Link></li>
+        <li><Link to="/formanimal" onClick={closeAllMenus}>Animais</Link></li>
+        <li><Link to="/formdoacao-funcionario" onClick={closeAllMenus}>Doações (Ver)</Link></li>
+        <li><Link to="/relatorio" onClick={closeAllMenus}>Relatórios</Link></li>
       </ul>
 
-      {/* ✅ Corrigido: toggleTheme */}
       <button 
         className="mode-toggle" 
         onClick={toggleTheme}
@@ -95,12 +114,12 @@ export default function NavbarFuncionario() {
         {dropdownOpen && (
           <ul className="dropdown-menu">
             <li>
-              <Link to="/perfil-funcionario" onClick={() => setDropdownOpen(false)}>
+              <Link to="/perfil-funcionario" onClick={closeAllMenus}>
                 <i className="fas fa-user-circle"></i> Meu Perfil
               </Link>
             </li>
             <li>
-              <Link to="/configuracoes" onClick={() => setDropdownOpen(false)}>
+              <Link to="/configuracoes" onClick={closeAllMenus}>
                 <i className="fas fa-cog"></i> Configurações
               </Link>
             </li>
@@ -113,7 +132,13 @@ export default function NavbarFuncionario() {
         )}
       </div>
 
-      {dropdownOpen && <div className="dropdown-overlay" onClick={toggleDropdown}></div>}
+      {(mobileMenuOpen || dropdownOpen) && (
+        <div 
+          className="overlay" 
+          onClick={closeAllMenus}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}
+        />
+      )}
     </nav>
   );
 }

@@ -1,4 +1,3 @@
-// src/components/Header/NavbarPublico.jsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logoLight from "../../IMG/logowhite.png";
@@ -11,6 +10,7 @@ export default function NavbarPublico() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [hasScroll, setHasScroll] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { darkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -48,11 +48,15 @@ export default function NavbarPublico() {
     return () => window.removeEventListener("scroll", controlNavbar);
   }, [lastScrollY, hasScroll]);
 
+  // Fecha menu ao navegar
+  const closeMenu = () => setMobileMenuOpen(false);
+
   // Função de busca
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/catalogo-produto?search=${encodeURIComponent(searchQuery)}`);
+      closeMenu();
     }
   };
 
@@ -71,12 +75,10 @@ export default function NavbarPublico() {
         transition: "all 0.4s ease",
       }}
     >
-      {/* LOGO */}
-      <Link to="/" className="logo">
+      <Link to="/" className="logo" onClick={closeMenu}>
         <img src={darkMode ? logoLight : logoDark} alt="Logo" id="header-logo" />
       </Link>
 
-      {/* BUSCA */}
       <div className="search-container">
         <form onSubmit={handleSearch} className="navbar-search-form">
           <input
@@ -89,21 +91,27 @@ export default function NavbarPublico() {
         </form>
       </div>
 
-      {/* MENU HAMBURGUER (mobile) */}
-      <input className="menu-btn" type="checkbox" id="menu-btn" />
+      <input 
+        className="menu-btn" 
+        type="checkbox" 
+        id="menu-btn" 
+        checked={mobileMenuOpen}
+        onChange={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Alternar menu"
+      />
       <label className="menu-icon" htmlFor="menu-btn">
+        <span className="nav-icon"></span>
+        <span className="nav-icon"></span>
         <span className="nav-icon"></span>
       </label>
 
-      {/* MENU DE NAVEGAÇÃO */}
-      <ul className="menu">
-        <li><Link to="/">Início</Link></li>
-        <li><Link to="/catalogo-produto">Produtos</Link></li>
-        <li><Link to="/catalogo-adocao">Animais</Link></li>
-        <li><Link to="/formdoacao">Doações</Link></li>
+      <ul className={`menu ${mobileMenuOpen ? 'menu-open' : ''}`}>
+        <li><Link to="/" onClick={closeMenu}>Início</Link></li>
+        <li><Link to="/catalogo-produto" onClick={closeMenu}>Produtos</Link></li>
+        <li><Link to="/catalogo-adocao" onClick={closeMenu}>Animais</Link></li>
+        <li><Link to="/formdoacao" onClick={closeMenu}>Doações</Link></li>
       </ul>
 
-      {/* BOTÃO DE TEMA */}
       <button
         className="mode-toggle"
         onClick={toggleTheme}
@@ -113,15 +121,22 @@ export default function NavbarPublico() {
         <i className={`fas ${darkMode ? "fa-sun" : "fa-moon"}`}></i>
       </button>
 
-      {/* BOTÕES DE LOGIN/REGISTRAR (em vez do ícone de usuário) */}
       <div className="auth-buttons">
-        <Link to="/login" className="btn-login">
+        <Link to="/login" className="btn-login" onClick={closeMenu}>
           Login
         </Link>
-        <Link to="/registro" className="btn-register">
+        <Link to="/registro" className="btn-register" onClick={closeMenu}>
           Registrar
         </Link>
       </div>
+
+      {mobileMenuOpen && (
+        <div 
+          className="overlay" 
+          onClick={closeMenu}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000 }}
+        />
+      )}
     </nav>
   );
 }

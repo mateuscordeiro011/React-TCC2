@@ -155,12 +155,17 @@ export default function Home() {
       { img: promo2, title: "BAIXE JÁ!", text: "Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br /><i>\"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão.\"</i>" },
       { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>", button: "VER CATÁLOGO" },
       { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "NÃO PERCA!" },
-
     ].map((slide, idx) => (
       <div key={idx} className="hero-slide">
         <div className="hero-slide-content">
+          {/* Imagem com proporção forçada */}
           <div className="hero-image-wrapper">
-            <img src={slide.img} alt={`Promoção ${idx + 1}`} className="hero-image" />
+            <div
+              className="hero-image-aspect-ratio"
+              style={{
+                backgroundImage: `url(${slide.img})`,
+              }}
+            />
           </div>
 
           <div className="hero-text-wrapper">

@@ -41,7 +41,6 @@
   }
 }
 
-/* Botão de fechar */
 .modal-close {
   position: absolute;
   top: 16px;
@@ -79,7 +78,6 @@
   color: white;
 }
 
-/* === CONTAINER DA IMAGEM — CENTRALIZADO === */
 .modal-image-container {
   width: 100%;
   display: flex;
@@ -109,7 +107,6 @@
   background-color: #333;
 }
 
-/* Título */
 .modal h2 {
   font-size: 28px;
   margin: 0 24px 12px;
@@ -123,7 +120,6 @@
   color: #fff;
 }
 
-/* === Detalhes do Animal Estilizados === */
 .modal-details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -186,7 +182,6 @@
   color: #fff;
 }
 
-/* Ajuste em telas menores */
 @media (max-width: 600px) {
   .modal-details-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -217,7 +212,6 @@
   }
 }
 
-/* Categoria */
 .modal-category {
   margin: 0 24px 16px;
   color: #555;
@@ -232,7 +226,6 @@
   color: #bbb;
 }
 
-/* Descrição */
 .modal-desc {
   margin: 16px 24px;
   color: #444;
@@ -245,7 +238,6 @@
   color: #ddd;
 }
 
-/* Preço / Informações */
 .modal-price {
   font-size: 22px;
   font-weight: 700;
@@ -261,7 +253,6 @@
   border-top-color: #444;
 }
 
-/* === Avaliação === */
 .modal-rating-section {
   padding: 0 24px 20px;
   border-bottom: 1px solid #f0f0f0;
@@ -316,7 +307,6 @@
   color: #aaa;
 }
 
-/* === Comentários === */
 .modal-comments-section {
   padding: 0 24px 24px;
   border-bottom: 1px solid #f0f0f0;
@@ -459,7 +449,6 @@
   color: #ccc;
 }
 
-/* === Adicionar comentário === */
 .modal-add-review {
   padding: 0 24px 24px;
   border-bottom: 1px solid #f0f0f0;
@@ -561,7 +550,6 @@
   box-shadow: 0 4px 10px rgba(0, 209, 178, 0.3);
 }
 
-/* === Ações finais === */
 .modal-actions {
   display: flex;
   gap: 16px;
@@ -602,7 +590,6 @@
   box-shadow: 0 5px 15px rgba(229, 57, 53, 0.35);
 }
 
-/* === Responsividade === */
 @media (max-width: 768px) {
   .modal-overlay {
     padding: 12px;
@@ -692,7 +679,6 @@
   }
 }
 
-/* === Scroll personalizado === */
 .modal::-webkit-scrollbar {
   width: 8px;
 }

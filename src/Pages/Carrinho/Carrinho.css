@@ -209,6 +209,7 @@
 
 .quantity-control {
   display: flex;
+  color: #fff;
   gap: 10px;
 }
 
@@ -225,6 +226,7 @@
 }
 
 .qty-btn:hover {
+  
   background: #0097a7;
 }
 
@@ -256,6 +258,7 @@
 
 .summary-card {
   background: #fff;
+  color: #fff;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);

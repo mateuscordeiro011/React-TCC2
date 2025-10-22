@@ -43,11 +43,11 @@ transform: translate(-50%, -50%);
 
 .signup-wrapper {
 position: relative;
-z-index: 2; /* Coloca à frente da imagem de fundo */
+z-index: 2; 
 width: 100%;
 margin: 0 1.25rem;
 border-radius: 1.25rem;
-background: rgba(24, 21, 36, 0.8); /* Fundo opaco */
+background: rgba(24, 21, 36, 0.8);
 padding: 4.5rem 1.5rem;
 backdrop-filter: blur(15px);
 text-align: center;
@@ -141,7 +141,7 @@ position: fixed;
 }
 
 .login-link-button:hover {
-  background: rgba(230, 131, 105, 0.2); /* Fundo suave no hover */
+  background: rgba(230, 131, 105, 0.2);
   border-color: var(--primary-hover);
   color: var(--primary-hover);
   transform: translateY(-1px);
@@ -242,24 +242,22 @@ position: fixed;
 
 .password-container button:hover {
   transform: translateY(-50%) scale(1.2);
-  color: #2eb5ab; /* Cor do ícone ao passar o mouse */
+  color: #2eb5ab; 
 }
 
-/* Adicionando efeito de foco ao campo de senha */
 .password-container input:focus {
   outline: none;
   border: 2px solid var(--primary);
 }
 
 
-/* Pop-up */
 .popup {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6); /* Fundo opaco */
+  background: rgba(0, 0, 0, 0.6); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -268,14 +266,14 @@ position: fixed;
 
 .popup-content {
   background: white;
-  padding: 1rem 1.5rem; /* Ajuste de padding para reduzir o tamanho */
+  padding: 1rem 1.5rem; 
   border-radius: 8px;
   text-align: center;
-  width: 300px; /* Largura fixa */
-  max-width: 90%; /* Evita que o pop-up ultrapasse o tamanho da tela em dispositivos móveis */
+  width: 300px;
+  max-width: 90%; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   animation: popupFadeIn 0.3s ease-out;
-  min-height: 150px; /* Definição de uma altura mínima */
+  min-height: 150px; 
 }
 
 .popup-content p {
@@ -298,7 +296,6 @@ position: fixed;
   background: var(--primary-hover);
 }
 
-/* Animação para o pop-up */
 @keyframes popupFadeIn {
   0% {
     opacity: 0;

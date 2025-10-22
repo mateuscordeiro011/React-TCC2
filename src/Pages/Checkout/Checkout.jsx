@@ -84,28 +84,28 @@ export default function Checkout() {
   // Função para calcular frete baseado na localização
   const calcularFrete = (enderecoData) => {
     const { uf } = enderecoData;
-    let valorFrete = 15; // Valor padrão
+    let valorFrete = 5; // Valor padrão
     
     // Cálculo baseado no estado
     switch (uf) {
       case 'SP':
       case 'RJ':
       case 'MG':
-        valorFrete = 10;
+        valorFrete = 3.99;
         break;
       case 'PR':
       case 'SC':
       case 'RS':
-        valorFrete = 15;
+        valorFrete = 8.00;
         break;
       case 'GO':
       case 'DF':
       case 'MT':
       case 'MS':
-        valorFrete = 20;
+        valorFrete = 10;
         break;
       default:
-        valorFrete = 25;
+        valorFrete = 15;
     }
     
     setFrete(valorFrete);

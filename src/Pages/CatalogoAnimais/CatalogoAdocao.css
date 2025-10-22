@@ -1,7 +1,7 @@
 .catalogo-page {
   min-height: 100vh;
   padding-top: 80px;
-  background-color: #9DBCEA; /* ✅ Fundo suave da paleta */
+  background-color: #9DBCEA; 
   color: #333;
   transition: all 0.5s ease;
   font-family: 'Poppins', sans-serif;
@@ -13,9 +13,8 @@
   background-color: #1a1a1a;
 }
 
-/* Hero Section */
 .catalogo-hero {
-  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%); /* ✅ Marrom → Azul suave */
+  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%); 
   padding: 80px 20px;
   text-align: center;
   position: relative;
@@ -44,12 +43,11 @@
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-/* Filtros */
 .catalogo-filters {
   padding: 30px 20px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(139, 115, 101, 0.2); /* ✅ Marrom translúcido */
+  border-bottom: 1px solid rgba(139, 115, 101, 0.2); 
   position: sticky;
   top: 80px;
   z-index: 100;
@@ -78,7 +76,7 @@
 .search-input,
 .filter-select {
   padding: 12px 15px;
-  border: 2px solid #00C4CC; /* ✅ Turquesa */
+  border: 2px solid #00C4CC; 
   border-radius: 30px;
   font-size: 1rem;
   outline: none;
@@ -96,7 +94,7 @@
 
 .search-input:focus,
 .filter-select:focus {
-  border-color: #0097a7; /* ✅ Turquesa mais escuro */
+  border-color: #0097a7;
   box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.3);
 }
 
@@ -106,7 +104,6 @@
   box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.3);
 }
 
-/* Resultados */
 .catalogo-results {
   padding: 30px 20px;
   max-width: 1400px;
@@ -125,7 +122,6 @@
   color: #aaa;
 }
 
-/* Grid de Animais */
 .catalogo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -137,19 +133,19 @@
   margin: 0 auto;
 }
 
-/* Estados de Carregamento e Erro */
 .loading-container,
 .error-container,
 .no-results {
   text-align: center;
   padding: 60px 20px;
+  color: #fff;
 }
 
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid rgba(0, 196, 204, 0.3); /* ✅ Turquesa translúcido */
-  border-top: 5px solid #00C4CC; /* ✅ Turquesa */
+  border: 5px solid rgba(0, 196, 204, 0.3);
+  border-top: 5px solid #00C4CC;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -171,14 +167,14 @@
 }
 
 .error-message {
-  color: #F48A73; /* ✅ Laranja-rosado */
+  color: #F48A73; 
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
 .retry-button {
   padding: 12px 25px;
-  background: #00C4CC; /* ✅ Turquesa */
+  background: #00C4CC; 
   color: white;
   border: none;
   border-radius: 30px;
@@ -188,11 +184,10 @@
 }
 
 .retry-button:hover {
-  background: #0097a7; /* ✅ Turquesa mais escuro */
+  background: #0097a7; 
   transform: translateY(-2px);
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .catalogo-hero h1 {
     font-size: 2.2rem;
@@ -238,7 +233,6 @@
   }
 }
 
-/* Card de Animal com Imagem Melhorada */
 .animal-card {
   background: white;
   border-radius: 20px;
@@ -295,7 +289,6 @@
   -webkit-filter: brightness(1.3) contrast(1.35) saturate(1.35);
 }
 
-/* Animação para os cards */
 .catalogo-grid > * {
   animation-duration: 0.6s;
   animation-fill-mode: both;

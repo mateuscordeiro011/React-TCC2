@@ -99,7 +99,6 @@
   border-radius: 2px;
 }
 
-/* Responsividade */
 @media (max-width: 600px) {
   .login-success-modal {
     padding: 2rem 1.5rem;

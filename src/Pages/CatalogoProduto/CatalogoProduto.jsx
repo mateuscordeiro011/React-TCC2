@@ -102,9 +102,6 @@ export default function CatalogoProdutos() {
         return false;
       }
       
-      if (filters.categoria && item.categoria !== filters.categoria) {
-        return false;
-      }
       
       if (filters.precoMin && item.preco < parseFloat(filters.precoMin)) {
         return false;
@@ -157,19 +154,6 @@ export default function CatalogoProdutos() {
               />
             </div>
             
-            <div className="filter-group">
-              <select 
-                value={filters.categoria}
-                onChange={(e) => setFilters({...filters, categoria: e.target.value})}
-                className="filter-select"
-              >
-                <option value="">Todas as categorias</option>
-                {categorias.map(categoria => (
-                  <option key={categoria} value={categoria}>{categoria}</option>
-                ))}
-              </select>
-            </div>
-            
             <div className="filter-group price-filters">
               <input
                 type="number"
@@ -194,8 +178,8 @@ export default function CatalogoProdutos() {
                 className="filter-select"
               >
                 <option value="nome">Ordenar por nome</option>
-                <option value="preco-asc">Menor preço</option>
-                <option value="preco-desc">Maior preço</option>
+                <option value="preco-asc">Ordernar por Menor preço</option>
+                <option value="preco-desc">Ordernar por Maior preço</option>
               </select>
             </div>
           </div>

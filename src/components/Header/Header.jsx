@@ -15,14 +15,15 @@ export default function Navbar() {
   const [navbarSearchQuery, setNavbarSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchRef = useRef(null);
-  const suggestionsRef = useRef(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // ✅ Novo estado para menu mobile
 
-  // ✅ Corrigido: toggleTheme em vez de toggleDarkMode
+  const searchRef = useRef(null);
+
   const { darkMode, toggleTheme } = useTheme();
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
+  // Verifica se a página tem scroll
   useEffect(() => {
     const checkScroll = () => {
       const documentHeight = document.documentElement.scrollHeight;
@@ -35,6 +36,7 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", checkScroll);
   }, []);
 
+  // Controla o esconder/aparecer da navbar ao rolar
   useEffect(() => {
     const controlNavbar = () => {
       if (!hasScroll) {
@@ -53,6 +55,28 @@ export default function Navbar() {
     window.addEventListener("scroll", controlNavbar);
     return () => window.removeEventListener("scroll", controlNavbar);
   }, [lastScrollY, hasScroll]);
+
+  // Fecha dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownOpen && !event.target.closest('.user-icon') && !event.target.closest('.dropdown-menu')) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
+
+  // Fecha sugestões de busca ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
@@ -75,6 +99,7 @@ export default function Navbar() {
       }
       setShowSuggestions(false);
       setNavbarSearchQuery("");
+      setMobileMenuOpen(false); // Fecha menu mobile após busca
     }
   };
 
@@ -179,16 +204,11 @@ export default function Navbar() {
     handleNavbarSearch(null, suggestion.name);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // Função para fechar todos os menus
+  const closeAllMenus = () => {
+    setDropdownOpen(false);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <nav
@@ -203,8 +223,7 @@ export default function Navbar() {
         transition: "all 0.4s ease",
       }}
     >
-      <RouterLink to="/" className="logo">
-        {/* ✅ Correto: modo escuro → logo claro */}
+      <RouterLink to="/" className="logo" onClick={closeAllMenus}>
         <img src={darkMode ? logoLight : logoDark} alt="Logo" id="header-logo" />
       </RouterLink>
 
@@ -219,7 +238,7 @@ export default function Navbar() {
             className="navbar-search-input"
           />
           {showSuggestions && (
-            <div className="search-suggestions" ref={suggestionsRef}>
+            <div className="search-suggestions" ref={searchRef}>
               {suggestions.length > 0 ? (
                 suggestions.map((suggestion, index) => (
                   <div
@@ -260,19 +279,32 @@ export default function Navbar() {
         </form>
       </div>
 
-      <input className="menu-btn" type="checkbox" id="menu-btn" />
+      {/* Menu Hambúrguer - Controle via React */}
+      <input 
+        className="menu-btn" 
+        type="checkbox" 
+        id="menu-btn" 
+        checked={mobileMenuOpen}
+        onChange={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label="Alternar menu"
+      />
       <label className="menu-icon" htmlFor="menu-btn">
+        <span className="nav-icon"></span>
+        <span className="nav-icon"></span>
         <span className="nav-icon"></span>
       </label>
 
-      <ul className="menu">
-        <li><RouterLink to="/">Início</RouterLink></li>
-        <li><RouterLink to="/catalogo-produto">Produtos</RouterLink></li>
-        <li><RouterLink to="/catalogo-adocao">Animais</RouterLink></li>
-        <li><RouterLink to="/formdoacao">Doações</RouterLink></li>
+      {/* Menu de navegação */}
+      <ul className={`menu ${mobileMenuOpen ? 'menu-open' : ''}`}>
+        <li><RouterLink to="/" onClick={() => setMobileMenuOpen(false)}><i className="fas fa-home"></i> Início</RouterLink></li>
+        <li><RouterLink to="/catalogo-produto" onClick={() => setMobileMenuOpen(false)}><i className="fas fa-box"></i> Produtos</RouterLink></li>
+        <li><RouterLink to="/catalogo-adocao" onClick={() => setMobileMenuOpen(false)}><i className="fas fa-paw"></i> Animais</RouterLink></li>
+        <li><RouterLink to="/carrinho" onClick={() => setMobileMenuOpen(false)}><i className="fas fa-shopping-cart"></i> Carrinho</RouterLink></li>
       </ul>
 
-      {/* ✅ Corrigido: onClick={toggleTheme} */}
+      {/* Separador visual */}
+      <div className="navbar-separator"></div>
+
       <button 
         className="mode-toggle" 
         onClick={toggleTheme} 
@@ -287,17 +319,17 @@ export default function Navbar() {
         {dropdownOpen && (
           <ul className="dropdown-menu">
             <li>
-              <RouterLink to="/carrinho" onClick={() => setDropdownOpen(false)}>
-                <i className="fas fa-shopping-cart"></i> Carrinho
+              <RouterLink to="/formdoacao" onClick={() => { setDropdownOpen(false); setMobileMenuOpen(false); }}>
+                <i className="fas fa-heart"></i> Doações
               </RouterLink>
             </li>
             <li>
-              <RouterLink to="/perfil-cliente" onClick={() => setDropdownOpen(false)}>
+              <RouterLink to="/perfil-cliente" onClick={() => { setDropdownOpen(false); setMobileMenuOpen(false); }}>
                 <i className="fas fa-user-circle"></i> Conta
               </RouterLink>
             </li>
             <li>
-              <RouterLink to="/configuracoes" onClick={() => setDropdownOpen(false)}>
+              <RouterLink to="/configuracoes" onClick={() => { setDropdownOpen(false); setMobileMenuOpen(false); }}>
                 <i className="fas fa-cog"></i> Configurações
               </RouterLink>
             </li>
@@ -310,7 +342,14 @@ export default function Navbar() {
         )}
       </div>
 
-      {dropdownOpen && <div className="dropdown-overlay" onClick={toggleDropdown}></div>}
+      {/* Overlay para fechar menus */}
+      {(mobileMenuOpen || dropdownOpen) && (
+        <div 
+          className="overlay" 
+          onClick={closeAllMenus}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000, cursor: 'default' }}
+        />
+      )}
     </nav>
   );
 }

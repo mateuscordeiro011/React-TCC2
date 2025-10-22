@@ -182,8 +182,8 @@ const handleAdopt = (animal) => {
                 className="filter-select"
               >
                 <option value="nome">Ordenar por nome</option>
-                <option value="idade-asc">Mais jovem</option>
-                <option value="idade-desc">Mais velho</option>
+                <option value="idade-asc">Ordenar por Mais jovem</option>
+                <option value="idade-desc">Ordenar por Mais velho</option>
               </select>
             </div>
           </div>

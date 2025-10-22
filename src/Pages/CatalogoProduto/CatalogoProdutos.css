@@ -11,7 +11,7 @@ html, body {
 .catalogo-page {
   min-height: 100vh;
   padding-top: 80px;
-  background-color: #9DBCEA; /* ✅ Fundo suave da paleta */
+  background-color: #9DBCEA; 
   color: #333;
   transition: all 0.5s ease;
   font-family: 'Poppins', sans-serif;
@@ -23,9 +23,8 @@ html, body {
   background-color: #1a1a1a;
 }
 
-/* Hero Section */
 .catalogo-hero {
-  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%); /* ✅ Marrom + azul suave */
+  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%);
   padding: 80px 20px;
   text-align: center;
   position: relative;
@@ -54,12 +53,12 @@ html, body {
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-/* Filtros */
+
 .catalogo-filters {
   padding: 30px 20px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(139, 115, 101, 0.2); /* ✅ Marrom translúcido */
+  border-bottom: 1px solid rgba(139, 115, 101, 0.2);
   position: sticky;
   top: 80px;
   z-index: 100;
@@ -89,7 +88,7 @@ html, body {
 .filter-select,
 .price-input {
   padding: 12px 15px;
-  border: 2px solid #00C4CC; /* ✅ Turquesa */
+  border: 2px solid #00C4CC;
   border-radius: 30px;
   font-size: 1rem;
   outline: none;
@@ -109,7 +108,7 @@ html, body {
 .search-input:focus,
 .filter-select:focus,
 .price-input:focus {
-  border-color: #0097a7; /* ✅ Turquesa mais escuro */
+  border-color: #0097a7; 
   box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.3);
 }
 
@@ -124,7 +123,6 @@ html, body {
   width: 120px;
 }
 
-/* Resultados */
 .catalogo-results {
   padding: 30px 20px;
   max-width: 1400px;
@@ -154,7 +152,6 @@ html, body {
   margin: 0 auto;
 }
 
-/* Estados de Carregamento e Erro */
 .loading-container,
 .error-container,
 .no-results {
@@ -165,8 +162,8 @@ html, body {
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid rgba(0, 196, 204, 0.3); /* ✅ Turquesa translúcido */
-  border-top: 5px solid #00C4CC; /* ✅ Turquesa */
+  border: 5px solid rgba(0, 196, 204, 0.3); 
+  border-top: 5px solid #00C4CC;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -188,14 +185,14 @@ html, body {
 }
 
 .error-message {
-  color: #F48A73; /* ✅ Laranja-rosado */
+  color: #F48A73; 
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
 .retry-button {
   padding: 12px 25px;
-  background: #00C4CC; /* ✅ Turquesa */
+  background: #00C4CC; 
   color: white;
   border: none;
   border-radius: 30px;
@@ -205,11 +202,11 @@ html, body {
 }
 
 .retry-button:hover {
-  background: #0097a7; /* ✅ Turquesa mais escuro */
+  background: #0097a7;
   transform: translateY(-2px);
 }
 
-/* Modal */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -319,12 +316,12 @@ html, body {
 .modal h2 {
   font-size: 28px;
   margin: 20px 20px 10px;
-  color: #8B7365; /* ✅ Marrom terroso */
+  color: #8B7365; 
   font-weight: 700;
 }
 
 .catalogo-page.dark-mode .modal h2 {
-  color: #D4AF37; /* ✅ Dourado */
+  color: #D4AF37; 
 }
 
 .modal-category {
@@ -354,7 +351,7 @@ html, body {
 .modal-price {
   font-size: 24px;
   font-weight: 700;
-  color: #00C4CC; /* ✅ Turquesa */
+  color: #00C4CC; 
   margin: 15px 20px;
 }
 
@@ -390,7 +387,7 @@ html, body {
 }
 
 .modal-btn.buy {
-  background-color: #D4AF37; /* ✅ Dourado */
+  background-color: #D4AF37;  
   color: #333;
 }
 
@@ -401,7 +398,7 @@ html, body {
 }
 
 .modal-btn.cart {
-  background-color: #F48A73; /* ✅ Laranja-rosado */
+  background-color: #F48A73; 
   color: white;
 }
 
@@ -421,7 +418,6 @@ html, body {
   color: white;
 }
 
-/* === Pop-up de Adicionado ao Carrinho === */
 
 .add-to-cart-popup-overlay {
   position: fixed;
@@ -450,7 +446,7 @@ html, body {
   align-items: center;
   transform: translateY(-20px);
   animation: slideIn 0.4s ease forwards;
-  border: 2px solid #D4AF37; /* ✅ Dourado */
+  border: 2px solid #D4AF37; 
 }
 
 .catalogo-page.dark-mode .add-to-cart-popup {
@@ -462,14 +458,14 @@ html, body {
 .popup-icon {
   font-size: 2.5rem;
   margin-bottom: 15px;
-  color: #D4AF37; /* ✅ Dourado */
+  color: #D4AF37;
 }
 
 .add-to-cart-popup h3 {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #8B7365; /* ✅ Marrom */
+  color: #8B7365; 
   text-align: center;
 }
 
@@ -483,7 +479,7 @@ html, body {
   gap: 15px;
   width: 100%;
   padding: 15px;
-  background: rgba(212, 175, 55, 0.08); /* ✅ Dourado translúcido */
+  background: rgba(212, 175, 55, 0.08);
   border-radius: 16px;
   margin-bottom: 20px;
 }
@@ -522,7 +518,7 @@ html, body {
 
 .popup-product-price {
   font-weight: 700;
-  color: #00C4CC; /* ✅ Turquesa */
+  color: #00C4CC;
   margin: 4px 0 0;
   font-size: 1rem;
 }
@@ -533,7 +529,7 @@ html, body {
 
 .popup-view-cart-btn {
   padding: 12px 28px;
-  background: linear-gradient(135deg, #D4AF37 0%, #8B7365 100%); /* ✅ Dourado → Marrom */
+  background: linear-gradient(135deg, #D4AF37 0%, #8B7365 100%); 
   color: #333;
   border: none;
   border-radius: 50px;
@@ -549,7 +545,6 @@ html, body {
   box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .catalogo-hero h1 {
     font-size: 2.2rem;
@@ -676,7 +671,6 @@ html, body {
   }
 }
 
-/* Card de Produto com Imagem Melhorada */
 .product-card {
   background: white;
   border-radius: 20px;
@@ -733,7 +727,6 @@ html, body {
   -webkit-filter: brightness(1.3) contrast(1.35) saturate(1.35);
 }
 
-/* Animação para os cards */
 .catalogo-grid > * {
   animation-duration: 0.6s;
   animation-fill-mode: both;
@@ -747,7 +740,6 @@ html, body {
 .catalogo-grid > *:nth-child(5) { animation-delay: 0.5s; }
 .catalogo-grid > *:nth-child(6) { animation-delay: 0.6s; }
 
-/* Scrollbar personalizada */
 .modal::-webkit-scrollbar {
   width: 8px;
 }

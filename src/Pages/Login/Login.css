@@ -76,7 +76,6 @@
   margin: 0 0 2rem;
 }
 
-/* Formulário com grupos de input estilizados */
 .input-group {
   position: relative;
   margin-bottom: 1.5rem;
@@ -120,7 +119,6 @@
   font-weight: 500;
 }
 
-/* Botão de olho */
 .eye-button {
   position: absolute;
   top: 50%;
@@ -139,7 +137,6 @@
   transform: translateY(-50%) scale(1.2);
 }
 
-/* Botão de login */
 .login-button {
   width: 100%;
   padding: 1rem;
@@ -164,7 +161,6 @@
   transform: translateY(0);
 }
 
-/* Animação de entrada */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -176,7 +172,6 @@
   }
 }
 
-/* Pop-up de erro (com animação) */
 .popup {
   position: fixed;
   inset: 0;
@@ -241,7 +236,6 @@
   }
 }
 
-/* Responsividade */
 @media (max-width: 480px) {
   .login-card {
     padding: 2.5rem 1.8rem;

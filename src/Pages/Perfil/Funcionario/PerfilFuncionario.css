@@ -2,14 +2,44 @@
     min-height: 100vh;
     font-family: 'Poppins', sans-serif;
     color: #333;
-    background: linear-gradient(135deg, #87a9db 0%, #c0e6ff 100%);
-    transition: background-color 0.5s ease, color 0.5s ease;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(0, 191, 165, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 112, 67, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #E3F2FD 0%, #B3E5FC 25%, #81D4FA 50%, #4FC3F7 75%, #29B6F6 100%);
+    background-attachment: fixed;
+    transition: all 0.5s ease;
     padding: 20px 0;
+    position: relative;
+}
+
+.profile-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 60% 30%, rgba(93, 64, 55, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 30% 70%, rgba(0, 191, 165, 0.08) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 body.dark-mode .profile-page {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 191, 165, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 112, 67, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #0d1117 0%, #161b22 25%, #21262d 50%, #30363d 75%, #484f58 100%);
     color: #eee;
+}
+
+body.dark-mode .profile-page::before {
+    background: 
+        radial-gradient(circle at 60% 30%, rgba(93, 64, 55, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 30% 70%, rgba(212, 175, 55, 0.08) 0%, transparent 40%);
 }
 
 .profile-container {
@@ -42,7 +72,6 @@ body.dark-mode .profile-container {
     }
 }
 
-/* Header */
 .profile-header {
     display: flex;
     justify-content: space-between;
@@ -82,7 +111,6 @@ body.dark-mode .profile-header h1 {
     background: rgba(255, 0, 0, 0.1);
 }
 
-/* === FOTO DE PERFIL INTERATIVA === */
 
 .profile-photo-container-wrapper {
     position: relative;
@@ -113,29 +141,28 @@ body.dark-mode .profile-header h1 {
     object-fit: cover;
     border: none;
     transition: all 0.6s ease;
-    filter: brightness(1.1) contrast(1.15) saturate(1.2) sharpen(1px);
-    -webkit-filter: brightness(1.1) contrast(1.15) saturate(1.2);
+    filter: brightness(1.15) contrast(1.2) saturate(1.4) hue-rotate(5deg) sharpen(1px);
+    -webkit-filter: brightness(1.15) contrast(1.2) saturate(1.4) hue-rotate(5deg);
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
 }
 
 .profile-photo-container:hover .profile-photo {
     transform: scale(1.1);
-    filter: brightness(1.2) contrast(1.25) saturate(1.3) sharpen(2px);
-    -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.3);
+    filter: brightness(1.25) contrast(1.3) saturate(1.6) hue-rotate(8deg) sharpen(2px);
+    -webkit-filter: brightness(1.25) contrast(1.3) saturate(1.6) hue-rotate(8deg);
 }
 
 body.dark-mode .profile-photo {
-    filter: brightness(1.2) contrast(1.25) saturate(1.25) sharpen(1px);
-    -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.25);
+    filter: brightness(1.2) contrast(1.25) saturate(1.5) hue-rotate(3deg) sharpen(1px);
+    -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.5) hue-rotate(3deg);
 }
 
 body.dark-mode .profile-photo-container:hover .profile-photo {
-    filter: brightness(1.3) contrast(1.35) saturate(1.35) sharpen(2px);
-    -webkit-filter: brightness(1.3) contrast(1.35) saturate(1.35);
+    filter: brightness(1.3) contrast(1.35) saturate(1.7) hue-rotate(6deg) sharpen(2px);
+    -webkit-filter: brightness(1.3) contrast(1.35) saturate(1.7) hue-rotate(6deg);
 }
 
-/* Menu de opções */
 .photo-menu {
     position: absolute;
     top: 100%;
@@ -197,7 +224,6 @@ body.dark-mode .profile-photo-container:hover .profile-photo {
     background: #00a0b0;
 }
 
-/* Modo escuro */
 body.dark-mode .photo-menu {
     background: #2a2a2a;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -223,7 +249,6 @@ body.dark-mode .change-btn:hover {
     background: #00a0b0;
 }
 
-/* Animação de entrada */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -240,9 +265,6 @@ body.dark-mode .change-btn:hover {
     animation: fadeInUp 0.3s ease forwards;
 }
 
-/* === FIM DA FOTO DE PERFIL === */
-
-/* Badge de tipo de usuário */
 .user-type-badge {
     display: inline-flex;
     align-items: center;
@@ -273,7 +295,6 @@ body.dark-mode .user-type-badge:hover {
     color: white;
 }
 
-/* Toggle de tema */
 .theme-toggle {
     display: flex;
     align-items: center;
@@ -349,7 +370,7 @@ input:checked+.slider:before {
     border-radius: 24px;
 }
 
-/* Cartão de informações */
+
 .profile-info-card {
     background: #fff;
     border-radius: 16px;
@@ -416,7 +437,7 @@ body.dark-mode .info-item p {
     color: #ccc;
 }
 
-/* Botão Editar Perfil */
+
 .edit-profile-btn {
     display: block;
     width: 100%;
@@ -449,7 +470,6 @@ body.dark-mode .edit-profile-btn:hover {
     color: #333;
 }
 
-/* Loading */
 .loading-spinner {
     text-align: center;
     font-size: 1.2rem;
@@ -468,7 +488,7 @@ body.dark-mode .edit-profile-btn:hover {
     }
 }
 
-/* Erros e mensagens */
+
 .error-message,
 .no-data-message {
     text-align: center;
@@ -486,7 +506,6 @@ body.dark-mode .no-data-message {
     background: #330000;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .profile-container {
         margin: 20px 15px;
@@ -548,7 +567,6 @@ body.dark-mode .no-data-message {
     }
 }
 
-/* Modal de Edição */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -690,14 +708,14 @@ body.dark-mode .form-group input {
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #f0f0f0;
-    filter: brightness(1.15) contrast(1.2) saturate(1.25) sharpen(1px);
-    -webkit-filter: brightness(1.15) contrast(1.2) saturate(1.25);
+    filter: brightness(1.15) contrast(1.2) saturate(1.4) hue-rotate(5deg) sharpen(1px);
+    -webkit-filter: brightness(1.15) contrast(1.2) saturate(1.4) hue-rotate(5deg);
     transition: all 0.3s ease;
 }
 
 .photo-preview:hover {
-    filter: brightness(1.25) contrast(1.3) saturate(1.35) sharpen(2px);
-    -webkit-filter: brightness(1.25) contrast(1.3) saturate(1.35);
+    filter: brightness(1.25) contrast(1.3) saturate(1.6) hue-rotate(8deg) sharpen(2px);
+    -webkit-filter: brightness(1.25) contrast(1.3) saturate(1.6) hue-rotate(8deg);
     transform: scale(1.05);
 }
 

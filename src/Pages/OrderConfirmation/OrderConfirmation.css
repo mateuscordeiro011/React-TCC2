@@ -53,7 +53,6 @@
   color: #aaa;
 }
 
-/* Detalhes do Pedido */
 .order-details {
   background: #f9f9f9;
   border-radius: 12px;
@@ -96,7 +95,6 @@
   color: #eee;
 }
 
-/* Botão */
 .btn-primary {
   padding: 15px 30px;
   background: linear-gradient(135deg, #00b7c2 0%, #007a87 100%);
@@ -128,7 +126,6 @@
   box-shadow: 0 6px 20px rgba(0, 209, 178, 0.5);
 }
 
-/* Animações */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -157,7 +154,6 @@
   }
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .order-confirmation-page {
     padding-top: 60px;
@@ -213,7 +209,6 @@
   }
 }
 
-/* Scrollbar personalizada para navegadores Webkit */
 .order-confirmation::-webkit-scrollbar {
   width: 8px;
 }

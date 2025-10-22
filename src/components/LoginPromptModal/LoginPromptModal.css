@@ -215,7 +215,6 @@ body.dark-mode .login-prompt-btn.register:hover {
   color: #333;
 }
 
-/* Responsivo */
 @media (max-width: 560px) {
   .login-prompt-modal {
     width: 90vw;

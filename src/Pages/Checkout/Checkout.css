@@ -563,7 +563,6 @@
   color: #aaa;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .checkout-content {
     grid-template-columns: 1fr;

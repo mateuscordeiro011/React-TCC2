@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,12 +16,17 @@ import promo4 from "../../IMG/promo4.png";
 
 export default function Home() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { darkMode } = useTheme();
   const [items, setItems] = useState([]);
   const [animals, setAnimals] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedAnimal, setSelectedAnimal] = useState(null);
+  
+  // Estados para o pop-up de carrinho
+  const [showAddToCartPopup, setShowAddToCartPopup] = useState(false);
+  const [popupProduct, setPopupProduct] = useState(null);
 
   const heroSettings = {
     dots: true,
@@ -34,12 +40,53 @@ export default function Home() {
     fade: true,
   };
 
-  const handleAddToCart = (item) => {
+    const handleAddToCart = (item) => {
     if (!user) {
       setShowLoginModal(true);
       return;
     }
-    console.log("Adicionando ao carrinho:", item.nome);
+
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existing = cart.find(p => p.id_produto === item.id_produto || p.id_produto === item.id);
+
+    if (existing) {
+      existing.quantidade += 1;
+    } else {
+      cart.push({
+        id_produto: item.id_produto || item.id,
+        nome: item.nome,
+        preco: item.preco,
+        foto: item.foto,
+        quantidade: 1
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    setPopupProduct(item);
+    setShowAddToCartPopup(true);
+
+    setTimeout(() => {
+      setShowAddToCartPopup(false);
+      setPopupProduct(null);
+    }, 3000);
+  };
+
+  const handleAdopt = (animal) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    console.log("Tentando adotar animal:", animal);
+
+    if (animal.id == null && animal.id_animal == null) {
+      alert("Erro: este animal não tem ID válido.");
+      return;
+    }
+
+    const animalId = animal.id || animal.id_animal;
+    navigate(`/agendamento-visita/${animalId}`);
   };
 
   useEffect(() => {
@@ -122,33 +169,38 @@ export default function Home() {
   return (
     <>
       <div className={`home ${darkMode ? "dark-mode" : "light-mode"}`}>
-        <section className="hero-carousel">
-          <Slider {...heroSettings}>
-            {[
-              { img: promo1, title: "ADOÇÃO", text: "Adote um novo amigo e faça parte de uma comunidade que ama animais. 🐶🐱✨<br /><i>\"Dê um lar amoroso a um animal que precisa de você!\"</i>", button: "ADOTAR" },
-              { img: promo2, title: "BAIXE JÁ!", text: "Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br /><i>\"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão.\"</i>" },
-              { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>", button: "VER CATÁLOGO" },
-              { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "NÃO PERCA!" },
+<section className="hero-carousel">
+  <Slider {...heroSettings}>
+    {[
+      { img: promo1, title: "ADOÇÃO", text: "Adote um novo amigo e faça parte de uma comunidade que ama animais. 🐶🐱✨<br /><i>\"Dê um lar amoroso a um animal que precisa de você!\"</i>", button: "ADOTAR" },
+      { img: promo2, title: "BAIXE JÁ!", text: "Disponível para Android e iOS, baixe nosso app agora mesmo! 📱🐶🐱<br /><i>\"Tudo o que você precisa para cuidar do seu pet, no conforto da sua mão.\"</i>" },
+      { img: promo3, title: "APENAS NO APP", text: "Até 15% de cashback exclusivo para compras no nosso aplicativo. 💰🐾<br /><i>\"Faça suas compras pelo app e ganhe recompensas extras!\"</i>", button: "VER CATÁLOGO" },
+      { img: promo4, title: "PRIMEIRA COMPRA", text: "60% OFF na sua primeira compra! Válido até 28/11. 🐾🦎🐱🐶<br /><i>\"Comece com um grande desconto e aproveite nossos produtos incríveis!\"</i>", button: "NÃO PERCA!" },
+    ].map((slide, idx) => (
+      <div key={idx} className="hero-slide">
+        <div className="hero-slide-content">
+          {/* Imagem com proporção forçada */}
+          <div className="hero-image-wrapper">
+            <div
+              className="hero-image-aspect-ratio"
+              style={{
+                backgroundImage: `url(${slide.img})`,
+              }}
+            />
+          </div>
 
-            ].map((slide, idx) => (
-              <div key={idx} className="hero-slide">
-                <div className="hero-slide-content">
-                  <div className="hero-image-wrapper">
-                    <img src={slide.img} alt={`Promoção ${idx + 1}`} className="hero-image" />
-                  </div>
-
-                  <div className="hero-text-wrapper">
-                    <h1>{slide.title}</h1>
-                    <p dangerouslySetInnerHTML={{ __html: slide.text }}></p>
-                    {slide.button && (
-                      <button className="cta-button">{slide.button}</button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Slider>
-        </section>
+          <div className="hero-text-wrapper">
+            <h1>{slide.title}</h1>
+            <p dangerouslySetInnerHTML={{ __html: slide.text }}></p>
+            {slide.button && (
+              <button className="cta-button">{slide.button}</button>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </Slider>
+</section>
 
         <section className="catalog-section">
           <div className="section-header">
@@ -255,7 +307,7 @@ export default function Home() {
                       className="catalog-item-button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(animal);
+                        handleAdopt(animal);
                       }}
                     >
                       Quero Adotar
@@ -333,6 +385,39 @@ export default function Home() {
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
+
+        {/* Pop-up de "Adicionado ao Carrinho" */}
+        {showAddToCartPopup && popupProduct && (
+          <div className="add-to-cart-popup-overlay">
+            <div className="add-to-cart-popup">
+              <div className="popup-icon">🛒</div>
+              <h3>Produto Adicionado!</h3>
+              <div className="popup-product">
+                <img
+                  src={getBase64ImageSrc(popupProduct.foto)}
+                  alt={popupProduct.nome}
+                  className="popup-product-img"
+                  onError={(e) => {
+                    e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM2NjYiPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+";
+                  }}
+                />
+                <div>
+                  <p className="popup-product-name">{popupProduct.nome}</p>
+                  <p className="popup-product-price">R$ {popupProduct.preco?.toFixed(2)}</p>
+                </div>
+              </div>
+              <button
+                className="popup-view-cart-btn"
+                onClick={() => {
+                  setShowAddToCartPopup(false);
+                  navigate('/carrinho');
+                }}
+              >
+                Ver Carrinho
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Footer />

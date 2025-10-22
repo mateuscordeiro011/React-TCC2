@@ -12,14 +12,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.8); /* Fundo semi-transparente */
-  z-index: 9999; /* Fica acima de outros elementos */
-  backdrop-filter: blur(2px); /* Efeito de desfoque no fundo */
+  background-color: rgba(255, 255, 255, 0.8); 
+  z-index: 9999; 
+  backdrop-filter: blur(2px);
 }
 
 .spinner {
-  border: 4px solid rgba(0, 184, 212, 0.2); /* Cor primária com transparência */
-  border-top: 4px solid #00b8d4; /* Cor primária sólida */
+  border: 4px solid rgba(0, 184, 212, 0.2); 
+  border-top: 4px solid #00b8d4; 
   border-radius: 50%;
   animation: spin 1s linear infinite;
 
@@ -45,7 +45,7 @@
 .spinner-message {
   margin-top: 15px;
   font-size: 1rem;
-  color: #6d4c41; /* Cor marrom do tema */
+  color: #6d4c41;
   text-align: center;
   font-weight: 500;
 }
