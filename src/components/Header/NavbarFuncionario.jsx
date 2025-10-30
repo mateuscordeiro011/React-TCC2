@@ -97,6 +97,7 @@ export default function NavbarFuncionario() {
         <li><Link to="/formproduto" onClick={closeAllMenus}>Produtos</Link></li>
         <li><Link to="/formanimal" onClick={closeAllMenus}>Animais</Link></li>
         <li><Link to="/formdoacao-funcionario" onClick={closeAllMenus}>Doações (Ver)</Link></li>
+        <li><Link to="/pedidos-vendas">Pedidos</Link></li>
         <li><Link to="/relatorio" onClick={closeAllMenus}>Relatórios</Link></li>
       </ul>
 

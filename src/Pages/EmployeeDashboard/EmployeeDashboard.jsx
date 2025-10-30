@@ -170,7 +170,14 @@ export default function EmployeeDashboard() {
     };
 
     const formatDateTime = (dateString) => {
-        return new Date(dateString).toLocaleString('pt-BR');
+        if (!dateString) return 'Data não disponível';
+        try {
+            // Para LocalDate, adicionar horário padrão
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('pt-BR');
+        } catch (e) {
+            return 'Data inválida';
+        }
     };
 
     const getStatusColor = (status) => {
@@ -187,10 +194,20 @@ export default function EmployeeDashboard() {
     const getActionIcon = (tipo) => {
         const icons = {
             'COMPRA': '🛒',
-            'DOACAO': '🐾',
+            'DOACAO': '🐾', 
             'ADOCAO': '❤️',
             'CADASTRO': '👤',
-            'PRODUTO': '📦'
+            'CADASTRO_PRODUTO': '📦',
+            'ATUALIZACAO_PRODUTO': '✏️',
+            'EXCLUSAO_PRODUTO': '🗑️',
+            'CADASTRO_ANIMAL': '🐕',
+            'ATUALIZACAO_ANIMAL': '🔄',
+            'EXCLUSAO_ANIMAL': '🗑️',
+            'ATUALIZACAO_PERFIL_CLIENTE': '👤',
+            'ATUALIZACAO_FOTO_CLIENTE': '📷',
+            'ATUALIZACAO_PERFIL_FUNCIONARIO': '👨‍💼',
+            'ATUALIZACAO_FOTO_FUNCIONARIO': '📷',
+            'ATUALIZACAO_DOACAO': '🔄'
         };
         return icons[tipo] || '📋';
     };
@@ -279,17 +296,17 @@ export default function EmployeeDashboard() {
                                         <div className="recent-activities">
                                             {logs.slice(0, 5).map(log => (
                                                 <div key={log.id} className="activity-item">
-                                                    <span className="activity-icon">{getActionIcon(log.tipo_acao)}</span>
+                                                    <span className="activity-icon">{getActionIcon(log.tipoAcao)}</span>
                                                     <div className="activity-details">
-                                                        <p><strong>{log.usuario_nome}</strong> - {log.descricao}</p>
-                                                        <small>{formatDateTime(log.data_hora)}</small>
+                                                        <p><strong>{log.tipoAcao}</strong> - {log.descricao}</p>
+                                                        <small>{formatDateTime(log.dataHora)}</small>
+                                                        {log.detalhes && log.detalhes !== 'Sistema' && (
+                                                            <small className="user-info"> | {log.detalhes}</small>
+                                                        )}
+                                                        {(!log.detalhes || log.detalhes === 'Sistema') && (
+                                                            <small className="system-info"> | Sistema</small>
+                                                        )}
                                                     </div>
-                                                    <span 
-                                                        className="activity-status"
-                                                        style={{ color: getStatusColor(log.status) }}
-                                                    >
-                                                        {log.status}
-                                                    </span>
                                                 </div>
                                             ))}
                                         </div>
@@ -309,28 +326,24 @@ export default function EmployeeDashboard() {
                                         logs.map(log => (
                                             <div key={log.id} className="log-item">
                                                 <div className="log-header">
-                                                    <span className="log-icon">{getActionIcon(log.tipo_acao)}</span>
+                                                    <span className="log-icon">{getActionIcon(log.tipoAcao)}</span>
                                                     <div className="log-info">
-                                                        <h4>{log.tipo_acao}</h4>
-                                                        <p><strong>Usuário:</strong> {log.usuario_nome}</p>
+                                                        <h4>{log.tipoAcao}</h4>
+                                                        <div className="log-user-info">
+                                                            {log.detalhes && log.detalhes !== 'Sistema' ? (
+                                                                <span className="log-badge user-badge">{log.detalhes}</span>
+                                                            ) : (
+                                                                <span className="log-badge system-badge">Sistema</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     <div className="log-meta">
-                                                        <span 
-                                                            className="log-status"
-                                                            style={{ backgroundColor: getStatusColor(log.status) }}
-                                                        >
-                                                            {log.status}
-                                                        </span>
-                                                        <small>{formatDateTime(log.data_hora)}</small>
+                                                        <small>{formatDateTime(log.dataHora)}</small>
+                                                        {log.ipOrigem && <small>IP: {log.ipOrigem}</small>}
                                                     </div>
                                                 </div>
                                                 <div className="log-description">
                                                     <p>{log.descricao}</p>
-                                                    {log.valor && (
-                                                        <p className="log-value">
-                                                            <strong>Valor:</strong> {formatCurrency(log.valor)}
-                                                        </p>
-                                                    )}
                                                 </div>
                                             </div>
                                         ))

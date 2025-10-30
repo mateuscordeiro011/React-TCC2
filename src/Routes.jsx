@@ -35,6 +35,7 @@ import PerfilFuncionario from "./Pages/Perfil/Funcionario/PerfilFuncionario";
 import Checkout from "./Pages/Checkout/Checkout";
 import OrderConfirmation from "./Pages/OrderConfirmation/OrderConfirmation";
 import EmployeeDashboard from "./Pages/EmployeeDashboard/EmployeeDashboard";
+import PedidosVendas from "./Pages/PedidoVendas/PedidoVendas";
 
 // Configurações
 import Configuracoes from "./Pages/Configuracoes/Configuracoes";
@@ -243,6 +244,16 @@ function RoutesApp() {
           <DynamicLayout>
             <ProtectedRoute allowedRoles={['FUNCIONARIO']}>
               <DoarAnimalFuncionario />
+            </ProtectedRoute>
+          </DynamicLayout>
+        }
+      />
+            <Route
+        path="/pedidos-vendas"
+        element={
+          <DynamicLayout>
+            <ProtectedRoute allowedRoles={['FUNCIONARIO']}>
+              <PedidosVendas />
             </ProtectedRoute>
           </DynamicLayout>
         }

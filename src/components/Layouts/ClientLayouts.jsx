@@ -1,4 +1,4 @@
-import Navbar from "../Header/Header"; // seu Navbar normal de cliente
+import Navbar from "../Header/Header"; 
 import Footer from "../Footer/Footer";
 
 export default function ClienteLayout({ children }) {

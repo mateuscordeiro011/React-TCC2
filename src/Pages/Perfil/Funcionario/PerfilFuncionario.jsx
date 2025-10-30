@@ -1,4 +1,3 @@
-// src/Pages/Perfil/Funcionario/PerfilFuncionario.jsx
 import { useState, useEffect, useRef } from "react";
 import { useTheme } from "../../../context/ThemeContext";
 import { useAuth } from "../../../utils/useAuth";
@@ -106,7 +105,7 @@ export default function PerfilFuncionario() {
 
     // ✅ Payload compatível
     const payload = {
-      email: user.nome, 
+      email: user.email, 
       nome: formData.nome,
       senha: formData.senha || null,
       cep: formData.cep.replace(/\D/g, "") || "",
@@ -124,12 +123,20 @@ export default function PerfilFuncionario() {
 
       // Upload de foto (se houver)
       if (formData.foto) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("email", user.email);
-        formDataUpload.append("foto", formData.foto);
-        await axios.post(`http://localhost:8080/api-salsi/funcionarios/perfil/foto`, formDataUpload, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        try {
+          const formDataUpload = new FormData();
+          formDataUpload.append("email", user.email);
+          formDataUpload.append("foto", formData.foto);
+          await axios.post(`http://localhost:8080/api-salsi/funcionarios/perfil/foto`, formDataUpload, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+        } catch (fotoError) {
+          console.error("Erro no upload da foto:", fotoError);
+          console.error("Resposta do servidor:", fotoError.response?.data);
+          const errorMsg = fotoError.response?.data?.erro || "Erro no upload da foto";
+          setMensagem({ tipo: "erro", texto: `Perfil atualizado, mas houve erro no upload da foto: ${errorMsg}` });
+          return;
+        }
       }
 
       // Recarrega perfil
@@ -367,10 +374,21 @@ export default function PerfilFuncionario() {
                 <button
                   type="button"
                   className="menu-btn remove-btn"
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation();
                     if (window.confirm("Tem certeza que deseja remover sua foto de perfil?")) {
-                      setFormData((prev) => ({ ...prev, foto: null, fotoPreview: null }));
+                      try {
+                        // Enviar requisição para remover foto no servidor
+                        await axios.delete(`http://localhost:8080/api-salsi/funcionarios/perfil/foto?email=${encodeURIComponent(user.email)}`);
+                        
+                        // Atualizar estado local
+                        setFormData((prev) => ({ ...prev, foto: null, fotoPreview: null }));
+                        setFuncionario((prev) => ({ ...prev, foto: null }));
+                        setMensagem({ tipo: "sucesso", texto: "Foto removida com sucesso!" });
+                      } catch (error) {
+                        console.error("Erro ao remover foto:", error);
+                        setMensagem({ tipo: "erro", texto: "Erro ao remover foto." });
+                      }
                       setIsPhotoMenuOpen(false);
                     }
                   }}

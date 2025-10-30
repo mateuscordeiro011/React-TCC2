@@ -268,7 +268,7 @@ const FormAnimal = () => {
                   type="text"
                   value={vsexo}
                   onChange={(e) => setSexo(e.target.value)}
-                  placeholder="Macho / Fêmea"
+                  placeholder="M (Macho) / F (Fêmea)"
                   required
                 />
               </div>

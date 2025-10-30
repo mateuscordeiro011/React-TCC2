@@ -102,6 +102,9 @@ export default function CatalogoProdutos() {
         return false;
       }
       
+      if (filters.categoria && item.categoria !== filters.categoria) {
+        return false;
+      }
       
       if (filters.precoMin && item.preco < parseFloat(filters.precoMin)) {
         return false;
@@ -154,19 +157,42 @@ export default function CatalogoProdutos() {
               />
             </div>
             
+            <div className="filter-group">
+              <select 
+                value={filters.categoria}
+                onChange={(e) => setFilters({...filters, categoria: e.target.value})}
+                className="filter-select"
+              >
+                <option value="">Todas as categorias</option>
+                {categorias.map(categoria => (
+                  <option key={categoria} value={categoria}>{categoria}</option>
+                ))}
+              </select>
+            </div>
+            
             <div className="filter-group price-filters">
               <input
                 type="number"
                 placeholder="Preço mín."
                 value={filters.precoMin}
-                onChange={(e) => setFilters({...filters, precoMin: e.target.value})}
+                onChange={(e) => {
+                  const value = Math.max(0, parseFloat(e.target.value) || 0);
+                  setFilters({...filters, precoMin: value > 0 ? value.toString() : ""});
+                }}
+                min="0"
+                step="0.01"
                 className="price-input"
               />
               <input
                 type="number"
                 placeholder="Preço máx."
                 value={filters.precoMax}
-                onChange={(e) => setFilters({...filters, precoMax: e.target.value})}
+                onChange={(e) => {
+                  const value = Math.max(0, parseFloat(e.target.value) || 0);
+                  setFilters({...filters, precoMax: value > 0 ? value.toString() : ""});
+                }}
+                min="0"
+                step="0.01"
                 className="price-input"
               />
             </div>
@@ -178,8 +204,8 @@ export default function CatalogoProdutos() {
                 className="filter-select"
               >
                 <option value="nome">Ordenar por nome</option>
-                <option value="preco-asc">Ordernar por Menor preço</option>
-                <option value="preco-desc">Ordernar por Maior preço</option>
+                <option value="preco-asc">Menor preço</option>
+                <option value="preco-desc">Maior preço</option>
               </select>
             </div>
           </div>

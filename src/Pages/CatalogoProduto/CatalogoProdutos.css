@@ -11,7 +11,7 @@ html, body {
 .catalogo-page {
   min-height: 100vh;
   padding-top: 80px;
-  background-color: #9DBCEA; 
+  background-color: #9DBCEA; /* ✅ Fundo suave da paleta */
   color: #333;
   transition: all 0.5s ease;
   font-family: 'Poppins', sans-serif;
@@ -23,8 +23,9 @@ html, body {
   background-color: #1a1a1a;
 }
 
+/* Hero Section */
 .catalogo-hero {
-  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%);
+  background: linear-gradient(120deg, #8B7365 0%, #9DBCEA 100%); /* ✅ Marrom + azul suave */
   padding: 80px 20px;
   text-align: center;
   position: relative;
@@ -53,12 +54,12 @@ html, body {
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-
+/* Filtros */
 .catalogo-filters {
   padding: 30px 20px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(139, 115, 101, 0.2);
+  border-bottom: 1px solid rgba(139, 115, 101, 0.2); /* ✅ Marrom translúcido */
   position: sticky;
   top: 80px;
   z-index: 100;
@@ -88,7 +89,7 @@ html, body {
 .filter-select,
 .price-input {
   padding: 12px 15px;
-  border: 2px solid #00C4CC;
+  border: 2px solid #00C4CC; /* ✅ Turquesa */
   border-radius: 30px;
   font-size: 1rem;
   outline: none;
@@ -108,7 +109,7 @@ html, body {
 .search-input:focus,
 .filter-select:focus,
 .price-input:focus {
-  border-color: #0097a7; 
+  border-color: #0097a7; /* ✅ Turquesa mais escuro */
   box-shadow: 0 0 0 3px rgba(0, 196, 204, 0.3);
 }
 
@@ -123,6 +124,7 @@ html, body {
   width: 120px;
 }
 
+/* Resultados */
 .catalogo-results {
   padding: 30px 20px;
   max-width: 1400px;
@@ -152,6 +154,7 @@ html, body {
   margin: 0 auto;
 }
 
+/* Estados de Carregamento e Erro */
 .loading-container,
 .error-container,
 .no-results {
@@ -162,8 +165,8 @@ html, body {
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid rgba(0, 196, 204, 0.3); 
-  border-top: 5px solid #00C4CC;
+  border: 5px solid rgba(0, 196, 204, 0.3); /* ✅ Turquesa translúcido */
+  border-top: 5px solid #00C4CC; /* ✅ Turquesa */
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
@@ -185,14 +188,14 @@ html, body {
 }
 
 .error-message {
-  color: #F48A73; 
+  color: #F48A73; /* ✅ Laranja-rosado */
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
 .retry-button {
   padding: 12px 25px;
-  background: #00C4CC; 
+  background: #00C4CC; /* ✅ Turquesa */
   color: white;
   border: none;
   border-radius: 30px;
@@ -202,11 +205,11 @@ html, body {
 }
 
 .retry-button:hover {
-  background: #0097a7;
+  background: #0097a7; /* ✅ Turquesa mais escuro */
   transform: translateY(-2px);
 }
 
-
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -286,42 +289,28 @@ html, body {
 
 .modal-image {
   width: 100%;
-  height: 350px;
+  height: 400px;
   object-fit: cover;
   border-radius: 12px 12px 0 0;
   display: block;
-  filter: brightness(1.15) contrast(1.2) saturate(1.25) sharpen(1px);
-  -webkit-filter: brightness(1.15) contrast(1.2) saturate(1.25);
   transition: all 0.3s ease;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
 }
 
 .modal-image:hover {
-  filter: brightness(1.25) contrast(1.3) saturate(1.35) sharpen(2px);
-  -webkit-filter: brightness(1.25) contrast(1.3) saturate(1.35);
   transform: scale(1.02);
-}
-
-.catalogo-page.dark-mode .modal-image {
-  filter: brightness(1.25) contrast(1.3) saturate(1.3) sharpen(1px);
-  -webkit-filter: brightness(1.25) contrast(1.3) saturate(1.3);
-}
-
-.catalogo-page.dark-mode .modal-image:hover {
-  filter: brightness(1.35) contrast(1.4) saturate(1.4) sharpen(2px);
-  -webkit-filter: brightness(1.35) contrast(1.4) saturate(1.4);
 }
 
 .modal h2 {
   font-size: 28px;
   margin: 20px 20px 10px;
-  color: #8B7365; 
+  color: #8B7365; /* ✅ Marrom terroso */
   font-weight: 700;
 }
 
 .catalogo-page.dark-mode .modal h2 {
-  color: #D4AF37; 
+  color: #D4AF37; /* ✅ Dourado */
 }
 
 .modal-category {
@@ -351,7 +340,7 @@ html, body {
 .modal-price {
   font-size: 24px;
   font-weight: 700;
-  color: #00C4CC; 
+  color: #00C4CC; /* ✅ Turquesa */
   margin: 15px 20px;
 }
 
@@ -387,7 +376,7 @@ html, body {
 }
 
 .modal-btn.buy {
-  background-color: #D4AF37;  
+  background-color: #D4AF37; /* ✅ Dourado */
   color: #333;
 }
 
@@ -398,7 +387,7 @@ html, body {
 }
 
 .modal-btn.cart {
-  background-color: #F48A73; 
+  background-color: #F48A73; /* ✅ Laranja-rosado */
   color: white;
 }
 
@@ -418,6 +407,7 @@ html, body {
   color: white;
 }
 
+/* === Pop-up de Adicionado ao Carrinho === */
 
 .add-to-cart-popup-overlay {
   position: fixed;
@@ -446,7 +436,7 @@ html, body {
   align-items: center;
   transform: translateY(-20px);
   animation: slideIn 0.4s ease forwards;
-  border: 2px solid #D4AF37; 
+  border: 2px solid #D4AF37; /* ✅ Dourado */
 }
 
 .catalogo-page.dark-mode .add-to-cart-popup {
@@ -458,14 +448,14 @@ html, body {
 .popup-icon {
   font-size: 2.5rem;
   margin-bottom: 15px;
-  color: #D4AF37;
+  color: #D4AF37; /* ✅ Dourado */
 }
 
 .add-to-cart-popup h3 {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #8B7365; 
+  color: #8B7365; /* ✅ Marrom */
   text-align: center;
 }
 
@@ -479,7 +469,7 @@ html, body {
   gap: 15px;
   width: 100%;
   padding: 15px;
-  background: rgba(212, 175, 55, 0.08);
+  background: rgba(212, 175, 55, 0.08); /* ✅ Dourado translúcido */
   border-radius: 16px;
   margin-bottom: 20px;
 }
@@ -489,19 +479,15 @@ html, body {
 }
 
 .popup-product-img {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
   border-radius: 10px;
   border: 2px solid #00C4CC;
-  filter: brightness(1.1) contrast(1.15) saturate(1.2) sharpen(1px);
-  -webkit-filter: brightness(1.1) contrast(1.15) saturate(1.2);
   transition: all 0.3s ease;
 }
 
 .popup-product-img:hover {
-  filter: brightness(1.2) contrast(1.25) saturate(1.3) sharpen(2px);
-  -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.3);
   transform: scale(1.05);
 }
 
@@ -518,7 +504,7 @@ html, body {
 
 .popup-product-price {
   font-weight: 700;
-  color: #00C4CC;
+  color: #00C4CC; /* ✅ Turquesa */
   margin: 4px 0 0;
   font-size: 1rem;
 }
@@ -529,7 +515,7 @@ html, body {
 
 .popup-view-cart-btn {
   padding: 12px 28px;
-  background: linear-gradient(135deg, #D4AF37 0%, #8B7365 100%); 
+  background: linear-gradient(135deg, #D4AF37 0%, #8B7365 100%); /* ✅ Dourado → Marrom */
   color: #333;
   border: none;
   border-radius: 50px;
@@ -545,6 +531,7 @@ html, body {
   box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
   .catalogo-hero h1 {
     font-size: 2.2rem;
@@ -671,6 +658,7 @@ html, body {
   }
 }
 
+/* Card de Produto com Imagem Melhorada */
 .product-card {
   background: white;
   border-radius: 20px;
@@ -699,34 +687,21 @@ html, body {
 
 .product-card-image {
   width: 100%;
-  height: 280px;
+  height: 320px;
   object-fit: cover;
   object-position: center;
   transition: all 0.6s ease;
-  filter: brightness(1.1) contrast(1.15) saturate(1.2) sharpen(1px);
-  -webkit-filter: brightness(1.1) contrast(1.15) saturate(1.2);
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   position: relative;
   z-index: 0;
 }
 
-.catalogo-page.dark-mode .product-card-image {
-  filter: brightness(1.2) contrast(1.25) saturate(1.25) sharpen(1px);
-  -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.25);
-}
-
 .product-card:hover .product-card-image {
   transform: scale(1.08);
-  filter: brightness(1.2) contrast(1.25) saturate(1.3) sharpen(2px);
-  -webkit-filter: brightness(1.2) contrast(1.25) saturate(1.3);
 }
 
-.catalogo-page.dark-mode .product-card:hover .product-card-image {
-  filter: brightness(1.3) contrast(1.35) saturate(1.35) sharpen(2px);
-  -webkit-filter: brightness(1.3) contrast(1.35) saturate(1.35);
-}
-
+/* Animação para os cards */
 .catalogo-grid > * {
   animation-duration: 0.6s;
   animation-fill-mode: both;
@@ -740,6 +715,7 @@ html, body {
 .catalogo-grid > *:nth-child(5) { animation-delay: 0.5s; }
 .catalogo-grid > *:nth-child(6) { animation-delay: 0.6s; }
 
+/* Scrollbar personalizada */
 .modal::-webkit-scrollbar {
   width: 8px;
 }

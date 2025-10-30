@@ -31,12 +31,13 @@ const Registro = () => {
     return value.slice(0, -1);
   };
 
+  // ✅ Função handleCpfChange (deve vir antes de ser usada)
   const handleCpfChange = (e) => {
     const value = e.target.value;
     setCpf(formatarCPF(value));
   };
 
-  // Validarde força da senha
+  // Validação de força da senha
   const passwordStrength = (value) => {
     let point = 0;
     const widthPower = ['1%', '25%', '50%', '75%', '100%'];
@@ -59,7 +60,7 @@ const Registro = () => {
     passwordStrength(value);
   };
 
-  // Validar de CPF
+  // Validação de CPF
   const validarCPF = (cpf) => {
     const match = cpf.match(/\d/g);
     if (!match || match.length !== 11) return false;

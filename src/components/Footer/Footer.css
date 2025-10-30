@@ -191,6 +191,7 @@ body.dark-mode .back-to-top:hover {
   color: #fff;
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
   .row {
     flex-direction: column;

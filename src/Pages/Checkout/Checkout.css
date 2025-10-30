@@ -11,6 +11,7 @@
   color: #eee;
 }
 
+/* Hero Section */
 .checkout-hero {
   background: linear-gradient(120deg, #00b7c2 0%, #007a87 100%);
   padding: 60px 20px;
@@ -28,6 +29,7 @@
   font-size: 1.1rem;
 }
 
+/* Conteúdo Principal */
 .checkout-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -37,6 +39,7 @@
   gap: 30px;
 }
 
+/* Seção */
 .checkout-section {
   background: white;
   border-radius: 12px;
@@ -59,6 +62,7 @@
   color: #00d1b2;
 }
 
+/* Carrinho de Compras */
 .cart-items {
   margin-bottom: 20px;
 }
@@ -106,6 +110,7 @@
   color: #00d1b2;
 }
 
+/* Resumo do Pedido */
 .order-summary {
   border-top: 1px solid #eee;
   padding-top: 20px;
@@ -143,6 +148,7 @@
   color: #00d1b2;
 }
 
+/* Endereço de Entrega */
 .address-section {
   margin-bottom: 20px;
 }
@@ -232,6 +238,7 @@
   color: #00d1b2;
 }
 
+/* Formas de Pagamento */
 .payment-methods {
   display: flex;
   flex-direction: column;
@@ -299,6 +306,7 @@
   background: rgba(0, 209, 178, 0.05);
 }
 
+/* Ações */
 .checkout-actions {
   grid-column: 1 / -1;
   display: flex;
@@ -347,6 +355,7 @@
   background: #555;
 }
 
+/* Confirmação de PIX */
 .pix-confirmation {
   text-align: center;
 }
@@ -436,6 +445,7 @@
   margin-top: 20px;
 }
 
+/* Página de Pedido Confirmado */
 .order-confirmation-page {
   min-height: 100vh;
   padding-top: 80px;
@@ -494,6 +504,7 @@
   background: #333;
 }
 
+/* Processing Overlay */
 .processing-overlay {
   position: fixed;
   top: 0;
@@ -563,6 +574,7 @@
   color: #aaa;
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
   .checkout-content {
     grid-template-columns: 1fr;

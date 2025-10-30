@@ -83,14 +83,14 @@ const handleAdopt = (animal) => {
         return nomeA.localeCompare(nomeB);
       }
       if (sortOption === "idade-asc") {
-        const dateA = a.idadeNumerica ?? Infinity;
-        const dateB = b.idadeNumerica ?? Infinity;
-        return dateA - dateB;
+        const ageA = a.idadeNumerica ?? Infinity;
+        const ageB = b.idadeNumerica ?? Infinity;
+        return ageA - ageB;
       }
-      if (sortOption === "idadeNumerica-desc") {
-        const dateA = a.idadeNumerica ?? -Infinity;
-        const dateB = b.idadeNumerica ?? -Infinity;
-        return dateB - dateA;
+      if (sortOption === "idade-desc") {
+        const ageA = a.idadeNumerica ?? -Infinity;
+        const ageB = b.idadeNumerica ?? -Infinity;
+        return ageB - ageA;
       }
       return 0;
     })
@@ -182,8 +182,8 @@ const handleAdopt = (animal) => {
                 className="filter-select"
               >
                 <option value="nome">Ordenar por nome</option>
-                <option value="idade-asc">Ordenar por Mais jovem</option>
-                <option value="idade-desc">Ordenar por Mais velho</option>
+                <option value="idade-asc">Mais jovem</option>
+                <option value="idade-desc">Mais velho</option>
               </select>
             </div>
           </div>

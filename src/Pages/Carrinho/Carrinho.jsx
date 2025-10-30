@@ -212,7 +212,7 @@ export default function Carrinho() {
                   >
                     {loading ? "Processando..." : "Ir para Checkout"} 
                   </button>
-                  <p className="secure-checkout">🔒 Compra segura e criptografada</p>
+                  <p className="secure-checkout">Compra segura e criptografada</p>
                 </div>
               </div>
             </div>

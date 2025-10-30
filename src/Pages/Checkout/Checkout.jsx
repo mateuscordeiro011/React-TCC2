@@ -21,6 +21,9 @@ export default function Checkout() {
   const [frete, setFrete] = useState(0);
   const [loadingCep, setLoadingCep] = useState(false);
   const [processingOrder, setProcessingOrder] = useState(false);
+  const [clienteEndereco, setClienteEndereco] = useState(null);
+  const [usandoEnderecoCliente, setUsandoEnderecoCliente] = useState(true);
+  const [showChangeAddress, setShowChangeAddress] = useState(false);
   const [order, setOrder] = useState({
     products: [],
     total: 0,
@@ -28,6 +31,28 @@ export default function Checkout() {
     shippingMethod: 'normal',
     paymentMethod: 'pix'
   });
+
+  const buscarEnderecoCliente = async () => {
+    if (!user?.email) return;
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api-salsi/clientes/perfil?email=${encodeURIComponent(user.email)}`);
+      if (response.ok) {
+        const clienteData = await response.json();
+        if (clienteData.endereco && clienteData.endereco.cep) {
+          setClienteEndereco(clienteData.endereco);
+          setCep(clienteData.endereco.cep);
+          
+          const cepLimpo = clienteData.endereco.cep.replace(/\D/g, '');
+          if (cepLimpo.length === 8) {
+            await buscarCep(cepLimpo);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao buscar endereço do cliente:', error);
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -38,12 +63,14 @@ export default function Checkout() {
     if (location.state?.products) {
       const products = location.state.products;
       const total = products.reduce((sum, product) => sum + (product.preco * product.quantity), 0);
-      
+
       setOrder({
         ...order,
         products,
         total
       });
+
+      buscarEnderecoCliente();
     } else {
       navigate('/catalogo-produto');
     }
@@ -60,17 +87,17 @@ export default function Checkout() {
   // Função para buscar CEP
   const buscarCep = async (cepValue) => {
     if (!cepValue || cepValue.length !== 8) return;
-    
+
     setLoadingCep(true);
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`);
       const data = await response.json();
-      
+
       if (data.erro) {
         alert('CEP não encontrado');
         return;
       }
-      
+
       setEndereco(data);
       calcularFrete(data);
     } catch (error) {
@@ -85,7 +112,7 @@ export default function Checkout() {
   const calcularFrete = (enderecoData) => {
     const { uf } = enderecoData;
     let valorFrete = 5; // Valor padrão
-    
+
     // Cálculo baseado no estado
     switch (uf) {
       case 'SP':
@@ -107,7 +134,7 @@ export default function Checkout() {
       default:
         valorFrete = 15;
     }
-    
+
     setFrete(valorFrete);
   };
 
@@ -115,14 +142,14 @@ export default function Checkout() {
   const criarPedidoNaAPI = async (orderData) => {
     try {
       console.log('📦 Enviando dados do pedido para API...');
-      
+
       const pedidoPayload = {
         idUsuario: Number(user.id),
         total: parseFloat((orderData.total + frete).toFixed(2)),
         endereco: endereco ? `${endereco.logradouro}, ${endereco.bairro}, ${endereco.localidade}/${endereco.uf}` : 'Não informado',
         cep: cep || 'Não informado'
       };
-      
+
       console.log('📋 Payload:', pedidoPayload);
 
       const response = await fetch('http://localhost:8080/api-salsi/pedidos', {
@@ -139,11 +166,11 @@ export default function Checkout() {
         const errorText = await response.text();
         throw new Error(`Erro ${response.status}: ${errorText}`);
       }
-      
+
       const pedidoCriado = await response.json();
       console.log('✅ Pedido criado com sucesso:', pedidoCriado);
       return pedidoCriado;
-      
+
     } catch (error) {
       console.error('❌ Erro ao criar pedido:', error);
       throw error;
@@ -167,7 +194,7 @@ export default function Checkout() {
     }
 
     console.log('Pedido confirmado:', order);
-    
+
     if (selectedPaymentMethod === 'pix') {
       setShowPixCode(true);
     } else if (selectedPaymentMethod === 'credit' || selectedPaymentMethod === 'debit') {
@@ -192,11 +219,76 @@ export default function Checkout() {
     }
   };
 
-  const generatePixCode = () => {
-    const totalComFrete = (order.total + frete).toFixed(2);
-    return `00020126580014BR.GOV.BCB.PIX0136${Date.now()}@exemplo.com5204000053039865406${totalComFrete}5802BR5913${user.nome || 'Cliente'}6009Sao Paulo62070503***6304`;
-  };
+const generatePixCode = () => {
+  const chavePix = "40a35a34-8931-4146-bc0b-40baeb9b4dbf";
+  const nomeRecebedor = "MATEUS CORDEIRO DA SILVA";
+  const cidade = "Sao Paulo";
 
+  // Campo 26: Merchant Account Information
+  const gui = "0014BR.GOV.BCB.PIX";
+  const chaveField = "01" + chavePix.length.toString().padStart(2, "0") + chavePix;
+  const merchantAccountInfo = gui + chaveField;
+
+  let payload = "000201"; // Payload Format Indicator
+
+  // Campo 26
+  payload += "26" + (merchantAccountInfo.length).toString().padStart(2, "0") + merchantAccountInfo;
+
+  // Campo 52
+  payload += "52040000";
+
+  // Campo 53
+  payload += "5303986";
+
+  // Campo 54 → vazio para QR Code sem valor fixo
+  payload += "5400";
+
+  // Campo 58
+  payload += "5802BR";
+
+  // Campo 59
+  payload += "59" + nomeRecebedor.length.toString().padStart(2, "0") + nomeRecebedor;
+
+  // Campo 60
+  payload += "60" + cidade.length.toString().padStart(2, "0") + cidade;
+
+  // Campo 62 (opcional)
+  payload += "62070503***";
+
+  // Calcula CRC16
+  const crc = calculateCrc16(payload);
+
+  // Adiciona CRC16
+  return payload + "6304" + crc;
+};
+
+function calculateCrc16(data) {
+  let crc = 0xFFFF;
+  const POLY = 0x1021;
+
+  for (let i = 0; i < data.length; i++) {
+    crc ^= data.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ POLY) : (crc << 1);
+    }
+  }
+
+  return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+}
+
+  function calculateCrc16(data) {
+    let crc = 0xFFFF;
+    const POLY = 0x1021;
+
+    for (let i = 0; i < data.length; i++) {
+      crc ^= data.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        crc = (crc & 0x8000) ? ((crc << 1) ^ POLY) : (crc << 1);
+      }
+    }
+
+    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+  }
   const handleCardConfirm = async (cardData) => {
     setProcessingOrder(true);
     try {
@@ -238,7 +330,7 @@ export default function Checkout() {
 
   if (showPixCode) {
     const pixCode = generatePixCode();
-    
+
     return (
       <>
         <div className={`checkout-page ${darkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -247,58 +339,54 @@ export default function Checkout() {
               <h2>💳 Pagamento por PIX</h2>
               <div className="pix-confirmation">
                 <div className="pix-qr-code">
-                  <div className="qr-placeholder">
-                    <div className="qr-dots"></div>
-                    <div className="qr-dots"></div>
-                    <div className="qr-dots"></div>
-                  </div>
+                
                 </div>
-                <p className="pix-instructions">
-                  Escaneie o código QR ou copie o código PIX abaixo para concluir o pagamento:
-                </p>
-                <div className="pix-code">
-                  <textarea 
-                    value={pixCode} 
-                    readOnly 
-                    rows="3"
-                    className="pix-code-textarea"
-                  />
-                  <button 
-                    className="copy-btn"
-                    onClick={() => navigator.clipboard.writeText(pixCode)}
-                  >
-                    📋 Copiar Código
-                  </button>
-                </div>
-                <p className="pix-timer">Tempo restante: 5:00</p>
-                <div className="pix-actions">
-                  <button 
-                    className="btn-secondary"
-                    onClick={() => setShowPixCode(false)}
-                  >
-                    Voltar
-                  </button>
-                  <button 
-                    className="btn-primary"
-                    disabled={processingOrder}
-                    onClick={async () => {
-                      setProcessingOrder(true);
-                      try {
-                        console.log('🔄 Finalizando pagamento PIX...');
-                        await criarPedidoNaAPI(order);
-                        console.log('✅ Pedido criado e email enviado!');
-                        navigate('/pedido-confirmado', { state: { order } });
-                      } catch (error) {
-                        console.error('❌ Erro ao finalizar PIX:', error);
-                        alert('Erro ao finalizar pagamento. Tente novamente.');
-                      } finally {
-                        setProcessingOrder(false);
-                      }
-                    }}
-                  >
-                    {processingOrder ? 'Processando...' : 'Pagamento Realizado'}
-                  </button>
-                </div>
+              </div>
+              <p className="pix-instructions">
+                Escaneie o código QR e informe o valor de R$ {(order.total + frete).toFixed(2)} ao pagar.
+              </p>
+              <div className="pix-code">
+                <textarea
+                  value={pixCode}
+                  readOnly
+                  rows="3"
+                  className="pix-code-textarea"
+                />
+                <button
+                  className="copy-btn"
+                  onClick={() => navigator.clipboard.writeText(pixCode)}
+                >
+                  📋 Copiar Código
+                </button>
+              </div>
+              <p className="pix-timer">Tempo restante: 5:00</p>
+              <div className="pix-actions">
+                <button
+                  className="btn-secondary"
+                  onClick={() => setShowPixCode(false)}
+                >
+                  Voltar
+                </button>
+                <button
+                  className="btn-primary"
+                  disabled={processingOrder}
+                  onClick={async () => {
+                    setProcessingOrder(true);
+                    try {
+                      console.log('🔄 Finalizando pagamento PIX...');
+                      await criarPedidoNaAPI(order);
+                      console.log('✅ Pedido criado e email enviado!');
+                      navigate('/pedido-confirmado', { state: { order } });
+                    } catch (error) {
+                      console.error('❌ Erro ao finalizar PIX:', error);
+                      alert('Erro ao finalizar pagamento. Tente novamente.');
+                    } finally {
+                      setProcessingOrder(false);
+                    }
+                  }}
+                >
+                  {processingOrder ? 'Processando...' : 'Pagamento Realizado'}
+                </button>
               </div>
             </div>
           </div>
@@ -326,9 +414,9 @@ export default function Checkout() {
             <div className="cart-items">
               {order.products.map((product, index) => (
                 <div key={index} className="cart-item">
-                  <img 
-                    src={product.foto} 
-                    alt={product.nome} 
+                  <img
+                    src={product.foto}
+                    alt={product.nome}
                     className="cart-item-image"
                   />
                   <div className="cart-item-details">
@@ -341,7 +429,7 @@ export default function Checkout() {
                 </div>
               ))}
             </div>
-            
+
             <div className="order-summary">
               <div className="summary-row">
                 <span>Subtotal:</span>
@@ -362,36 +450,73 @@ export default function Checkout() {
           <div className="checkout-section">
             <h2>📍 Endereço de Entrega</h2>
             <div className="address-section">
-              <div className="cep-input-group">
-                <input
-                  type="text"
-                  placeholder="Digite seu CEP (apenas números)"
-                  value={cep}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
-                    if (value.length <= 8) {
-                      setCep(value);
-                    }
-                  }}
-                  maxLength="8"
-                  className="cep-input"
-                />
-                <button
-                  type="button"
-                  onClick={() => buscarCep(cep)}
-                  disabled={cep.length !== 8 || loadingCep}
-                  className="btn-buscar-cep"
-                >
-                  {loadingCep ? 'Buscando...' : 'Buscar'}
-                </button>
-              </div>
-              
-              {endereco && (
-                <div className="endereco-info">
-                  <p><strong>Endereço:</strong> {endereco.logradouro}</p>
-                  <p><strong>Bairro:</strong> {endereco.bairro}</p>
-                  <p><strong>Cidade:</strong> {endereco.localidade}/{endereco.uf}</p>
-                  <p><strong>Frete calculado:</strong> R$ {frete.toFixed(2)}</p>
+              {usandoEnderecoCliente && clienteEndereco && !showChangeAddress ? (
+                <div className="endereco-cliente">
+                  <div className="endereco-info">
+                    <h3>Seu endereço cadastrado:</h3>
+                    <p><strong>CEP:</strong> {clienteEndereco.cep}</p>
+                    <p><strong>Endereço:</strong> {clienteEndereco.rua}, {clienteEndereco.numero}</p>
+                    {clienteEndereco.complemento && <p><strong>Complemento:</strong> {clienteEndereco.complemento}</p>}
+                    <p><strong>Bairro:</strong> {clienteEndereco.bairro}</p>
+                    <p><strong>Cidade:</strong> {clienteEndereco.cidade}/{clienteEndereco.estado}</p>
+                    <p className="frete-info"><strong>Frete calculado:</strong> R$ {frete.toFixed(2)}</p>
+                  </div>
+                  <button 
+                    className="btn-change-address"
+                    onClick={() => setShowChangeAddress(true)}
+                  >
+                    📍 Alterar Endereço
+                  </button>
+                </div>
+              ) : (
+                <div className="endereco-manual">
+                  <div className="cep-input-group">
+                    <input
+                      type="text"
+                      placeholder="Digite seu CEP (apenas números)"
+                      value={cep}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                        if (value.length <= 8) {
+                          setCep(value);
+                          setUsandoEnderecoCliente(false);
+                        }
+                      }}
+                      maxLength="8"
+                      className="cep-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => buscarCep(cep)}
+                      disabled={cep.length !== 8 || loadingCep}
+                      className="btn-buscar-cep"
+                    >
+                      {loadingCep ? 'Buscando...' : 'Buscar CEP'}
+                    </button>
+                  </div>
+                  
+                  {endereco && (
+                    <div className="endereco-info">
+                      <p><strong>Endereço:</strong> {endereco.logradouro}</p>
+                      <p><strong>Bairro:</strong> {endereco.bairro}</p>
+                      <p><strong>Cidade:</strong> {endereco.localidade}/{endereco.uf}</p>
+                      <p className="frete-info"><strong>Frete recalculado:</strong> R$ {frete.toFixed(2)}</p>
+                    </div>
+                  )}
+                  
+                  {clienteEndereco && (
+                    <button 
+                      className="btn-use-saved-address"
+                      onClick={() => {
+                        setShowChangeAddress(false);
+                        setUsandoEnderecoCliente(true);
+                        setCep(clienteEndereco.cep);
+                        buscarCep(clienteEndereco.cep.replace(/\D/g, ''));
+                      }}
+                    >
+                      🏠 Usar Endereço Cadastrado
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -418,7 +543,7 @@ export default function Checkout() {
                   </div>
                 </label>
               </div>
-              
+
               <div className="payment-option">
                 <input
                   type="radio"
@@ -436,7 +561,7 @@ export default function Checkout() {
                   </div>
                 </label>
               </div>
-              
+
               <div className="payment-option">
                 <input
                   type="radio"
@@ -459,13 +584,13 @@ export default function Checkout() {
 
           {/* Ações */}
           <div className="checkout-actions">
-            <button 
+            <button
               className="btn-secondary"
               onClick={handleBack}
             >
               ← Voltar
             </button>
-            <button 
+            <button
               className="btn-primary"
               onClick={handleConfirmOrder}
             >
@@ -475,12 +600,12 @@ export default function Checkout() {
         </div>
       </div>
       <Footer />
-      
+
       <LoginRequiredModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       />
-      
+
       <CardModal
         isOpen={showCardModal}
         onClose={() => setShowCardModal(false)}
@@ -489,7 +614,7 @@ export default function Checkout() {
         darkMode={darkMode}
         total={order.total + frete}
       />
-      
+
       {processingOrder && (
         <div className="processing-overlay">
           <div className="processing-content">
