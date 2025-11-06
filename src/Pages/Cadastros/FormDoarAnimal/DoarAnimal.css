@@ -901,6 +901,40 @@ body.dark-mode .petshop-cliente-avatar:not(img) {
   flex: 1;
 }
 
+.petshop-cliente-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--cor-secundaria);
+  box-shadow: var(--sombra-suave);
+  filter: brightness(1.1) contrast(1.15) saturate(1.2);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.petshop-cliente-avatar-small:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2) contrast(1.25) saturate(1.3);
+}
+
+.petshop-cliente-avatar-small:not(img) {
+  background: rgba(32, 178, 170, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-secundaria);
+}
+
+body.dark-mode .petshop-cliente-avatar-small {
+  border-color: var(--cor-secundaria-dark);
+}
+
+body.dark-mode .petshop-cliente-avatar-small:not(img) {
+  background: rgba(72, 209, 204, 0.2);
+  color: var(--cor-secundaria-dark);
+}
+
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .petshop-doacoes-grid {

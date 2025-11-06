@@ -207,6 +207,36 @@
   transform: none;
 }
 
+.btn-change-address {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #00b7c2 0%, #007a87 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  box-shadow: 0 2px 8px rgba(0, 183, 194, 0.3);
+}
+
+.checkout-page.dark-mode .btn-change-address {
+  box-shadow: 0 2px 8px rgba(0, 209, 178, 0.3);
+}
+
+.btn-change-address:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 183, 194, 0.4);
+}
+
+.checkout-page.dark-mode .btn-change-address:hover {
+  box-shadow: 0 5px 15px rgba(0, 209, 178, 0.4);
+}
+
 .endereco-info {
   background: #f8f9fa;
   padding: 15px;
@@ -364,6 +394,10 @@
   display: flex;
   justify-content: center;
   margin: 20px 0;
+}
+
+.pix-qr-code img {
+  width: 500px;
 }
 
 .qr-placeholder {

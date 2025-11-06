@@ -288,6 +288,379 @@
   font-weight: 600;
 }
 
+.log-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.user-badge {
+  background: #D4AF37;
+  color: #333;
+}
+
+.system-badge {
+  background: #666;
+  color: white;
+}
+
+/* Estilos para Adoções */
+.adocoes-section {
+  margin-top: 20px;
+}
+
+.adocoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.adocao-item {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 4px solid #F48A73;
+  transition: all 0.3s ease;
+}
+
+.employee-dashboard-page.dark-mode .adocao-item {
+  background: #222;
+  border-left-color: #F48A73;
+}
+
+.adocao-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.adocao-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.adocao-icon {
+  font-size: 1.5rem;
+  background: rgba(244, 138, 115, 0.15);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F48A73;
+}
+
+.adocao-info {
+  flex: 1;
+}
+
+.adocao-info h4 {
+  margin: 0;
+  color: #8B7365;
+  font-size: 1.2rem;
+}
+
+.employee-dashboard-page.dark-mode .adocao-info h4 {
+  color: #D4AF37;
+}
+
+.adocao-cliente {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.cliente-badge {
+  background: #00C4CC;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.adocao-cliente small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.employee-dashboard-page.dark-mode .adocao-cliente small {
+  color: #aaa;
+}
+
+.adocao-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.adocao-data {
+  font-size: 1rem;
+  color: #8B7365;
+}
+
+.employee-dashboard-page.dark-mode .adocao-data {
+  color: #D4AF37;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+}
+
+.status-aprovada {
+  background: #4CAF50 !important;
+}
+
+.status-recusada {
+  background: #F44336 !important;
+}
+
+.status-em_análise {
+  background: #FF9800 !important;
+}
+
+.adocao-details {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.employee-dashboard-page.dark-mode .adocao-details {
+  border-top-color: #444;
+}
+
+.adocao-details small {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.employee-dashboard-page.dark-mode .adocao-details small {
+  color: #aaa;
+}
+
+/* Estilos para Agendamentos */
+.agendamentos-section {
+  margin-top: 20px;
+}
+
+.agendamentos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.agendamento-item {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 4px solid #D4AF37;
+  transition: all 0.3s ease;
+}
+
+.employee-dashboard-page.dark-mode .agendamento-item {
+  background: #222;
+  border-left-color: #D4AF37;
+}
+
+.agendamento-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.agendamento-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.agendamento-icon {
+  font-size: 1.5rem;
+  background: rgba(212, 175, 55, 0.15);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #D4AF37;
+}
+
+.agendamento-info {
+  flex: 1;
+}
+
+.agendamento-info h4 {
+  margin: 0;
+  color: #8B7365;
+  font-size: 1.2rem;
+}
+
+.employee-dashboard-page.dark-mode .agendamento-info h4 {
+  color: #D4AF37;
+}
+
+.agendamento-cliente {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.agendamento-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.agendamento-data {
+  font-size: 1rem;
+  color: #8B7365;
+}
+
+.employee-dashboard-page.dark-mode .agendamento-data {
+  color: #D4AF37;
+}
+
+.agendamento-valor {
+  font-size: 0.9rem;
+  color: #00C4CC;
+  font-weight: 600;
+}
+
+/* Estilos para Doações */
+.doacoes-section {
+  margin-top: 20px;
+}
+
+.doacoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.doacao-item {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 16px;
+  border-left: 4px solid #4CAF50;
+  transition: all 0.3s ease;
+}
+
+.employee-dashboard-page.dark-mode .doacao-item {
+  background: #222;
+  border-left-color: #4CAF50;
+}
+
+.doacao-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doacao-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.doacao-icon {
+  font-size: 1.5rem;
+  background: rgba(76, 175, 80, 0.15);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4CAF50;
+}
+
+.doacao-info {
+  flex: 1;
+}
+
+.doacao-info h4 {
+  margin: 0;
+  color: #8B7365;
+  font-size: 1.2rem;
+}
+
+.employee-dashboard-page.dark-mode .doacao-info h4 {
+  color: #D4AF37;
+}
+
+.doacao-detalhes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.raca-badge {
+  background: #4CAF50;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.doacao-detalhes small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.employee-dashboard-page.dark-mode .doacao-detalhes small {
+  color: #aaa;
+}
+
+.doacao-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.doacao-data {
+  font-size: 1rem;
+  color: #8B7365;
+}
+
+.employee-dashboard-page.dark-mode .doacao-data {
+  color: #D4AF37;
+}
+
+.doacao-details {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.employee-dashboard-page.dark-mode .doacao-details {
+  border-top-color: #444;
+}
+
+.doacao-details small {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.employee-dashboard-page.dark-mode .doacao-details small {
+  color: #aaa;
+}
+
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -530,6 +903,16 @@
   .tab-content h2 {
     font-size: 1.8rem;
   }
+
+  .adocao-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adocao-meta {
+    align-items: flex-start;
+    margin-top: 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -552,5 +935,11 @@
     margin-left: 0;
     margin-top: 10px;
     text-align: left;
+  }
+
+  .adocao-cliente {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
   }
 }

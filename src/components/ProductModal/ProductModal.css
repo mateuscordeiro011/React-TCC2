@@ -273,8 +273,6 @@
   object-fit: cover;
   object-position: center;
   display: block;
-  transform: scale(1.1);
-  transform-origin: center;
   border-radius: 50%;
 }
 

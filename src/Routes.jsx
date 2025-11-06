@@ -98,9 +98,9 @@ function RoutesApp() {
       <Route
         path="/endereco-cadastro"
         element={
-          <DynamicLayout>
+          <AuthLayout>
             <EnderecoCadastro />
-          </DynamicLayout>
+          </AuthLayout>
         }
       />
 

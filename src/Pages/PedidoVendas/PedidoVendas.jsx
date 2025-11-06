@@ -22,9 +22,81 @@ export default function PedidosVendas() {
                 
                 if (response.ok) {
                     const data = await response.json();
-                    // Filtrar apenas pedidos de clientes (não funcionários)
-                    const pedidosClientes = Array.isArray(data) ? data.filter(pedido => pedido.cliente) : [];
-                    setPedidos(pedidosClientes);
+                    console.log('Pedidos carregados:', data);
+                    
+                    // Carregar pedidos com dados do cliente e itens
+                    const pedidosComDetalhes = await Promise.all(
+                        (Array.isArray(data) ? data : []).map(async (pedido) => {
+                            try {
+                                // Buscar dados do cliente
+                                let clienteData = null;
+                                if (pedido.clienteId) {
+                                    const clienteResponse = await fetch(`http://localhost:8080/api-salsi/clientes/${pedido.clienteId}`, {
+                                        credentials: "include"
+                                    });
+                                    if (clienteResponse.ok) {
+                                        clienteData = await clienteResponse.json();
+                                    }
+                                }
+                                
+                                // Buscar itens do pedido
+                                let itensData = [];
+                                try {
+                                    const itensResponse = await fetch(`http://localhost:8080/api-salsi/itempedidos`, {
+                                        credentials: "include"
+                                    });
+                                    if (itensResponse.ok) {
+                                        const todosItens = await itensResponse.json();
+                                        
+                                        // Filtrar itens deste pedido específico
+                                        const itensDoPedido = (Array.isArray(todosItens) ? todosItens : [])
+                                            .filter(item => item.idPedido === pedido.id_pedido);
+                                        
+                                        // Para cada item, buscar dados do produto
+                                        itensData = await Promise.all(
+                                            itensDoPedido.map(async (item) => {
+                                                try {
+                                                    const produtoResponse = await fetch(`http://localhost:8080/api-salsi/produtos/${item.idProduto}`, {
+                                                        credentials: "include"
+                                                    });
+                                                    if (produtoResponse.ok) {
+                                                        const produto = await produtoResponse.json();
+                                                        return { ...item, produto };
+                                                    }
+                                                } catch (err) {
+                                                    console.warn(`Erro ao carregar produto ${item.idProduto}:`, err);
+                                                }
+                                                return item;
+                                            })
+                                        );
+                                    }
+                                } catch (err) {
+                                    console.warn(`Erro ao carregar itens do pedido ${pedido.id_pedido}:`, err);
+                                }
+                                
+                                return {
+                                    id: pedido.id_pedido,
+                                    dataPedido: pedido.data_pedido,
+                                    status: pedido.status,
+                                    valorTotal: pedido.valor_total,
+                                    cliente: clienteData,
+                                    itens: itensData
+                                };
+                            } catch (err) {
+                                console.warn(`Erro ao processar pedido ${pedido.id_pedido}:`, err);
+                                return {
+                                    id: pedido.id_pedido,
+                                    dataPedido: pedido.data_pedido,
+                                    status: pedido.status,
+                                    valorTotal: pedido.valor_total,
+                                    cliente: null,
+                                    itens: []
+                                };
+                            }
+                        })
+                    );
+                    
+                    setPedidos(pedidosComDetalhes.filter(pedido => pedido.cliente));
                 } else {
                     throw new Error('Erro ao carregar pedidos');
                 }
@@ -101,7 +173,7 @@ export default function PedidosVendas() {
         return matchStatus && matchData && matchSearch;
     });
 
-    const totalVendas = pedidosFiltrados.reduce((sum, pedido) => sum + (pedido.total || 0), 0);
+    const totalVendas = pedidosFiltrados.reduce((sum, pedido) => sum + (Number(pedido.valorTotal) || 0), 0);
 
     if (loading) {
         return (
@@ -199,7 +271,7 @@ export default function PedidosVendas() {
                                         </span>
                                     </div>
                                     <div className="pedido-total">
-                                        {formatCurrency(pedido.total)}
+                                        {formatCurrency(Number(pedido.valorTotal) || 0)}
                                     </div>
                                 </div>
 
@@ -212,8 +284,8 @@ export default function PedidosVendas() {
                                     
                                     <div className="pedido-meta">
                                         <p><strong>Data:</strong> {formatDateTime(pedido.dataPedido)}</p>
-                                        <p><strong>Endereço:</strong> {pedido.enderecoEntrega || 'N/A'}</p>
-                                        <p><strong>Frete:</strong> {formatCurrency(pedido.valorFrete || 0)}</p>
+                                        <p><strong>ID do Pedido:</strong> #{pedido.id}</p>
+                                        <p><strong>Status:</strong> {pedido.status}</p>
                                     </div>
                                 </div>
 
@@ -228,20 +300,7 @@ export default function PedidosVendas() {
                                     )}
                                 </div>
 
-                                {pedido.itens && pedido.itens.length > 0 && (
-                                    <div className="itens-pedido">
-                                        <h4>Itens do Pedido:</h4>
-                                        <div className="itens-list">
-                                            {pedido.itens.map((item, index) => (
-                                                <div key={index} className="item-row">
-                                                    <span className="item-nome">{item.produto?.nome || 'Produto'}</span>
-                                                    <span className="item-quantidade">Qtd: {item.quantidade}</span>
-                                                    <span className="item-preco">{formatCurrency(item.precoUnitario)}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                
                             </div>
                         ))
                     )}

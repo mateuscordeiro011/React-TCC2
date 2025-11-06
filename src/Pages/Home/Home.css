@@ -544,12 +544,11 @@ body.dark-mode .catalog-item:hover {
 
 .add-to-cart-popup-overlay {
   position: fixed;
-  color: #fff;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -558,36 +557,39 @@ body.dark-mode .catalog-item:hover {
 }
 
 .add-to-cart-popup {
-  color: #fff;
-  background: white;
+  background: #1a1a1a;
+  color: #ffffff;
   border-radius: 20px;
   padding: 30px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   max-width: 400px;
   width: 90%;
   animation: popIn 0.4s ease;
+  border: 2px solid #333;
+}
+
+.add-to-cart-popup * {
+  color: #ffffff !important;
 }
 
 body.dark-mode .add-to-cart-popup {
-  background: #2a2a2a;
-  color: #eee;
+  background: #1a1a1a;
+  color: #ffffff;
 }
 
 .popup-icon {
   font-size: 3rem;
   margin-bottom: 15px;
   animation: bounce 0.6s ease;
+  color: #ffffff;
 }
 
 .add-to-cart-popup h3 {
-  color: #fff;
+  color: #ffffff !important;
   margin-bottom: 20px;
   font-size: 1.5rem;
-}
-
-body.dark-mode .add-to-cart-popup h3 {
-  color: #fff;
+  font-weight: 600;
 }
 
 .popup-product {
@@ -596,12 +598,9 @@ body.dark-mode .add-to-cart-popup h3 {
   gap: 15px;
   margin-bottom: 20px;
   padding: 15px;
-  background: #f8f9fa;
+  background: #333333;
   border-radius: 12px;
-}
-
-body.dark-mode .popup-product {
-  background: #333;
+  border: 1px solid #444;
 }
 
 .popup-product-img {
@@ -609,21 +608,20 @@ body.dark-mode .popup-product {
   height: 60px;
   object-fit: cover;
   border-radius: 8px;
+  border: 1px solid #555;
 }
 
 .popup-product-name {
   font-weight: bold;
   margin-bottom: 5px;
-}
-
-.popup-product-price {
-  color: #28a745;
-  font-weight: bold;
+  color: #ffffff !important;
   font-size: 1.1rem;
 }
 
-body.dark-mode .popup-product-price {
-  color: #00d1b2;
+.popup-product-price {
+  color: #4ade80 !important;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .popup-view-cart-btn {
@@ -792,6 +790,160 @@ body.dark-mode .no-items {
   color: #8b949e;
   background: rgba(22, 27, 34, 0.8);
   border-color: #30363d;
+}
+
+.add-to-cart-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; 
+  padding-top: 80px;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+  pointer-events: none; 
+}
+
+.add-to-cart-popup {
+  background: #2c3e50;
+  color: white;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: 380px;
+  width: 90%;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: auto; /* permite interagir com o popup */
+  border: 1px solid #e0e0e0;
+  transform-origin: top center;
+}
+
+body.dark-mode .add-to-cart-popup {
+  background: #21262d;
+  color: #f0f6fc;
+  border-color: #30363d;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.popup-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  color: #28a745;
+  animation: bounce 0.6s ease;
+}
+
+body.dark-mode .popup-icon {
+  color: #3fb950;
+}
+
+.add-to-cart-popup h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: inherit;
+}
+
+.popup-product {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 14px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+body.dark-mode .popup-product {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+.popup-product-img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #eee;
+}
+
+body.dark-mode .popup-product-img {
+  background: #30363d;
+}
+
+.popup-product-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: inherit;
+  text-align: left;
+}
+
+.popup-product-price {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #28a745;
+}
+
+body.dark-mode .popup-product-price {
+  color: #3fb950;
+}
+
+.popup-view-cart-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+body.dark-mode .popup-view-cart-btn {
+  background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+  box-shadow: 0 4px 12px rgba(46, 160, 67, 0.4);
+}
+
+.popup-view-cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
+body.dark-mode .popup-view-cart-btn:hover {
+  box-shadow: 0 6px 16px rgba(46, 160, 67, 0.6);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-8px); }
+  60% { transform: translateY(-4px); }
 }
 
 .modal-overlay {

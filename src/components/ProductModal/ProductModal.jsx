@@ -46,14 +46,17 @@ const ProductModal = ({ product, onClose, onAddToCart, onBuyNow }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [userReviews, setUserReviews] = useState([]);
 
   if (!product) return null;
 
-  const reviews = product.comentarios || [
+  const defaultReviews = [
     { id: 1, user: 'Neyma', rating: 5, comment: 'Excelente produto! Meu pet adorou.', date: '2025-01-15' },
     { id: 2, user: 'Meci', rating: 4, comment: 'Bom produto, entrega rápida.', date: '2025-01-10' },
     { id: 3, user: 'Cericete', rating: 5, comment: 'Melhor compra que fiz!', date: '2025-01-05' }
   ];
+  
+  const reviews = [...userReviews, ...(product.comentarios || defaultReviews)];
 
   const handleAddReview = () => {
     if (!user) {
@@ -62,12 +65,15 @@ const ProductModal = ({ product, onClose, onAddToCart, onBuyNow }) => {
     }
 
     if (rating > 0 && comment.trim()) {
-      console.log('Nova avaliação:', {
-        userId: user.id,
-        productId: product.id_produto || product.id,
+      const newReview = {
+        id: Date.now(),
+        user: user.nome || user.email || 'Usuário',
         rating,
-        comment
-      });
+        comment: comment.trim(),
+        date: new Date().toLocaleDateString('pt-BR')
+      };
+      
+      setUserReviews(prev => [newReview, ...prev]);
       setRating(0);
       setComment('');
     }

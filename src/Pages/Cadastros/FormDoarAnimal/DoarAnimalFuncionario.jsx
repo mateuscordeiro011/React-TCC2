@@ -84,6 +84,11 @@ const DoarAnimalFuncionario = () => {
     return <img src={`data:image/jpeg;base64,${foto}`} alt="Cliente" className="petshop-cliente-avatar" />;
   };
 
+  const renderClienteImageSmall = (foto) => {
+    if (!foto) return <div className="petshop-cliente-avatar-small"><User size={16} /></div>;
+    return <img src={`data:image/jpeg;base64,${foto}`} alt="Cliente" className="petshop-cliente-avatar-small" />;
+  };
+
   if (!isFuncionario) {
     return (
       <>
@@ -151,12 +156,14 @@ const DoarAnimalFuncionario = () => {
                     <p><strong>Status:</strong> {doacao.status}</p>
                     
                     <div className="petshop-cliente-info">
-                      <User size={16} />
-                      <span><strong>Doador:</strong> {doacao.cliente?.nome || "Carregando..."}</span>
+                      {renderClienteImageSmall(doacao.cliente?.foto)}
+                      <div>
+                        <span><strong>Doador:</strong> {doacao.cliente?.nome || "Carregando..."}</span>
+                        {doacao.cliente?.email && (
+                          <p style={{fontSize: '0.8rem', color: '#666', margin: '2px 0'}}>{doacao.cliente.email}</p>
+                        )}
+                      </div>
                     </div>
-                    {doacao.id_cliente_doador && (
-                      <p style={{fontSize: '0.8rem', color: '#999'}}>ID Cliente: {doacao.id_cliente_doador}</p>
-                    )}
                     
                     <button
                       onClick={() => handleViewDoacao(doacao)}

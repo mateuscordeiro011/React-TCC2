@@ -10,6 +10,9 @@ export default function EmployeeDashboard() {
     const [products, setProducts] = useState([]);
     const [clients, setClients] = useState([]);
     const [logs, setLogs] = useState([]);
+    const [adocoes, setAdocoes] = useState([]);
+    const [agendamentos, setAgendamentos] = useState([]);
+    const [doacoes, setDoacoes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('overview');
@@ -18,7 +21,10 @@ export default function EmployeeDashboard() {
         totalProducts: 0,
         totalClients: 0,
         totalSales: 0,
-        recentActivities: 0
+        recentActivities: 0,
+        totalAdocoes: 0,
+        totalAgendamentos: 0,
+        totalDoacoes: 0
     });
 
     // Função para tratar imagens Base64
@@ -140,6 +146,48 @@ export default function EmployeeDashboard() {
                     setLogs([]);
                 }
 
+                // Carregar adoções
+                try {
+                    const adocoesRes = await fetch("http://localhost:8080/api-salsi/adocoes");
+                    if (adocoesRes.ok) {
+                        const adocoesData = await adocoesRes.json();
+                        setAdocoes(Array.isArray(adocoesData) ? adocoesData : []);
+                    } else {
+                        setAdocoes([]);
+                    }
+                } catch (err) {
+                    console.warn("Erro ao carregar adoções:", err);
+                    setAdocoes([]);
+                }
+
+                // Carregar doações (animais cadastrados por clientes)
+                try {
+                    const doacoesRes = await fetch("http://localhost:8080/api-salsi/doacoes/disponiveis");
+                    if (doacoesRes.ok) {
+                        const doacoesData = await doacoesRes.json();
+                        setDoacoes(Array.isArray(doacoesData) ? doacoesData : []);
+                    } else {
+                        setDoacoes([]);
+                    }
+                } catch (err) {
+                    console.warn("Erro ao carregar doações:", err);
+                    setDoacoes([]);
+                }
+
+                // Carregar agendamentos de visitas reais
+                try {
+                    const agendamentosRes = await fetch("http://localhost:8080/api-salsi/agendamentos");
+                    if (agendamentosRes.ok) {
+                        const agendamentosData = await agendamentosRes.json();
+                        setAgendamentos(Array.isArray(agendamentosData) ? agendamentosData : []);
+                    } else {
+                        setAgendamentos([]);
+                    }
+                } catch (err) {
+                    console.warn("Erro ao carregar agendamentos:", err);
+                    setAgendamentos([]);
+                }
+
             } catch (err) {
                 console.error("Erro geral:", err);
                 setError(err.message);
@@ -158,9 +206,12 @@ export default function EmployeeDashboard() {
             totalProducts: products.length,
             totalClients: clients.length,
             totalSales: purchases.reduce((sum, p) => sum + (p.total || 0), 0),
-            recentActivities: logs.length
+            recentActivities: logs.length,
+            totalAdocoes: adocoes.length,
+            totalAgendamentos: agendamentos.length,
+            totalDoacoes: doacoes.length
         });
-    }, [adoptions, products, clients, purchases, logs]);
+    }, [adoptions, products, clients, purchases, logs, adocoes, agendamentos, doacoes]);
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
@@ -265,6 +316,27 @@ export default function EmployeeDashboard() {
                                     <p>Total em Vendas</p>
                                 </div>
                             </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">❤️</div>
+                                <div className="stat-info">
+                                    <h3>{stats.totalAdocoes}</h3>
+                                    <p>Adoções Realizadas</p>
+                                </div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">📅</div>
+                                <div className="stat-info">
+                                    <h3>{stats.totalAgendamentos}</h3>
+                                    <p>Agendamentos</p>
+                                </div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">🎁</div>
+                                <div className="stat-info">
+                                    <h3>{stats.totalDoacoes}</h3>
+                                    <p>Doações Recebidas</p>
+                                </div>
+                            </div>
                         </div>
                     </section>
 
@@ -281,6 +353,24 @@ export default function EmployeeDashboard() {
                             onClick={() => setActiveTab('logs')}
                         >
                             📝 Log de Atividades
+                        </button>
+                        <button 
+                            className={activeTab === 'adocoes' ? 'active' : ''}
+                            onClick={() => setActiveTab('adocoes')}
+                        >
+                            ❤️ Adoções
+                        </button>
+                        <button 
+                            className={activeTab === 'agendamentos' ? 'active' : ''}
+                            onClick={() => setActiveTab('agendamentos')}
+                        >
+                            📅 Agendamentos
+                        </button>
+                        <button 
+                            className={activeTab === 'doacoes' ? 'active' : ''}
+                            onClick={() => setActiveTab('doacoes')}
+                        >
+                            🎁 Doações
                         </button>
                     </nav>
 
@@ -344,6 +434,178 @@ export default function EmployeeDashboard() {
                                                 </div>
                                                 <div className="log-description">
                                                     <p>{log.descricao}</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Adoções */}
+                        {activeTab === 'adocoes' && (
+                            <section className="adocoes-section">
+                                <h2>❤️ Adoções Realizadas</h2>
+                                <div className="adocoes-container">
+                                    {adocoes.length === 0 ? (
+                                        <p>Nenhuma adoção encontrada.</p>
+                                    ) : (
+                                        adocoes.map(adocao => (
+                                            <div key={adocao.id} className="adocao-item">
+                                                <div className="adocao-header">
+                                                    <span className="adocao-icon">🐾</span>
+                                                    <div className="adocao-info">
+                                                        <h4>{adocao.animal?.nome || 'Animal'} ({adocao.animal?.especie || 'N/A'})</h4>
+                                                        <div className="adocao-cliente">
+                                                            <span className="cliente-badge">{adocao.cliente?.nome || 'Cliente'}</span>
+                                                            <small>{adocao.cliente?.email || 'N/A'}</small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="adocao-meta">
+                                                        <div className="adocao-data">
+                                                            <strong>{formatDateTime(adocao.dataAdocao)}</strong>
+                                                        </div>
+                                                        <span 
+                                                            className={`status-badge status-${adocao.status?.toLowerCase() || 'aprovada'}`}
+                                                            style={{ backgroundColor: getStatusColor(adocao.status || 'APROVADA') }}
+                                                        >
+                                                            {adocao.status || 'Aprovada'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {adocao.observacoes && (
+                                                    <div className="adocao-details">
+                                                        <small>Observações: {adocao.observacoes}</small>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Agendamentos */}
+                        {activeTab === 'agendamentos' && (
+                            <section className="agendamentos-section">
+                                <h2>📅 Agendamentos de Visitas</h2>
+                                <div className="agendamentos-container">
+                                    {agendamentos.length === 0 ? (
+                                        <p>Nenhum agendamento de visita encontrado.</p>
+                                    ) : (
+                                        agendamentos.filter(agendamento => 
+                                            agendamento.animalNome && 
+                                            agendamento.clienteNome && 
+                                            agendamento.dataVisita
+                                        ).map(agendamento => (
+                                            <div key={agendamento.id} className="agendamento-item">
+                                                <div className="agendamento-header">
+                                                    <span className="agendamento-icon">🐾</span>
+                                                    <div className="agendamento-info">
+                                                        <h4>Visita - {agendamento.animalNome}</h4>
+                                                        <div className="agendamento-cliente">
+                                                            <span className="cliente-badge">{agendamento.clienteNome}</span>
+                                                            <small>{agendamento.clienteEmail}</small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="agendamento-meta">
+                                                        <div className="agendamento-data">
+                                                            <strong>{agendamento.dataVisita}</strong>
+                                                        </div>
+                                                        <span 
+                                                            className={`status-badge status-${agendamento.status?.toLowerCase() || 'pendente'}`}
+                                                            style={{ backgroundColor: getStatusColor(agendamento.status || 'PENDENTE') }}
+                                                        >
+                                                            {agendamento.status || 'Pendente'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="agendamento-details">
+                                                    <small>Agendado em: {formatDateTime(agendamento.dataCriacao)}</small>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Doações */}
+                        {activeTab === 'doacoes' && (
+                            <section className="doacoes-section">
+                                <h2>🎁 Animais Doados por Clientes</h2>
+                                <div className="doacoes-container">
+                                    {doacoes.length === 0 ? (
+                                        <p>Nenhuma doação encontrada.</p>
+                                    ) : (
+                                        doacoes.map(doacao => (
+                                            <div key={doacao.id} className="doacao-item">
+                                                <div className="doacao-header">
+                                                    <span className="doacao-icon">🎁</span>
+                                                    <div className="doacao-info">
+                                                        <h4>{doacao.nome} ({doacao.especie})</h4>
+                                                        <div className="doacao-detalhes">
+                                                            <span className="raca-badge">{doacao.raca || 'SRD'}</span>
+                                                            <small>Sexo: {doacao.sexo === 'M' ? 'Macho' : 'Fêmea'}</small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="doacao-meta">
+                                                        <div className="doacao-data">
+                                                            <strong>{formatDateTime(doacao.dataCadastro)}</strong>
+                                                        </div>
+                                                        <span 
+                                                            className={`status-badge status-${doacao.status?.toLowerCase() || 'disponivel'}`}
+                                                            style={{ backgroundColor: getStatusColor(doacao.status || 'DISPONÍVEL') }}
+                                                        >
+                                                            {doacao.status || 'Disponível'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {doacao.peso && (
+                                                    <div className="doacao-details">
+                                                        <small>Peso: {doacao.peso} kg</small>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Agendamentos */}
+                        {activeTab === 'agendamentos' && (
+                            <section className="agendamentos-section">
+                                <h2>📅 Agendamentos de Visitas</h2>
+                                <div className="agendamentos-container">
+                                    {agendamentos.length === 0 ? (
+                                        <p>Nenhum agendamento encontrado.</p>
+                                    ) : (
+                                        agendamentos.map(agendamento => (
+                                            <div key={agendamento.id} className="agendamento-item">
+                                                <div className="agendamento-header">
+                                                    <span className="agendamento-icon">🐶</span>
+                                                    <div className="agendamento-info">
+                                                        <h4>{agendamento.animalNome} ({agendamento.animalEspecie})</h4>
+                                                        <div className="agendamento-cliente">
+                                                            <span className="cliente-badge">{agendamento.clienteNome}</span>
+                                                            <small>{agendamento.clienteEmail}</small>
+                                                        </div>
+                                                    </div>
+                                                    <div className="agendamento-meta">
+                                                        <div className="agendamento-data">
+                                                            <strong>{agendamento.dataVisita}</strong>
+                                                        </div>
+                                                        <span 
+                                                            className={`status-badge status-${agendamento.status.toLowerCase()}`}
+                                                            style={{ backgroundColor: getStatusColor(agendamento.status) }}
+                                                        >
+                                                            {agendamento.status}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="agendamento-details">
+                                                    <small>Agendado em: {formatDateTime(agendamento.dataCriacao)}</small>
                                                 </div>
                                             </div>
                                         ))

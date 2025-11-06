@@ -74,7 +74,7 @@ const FormAnimal = () => {
     setSexo(animal.sexo);
     setPeso(animal.peso);
     setNascimento(animal.nascimento);
-    setAnimalEditando(animal.id_animal);
+    setAnimalEditando(animal.id || animal.id_animal);
 
     if (animal.foto) {
       setImg(`data:image/jpeg;base64,${animal.foto}`);
@@ -136,15 +136,17 @@ const FormAnimal = () => {
 
       let response;
       if (animalEditando) {
+        // PUT para atualizar animal existente
         response = await api.put(
           `/api-salsi/animais/${animalEditando}`,
           payload
         );
         setUsuarios((prev) =>
-          prev.map((p) => (p.id_animal === animalEditando ? response.data : p))
+          prev.map((p) => (p.id === animalEditando ? response.data : p))
         );
         setMessage({ type: "success", text: "Animal atualizado com sucesso!" });
       } else {
+        // POST para criar novo animal
         response = await api.post("/api-salsi/animais", payload);
         setUsuarios((prev) => [...prev, response.data]);
         setMessage({ type: "success", text: "Animal cadastrado com sucesso!" });
@@ -172,8 +174,9 @@ const FormAnimal = () => {
     setShowDeleteModal(false);
 
     try {
-      await api.delete(`/api-salsi/animais/${animal.id_animal}`);
-      setUsuarios((prev) => prev.filter((p) => p.id_animal !== animal.id_animal));
+      const animalId = animal.id || animal.id_animal;
+      await api.delete(`/api-salsi/animais/${animalId}`);
+      setUsuarios((prev) => prev.filter((p) => (p.id || p.id_animal) !== animalId));
       setSuccessMessage(`O animal "${animal.nome}" foi excluído com sucesso!`);
       setShowSuccessModal(true);
     } catch (error) {
@@ -381,7 +384,7 @@ const FormAnimal = () => {
                     const idade = calculateAge(animal.nascimento);
                     return (
                       <motion.li
-                        key={animal.id_animal}
+                        key={animal.id || animal.id_animal}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}

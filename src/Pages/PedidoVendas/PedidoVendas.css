@@ -185,24 +185,44 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
     border-radius: 8px;
     font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .item-nome {
-    flex: 1;
-    font-weight: 500;
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
 }
 
-.item-quantidade {
-    margin: 0 15px;
+.item-detalhes {
+    font-size: 0.85rem;
     color: #666;
 }
 
-.item-preco {
+.item-total {
     font-weight: bold;
-    color: #007bff;
+    color: #28a745;
+    font-size: 1rem;
+}
+
+.no-items {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
 }
 
 .empty-state {
@@ -283,6 +303,19 @@
 
 .dark-mode .item-row {
     background-color: #3d3d3d;
+}
+
+.dark-mode .item-nome {
+    color: #e0e0e0;
+}
+
+.dark-mode .item-detalhes {
+    color: #aaa;
+}
+
+.dark-mode .no-items {
+    background-color: #3d3d3d;
+    color: #aaa;
 }
 
 .dark-mode .pedido-header {

@@ -6,6 +6,7 @@ import LoginRequiredModal from '../../components/LoginRequiredModal/LoginRequire
 import CardModal from '../../components/CardModal/CardModal';
 import './Checkout.css';
 import Footer from '../../components/Footer/Footer';
+import qrcode from "../../IMG/qrcode.jpg"
 
 export default function Checkout() {
   const { user } = useAuth();
@@ -24,6 +25,7 @@ export default function Checkout() {
   const [clienteEndereco, setClienteEndereco] = useState(null);
   const [usandoEnderecoCliente, setUsandoEnderecoCliente] = useState(true);
   const [showChangeAddress, setShowChangeAddress] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutos em segundos
   const [order, setOrder] = useState({
     products: [],
     total: 0,
@@ -196,6 +198,7 @@ export default function Checkout() {
     console.log('Pedido confirmado:', order);
 
     if (selectedPaymentMethod === 'pix') {
+      setTimeLeft(600); // Reset timer para 10 minutos
       setShowPixCode(true);
     } else if (selectedPaymentMethod === 'credit' || selectedPaymentMethod === 'debit') {
       setShowCardModal(true);
@@ -328,6 +331,31 @@ function calculateCrc16(data) {
     );
   }
 
+  // Timer para PIX
+  useEffect(() => {
+    let timer;
+    if (showPixCode && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            setShowPixCode(false);
+            alert('Tempo para pagamento PIX expirado. Tente novamente.');
+            return 600;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [showPixCode, timeLeft]);
+
+  // Função para formatar tempo
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   if (showPixCode) {
     const pixCode = generatePixCode();
 
@@ -345,6 +373,11 @@ function calculateCrc16(data) {
               <p className="pix-instructions">
                 Escaneie o código QR e informe o valor de R$ {(order.total + frete).toFixed(2)} ao pagar.
               </p>
+              <div className='pix-qr-code'>
+                <div className='.qr-placeholder'>
+                <img src={qrcode} alt="qrcode" />
+                </div>
+              </div>
               <div className="pix-code">
                 <textarea
                   value={pixCode}
@@ -359,7 +392,7 @@ function calculateCrc16(data) {
                   📋 Copiar Código
                 </button>
               </div>
-              <p className="pix-timer">Tempo restante: 5:00</p>
+              <p className="pix-timer">Tempo restante: {formatTime(timeLeft)}</p>
               <div className="pix-actions">
                 <button
                   className="btn-secondary"

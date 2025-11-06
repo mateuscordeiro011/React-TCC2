@@ -89,6 +89,32 @@ export default function Home() {
     navigate(`/agendamento-visita/${animalId}`);
   };
 
+  const handleBuyNow = (product) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    // Adiciona o produto ao carrinho
+    handleAddToCart(product);
+    
+    // Redireciona para o checkout
+    const productForCheckout = {
+      id_produto: product.id_produto || product.id,
+      nome: product.nome,
+      preco: product.preco,
+      foto: product.foto,
+      quantity: 1
+    };
+    
+    navigate('/checkout', { 
+      state: { 
+        products: [productForCheckout],
+        fromBuyNow: true 
+      } 
+    });
+  };
+
   useEffect(() => {
     fetch("http://localhost:8080/api-salsi/produtos", {
       method: 'GET',
@@ -336,7 +362,15 @@ export default function Home() {
               <p className="modal-desc">{selectedProduct.descricao}</p>
               <p className="modal-price">R$ {selectedProduct.preco?.toFixed(2)}</p>
               <div className="modal-actions">
-                <button className="modal-btn buy">Comprar Agora</button>
+                <button 
+                  className="modal-btn buy"
+                  onClick={() => {
+                    closeProductModal();
+                    handleBuyNow(selectedProduct);
+                  }}
+                >
+                  Comprar Agora
+                </button>
                 <button
                   className="modal-btn cart"
                   onClick={(e) => {
@@ -374,8 +408,15 @@ export default function Home() {
                 {new Date(selectedAnimal.data_nascimento || selectedAnimal.nascimento).toLocaleDateString("pt-BR")}
               </p>
               <div className="modal-actions">
-                <button className="modal-btn adopt">Iniciar Adoção</button>
-                <button className="modal-btn info">Saber Mais</button>
+                <button 
+                  className="modal-btn adopt"
+                  onClick={() => {
+                    closeAnimalModal();
+                    handleAdopt(selectedAnimal);
+                  }}
+                >
+                  Iniciar Adoção
+                </button>
               </div>
             </div>
           </div>

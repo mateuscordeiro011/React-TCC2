@@ -199,8 +199,9 @@ export default function PerfilCliente() {
 
   const formatAddress = (endereco) => {
     if (!endereco) return "Endereço não cadastrado";
-    const { rua, numero, complemento, bairro, cidade, estado } = endereco;
-    return `${rua}, ${numero}${complemento ? `, ${complemento}` : ""} - ${bairro}, ${cidade} - ${estado}`;
+    const { rua, numero, complemento, bairro, cidade, estado, cep } = endereco;
+    const cepFormatted = cep && cep.length === 8 ? `${cep.slice(0, 5)}-${cep.slice(5)}` : cep;
+    return `${rua}, ${numero}${complemento ? `, ${complemento}` : ""} - ${bairro}, ${cidade} - ${estado}${cepFormatted ? ` - CEP: ${cepFormatted}` : ""}`;
   };
 
   // Carregar perfil inicial
